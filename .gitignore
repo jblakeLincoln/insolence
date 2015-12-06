@@ -1,0 +1,14 @@
+*bin
+*ipch
+*obj
+src/*.dll
+
+*.swp
+*.sdf
+*.sln
+*.suo
+*.make
+Makefile
+*.vcxproj
+*.vcxproj.*
+tags
