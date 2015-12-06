@@ -14,8 +14,9 @@ private:
 	GLFWwindow *glfw_window;
 	GLuint width;
 	GLuint height;
-	bool maximised;
 	bool should_close;
+
+	/* TODO Issue #4: Add window options. */
 
 public:
 	bool ShouldClose() { return glfwWindowShouldClose(glfw_window); }
@@ -38,7 +39,7 @@ public:
 		int gl_minor = 1;
 
 		/* TODO Issue #2: Log success/failure. */
-		if(glfwInit())
+		if(glfwInit() == GL_TRUE)
 		{
 			// Log success
 		}
@@ -71,7 +72,7 @@ public:
 			exit(-1);
 		}
 
-		//TODO: Log window creation success.
+		// Log window creation success.
 
 		return output;
 	}
