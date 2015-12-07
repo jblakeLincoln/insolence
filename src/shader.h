@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <GL/glew.h>
 
-/* TODO Issue #5: Logging. */
+/* TODO Issue #10: Logging. */
 struct Shader
 {
 private:
