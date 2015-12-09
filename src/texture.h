@@ -1,5 +1,6 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
+#define ILUT_USE_OPENGL
 
 #include <stdio.h>
 #include <GL/glew.h>
