@@ -2,7 +2,7 @@
 #define RENDER_MANAGER_H
 
 #include "shader_program.h"
-#include <glm/mat4x4.hpp>
+#include <glm/matrix.hpp>
 
 /* TODO Issue #13: Logging. */
 struct RenderManager

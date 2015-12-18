@@ -2,7 +2,7 @@
 
 RenderManager2D::RenderManager2D()
 {
-	glm::vec3 view_pos = glm::vec3(200.f, 0.f, 200.f);
+	glm::vec3 view_pos = glm::vec3(2.f, 0.f, 2.f);
 	GLint uni_proj;
 	GLint uni_view;
 	int vbo_attrib_len;
