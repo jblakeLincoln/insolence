@@ -10,18 +10,6 @@
 struct Renderable;
 struct Entity
 {
-private:
-	glm::mat4 model_matrix;
-	bool model_changed;
-
-	glm::vec3 position;
-	glm::quat orientation;
-	glm::vec3 scale;
-
-public:
-
-struct Entity
-{
 	Entity();
 	~Entity() {}
 

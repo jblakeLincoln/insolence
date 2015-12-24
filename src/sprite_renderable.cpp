@@ -10,6 +10,6 @@ SpriteRenderable::~SpriteRenderable()
 
 }
 
-void SpriteRenderable::Draw()
+void SpriteRenderable::Draw(RenderManager2D *r)
 {
 }

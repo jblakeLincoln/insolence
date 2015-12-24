@@ -13,7 +13,8 @@ struct SpriteRenderable : public Renderable
 	/**
 	 * Overload of Renderable draw that sends data to the renderer.
 	 */
-	void Draw();
+
+	void Draw(RenderManager2D *r);
 };
 
 #endif

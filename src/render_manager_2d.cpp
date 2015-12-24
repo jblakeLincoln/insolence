@@ -3,8 +3,6 @@
 RenderManager2D::RenderManager2D()
 {
 	glm::vec3 view_pos = glm::vec3(2.f, 0.f, 2.f);
-	GLint uni_proj;
-	GLint uni_view;
 	int vbo_attrib_len;
 
 	/* Data for our quad - centre aligned - 3 verts, 2 UVs. */
@@ -34,10 +32,10 @@ RenderManager2D::RenderManager2D()
 	mat_projection = glm::perspective(1.f, 1.f, 0.1f, 10000.f);
 	mat_view = glm::lookAt(view_pos, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
 
-	uni_proj = glGetUniformLocation(shader_program->GetID(), "mat_proj");
+	uni_projection = glGetUniformLocation(shader_program->GetID(), "mat_proj");
 	uni_view = glGetUniformLocation(shader_program->GetID(), "mat_view");
 
-	glUniformMatrix4fv(uni_proj, 1, GL_FALSE, &mat_projection[0][0]);
+	glUniformMatrix4fv(uni_projection, 1, GL_FALSE, &mat_projection[0][0]);
 	glUniformMatrix4fv(uni_view, 1, GL_FALSE, &mat_view[0][0]);
 
 	/* Set up and bind all of our data that will be reused for each sprite. */

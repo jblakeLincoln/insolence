@@ -10,7 +10,8 @@ struct RenderManager
 	ShaderProgram *shader_program;
 	glm::mat4 mat_projection;
 	glm::mat4 mat_view;
-	GLint uni_model;
+	GLint uni_projection;
+	GLint uni_view;
 
 	/**
 	 * The renderer drawing at the end of the frame.
