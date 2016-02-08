@@ -1,14 +1,19 @@
 #ifndef RENDER_MANAGER_2D
 #define RENDER_MANAGER_2D
 
+#include <map>
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include "texture.h"
 #include "render_manager.h"
 
 /* TODO Issue #13: Logging. */
 struct RenderManager2D : public RenderManager
 {
+	typedef std::map<Texture*, std::vector<float> > data_def;
+
 	GLuint vao;
 	GLuint vbo_verts;
 	GLuint vbo_data;
@@ -17,8 +22,8 @@ struct RenderManager2D : public RenderManager
 	GLint attrib_uvs;
 	GLint attrib_models[4];
 	GLint attrib_colour;
-	std::vector<float> data;
-	int count;
+	std::map<Texture*, std::vector<float> > data;
+	std::map<Texture*, float> count;
 
 	RenderManager2D();
 	~RenderManager2D();
@@ -34,7 +39,7 @@ struct RenderManager2D : public RenderManager
 	 * \param model		Model matrix of sprite.
 	 * \param colour	colour of sprite.
 	 */
-	void Add(const glm::mat4 &model, const glm::vec4& colour);
+	void Add(Texture *tex, const glm::mat4 &model, const glm::vec4& colour);
 };
 
 #endif

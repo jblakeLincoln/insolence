@@ -83,12 +83,6 @@ RenderManager2D::RenderManager2D()
 	for(int i = 0; i < 4; ++i)
 		glVertexAttribDivisor(attrib_models[i], 1);
 	glVertexAttribDivisor(attrib_colour, 1);
-
-	count = 0;
-
-	/* TODO Issue #14: Decide on allocation. Copying FNA for now. */
-	for(int i = 0; i < 2048*20; ++i)
-		data.push_back(0);
 }
 
 RenderManager2D::~RenderManager2D()
@@ -102,34 +96,45 @@ RenderManager2D::~RenderManager2D()
 void RenderManager2D::Manage()
 {
 	glBindVertexArray(vao);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*(count*20), &data[0],
+
+	for(data_def::iterator i = data.begin(); i != data.end(); ++i)
+	{
+		if(count[i->first] == 0)
+			continue;
+
+		if(i->first != NULL)
+			i->first->Bind();
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*(count[i->first]*20),
+				&data[i->first][0],
 			GL_DYNAMIC_DRAW);
 
-	if(count == 0)
-		return;
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, count[i->first]);
+	}
 
-	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, count);
-
-	count = 0;
+	data.clear();
+	count.clear();
 }
 
-void RenderManager2D::Add(const glm::mat4& model, const glm::vec4& colour)
+void RenderManager2D::Add(Texture *t, const glm::mat4& model,
+		const glm::vec4& colour)
 {
+	if(count.count(t) == 0)
+		count[t] = 0;
+
 	/*
 	 * TODO Issue #15: Fix all this copying - should everything always be
 	 * stored in the renderer?
 	 */
 
-	/* Can't decide whether resize is faster than looping push_back. */
-	if(count*20 >= data.size())
-		data.resize((count+2048)*20);
+	data[t].resize((count[t]+2048)*20);
 
 	for(int i = 0; i < 4; ++i)
 		for(int j = 0; j < 4; ++j)
-			data[count*20+(i*4+j)] = model[i][j];
+			data[t][count[t]*20+(i*4+j)] = model[i][j];
 
 	for(int i = 0; i < 4; ++i)
-		data[count*20+16+i] = (colour[i]);
+		data[t][count[t]*20+16+i] = (colour[i]);
 
-	count++;
+	count[t]++;
 }
