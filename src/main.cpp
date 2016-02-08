@@ -1,8 +1,11 @@
 #include <stdio.h>
+#include <bitset>
+#include <map>
 
 #include "game_world.cpp"
 #include "entity.h"
 #include "sprite_renderable.h"
+#include "keys.h"
 #include "window.h"
 
 #include "camera.h"
@@ -48,6 +51,13 @@ private:
 
 	void Update()
 	{
+		if(Input::GetKey(JKEY_KEY_W) == JKEY_PRESS)
+			printf("Pressed!\n");
+		else if(Input::GetKey(JKEY_KEY_W) == JKEY_RELEASE)
+			printf("Released!\n");
+
+		glm::vec2 mouse = Input::GetCursorPos();
+
 		e->Update();
 	}
 

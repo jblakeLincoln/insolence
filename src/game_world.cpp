@@ -1,6 +1,7 @@
 #ifndef GAME_WORLD_H
 #define GAME_WORLD_H
 
+#include <cstdio>
 #include <GL/glew.h>
 #include "window.h"
 
@@ -20,7 +21,6 @@ private:
 
 	void BaseUpdate()
 	{
-
 		Update();
 		BaseDraw();
 	}
@@ -49,6 +49,7 @@ private:
 	void BaseUnload()
 	{
 		Unload();
+
 		Window::DestroyInsolenceWindow(window);
 	}
 

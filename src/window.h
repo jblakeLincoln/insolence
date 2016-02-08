@@ -1,17 +1,21 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include <cstdio>
 #include <stdlib.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "input.h"
+
 struct Window
 {
 private:
+	GLFWwindow *glfw_window;
+
 	Window() {}
 	~Window() {}
 
-	GLFWwindow *glfw_window;
 	GLuint width;
 	GLuint height;
 	bool should_close;
@@ -72,8 +76,10 @@ public:
 			exit(-1);
 		}
 
-		// Log window creation success.
+		Input::AttachWindowToKeyboard(output->glfw_window);
+		Input::SetMouseWindow(output->glfw_window);
 
+		// Log window creation success.
 		return output;
 	}
 
@@ -85,16 +91,19 @@ public:
 	static void DestroyInsolenceWindow(Window *window)
 	{
 		glfwDestroyWindow(window->glfw_window);
+
 		delete window;
 		window = 0;
 	}
 
 	/**
-	 * Process all window callbacks (including input).
+	 * Process all window callbacks and update input.
 	 */
 	static void PollEvents()
 	{
 		glfwPollEvents();
+		Input::Update();
+		//Mouse::Update();
 	}
 };
 
