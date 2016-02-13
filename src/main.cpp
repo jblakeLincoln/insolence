@@ -8,31 +8,35 @@
 #include "keys.h"
 #include "window.h"
 
+#include "mesh.h"
+
 #include "camera.h"
+#include "shader_program.h"
+#include "render_manager_3d.h"
 
 struct TestEntity : Entity
 {
 	Texture *tex;
-	SpriteRenderable *renderable;
-	RenderManager2D *renderer;
+	Mesh *mesh;
+	RenderManager3D *renderer;
 	MovementComponent move;
 
-	TestEntity(Texture *t, const glm::vec3 &pos, RenderManager2D *r)
+	TestEntity(Mesh *m, Texture *t, const glm::vec3 &pos, RenderManager3D *r)
 	{
+		mesh = m;
 		tex = t;
 		renderer = r;
-		renderable = new SpriteRenderable(this);
 		move.Move(pos);
 	}
 
 	virtual void Update()
 	{
-		move.Rotate(0.1f, glm::vec3(1.f, 0.f, 0.f));
+		move.Rotate(0.01f, glm::vec3(1.f, 0.f, 0.f));
 	}
 
 	virtual void Draw()
 	{
-		renderer->Add(tex, move.GetModelMatrix(), glm::vec4(1.f));
+		renderer->Add(mesh, tex, move.GetModelMatrix());
 	}
 };
 
@@ -40,29 +44,40 @@ struct TestEntity : Entity
 struct GameWorld : BaseGameWorld
 {
 private:
-	RenderManager2D *renderer_2d;
+	RenderManager3D *renderer_3d;
+	Mesh *mesh;
 
 	std::vector<TestEntity*> e;
-	Camera *camera;
 
+	Camera *camera;
 	Texture *tex_red;
 	Texture *tex_blue;
 
 	void Initialise()
 	{
+		/* Init. */
 		Texture::Init();
+		glEnable(GL_DEPTH_TEST);
+		renderer_3d = new RenderManager3D();
 
+		/* Load assets. */
 		tex_red = Texture::LoadColour(glm::vec4(1.f, 0.f, 0.f, 1.f));
 		tex_blue = Texture::LoadColour(glm::vec4(0.f, 1.f, 0.f, 1.f));
+		mesh = Mesh::LoadFile("assets/crate.obj", renderer_3d->shader_program);
 
-		renderer_2d = new RenderManager2D();
+		/* Set up a load of test entities. */
+		int max = 6;
 
-		e.push_back(new TestEntity(tex_red, glm::vec3(0, 0.f, 0.f),
-					renderer_2d));
-		e.push_back(new TestEntity(tex_blue, glm::vec3(1, 0.f, 0.f),
-					renderer_2d));
+		for(int i = 0; i < max; i+=2)
+			e.push_back(new TestEntity(mesh, tex_red,
+						glm::vec3(i*2.1f, 0.f, 0.f), renderer_3d));
+		for(int i = 1; i < max; i+=2)
+			e.push_back(new TestEntity(mesh, tex_blue,
+						glm::vec3(i*2.1f, 0.f, 0.f), renderer_3d));
 
 		camera = new Camera();
+		camera->move.MoveX(-6.f);
+		camera->move.MoveZ(3.f);
 	}
 
 	void Update()
@@ -78,14 +93,12 @@ private:
 
 	void Draw()
 	{
-		camera->move.MoveX(0.1f);
+		camera->UpdateRenderer(renderer_3d);
 
 		for(int i = 0; i < e.size(); ++i)
 			e[i]->Draw();
 
-		camera->UpdateRenderer(renderer_2d);
-
-		renderer_2d->Manage();
+		renderer_3d->Manage();
 	}
 
 	void Unload()
@@ -93,7 +106,11 @@ private:
 		for(int i = 0; i < e.size(); ++i)
 			delete e[i];
 
+		delete tex_red;
+		delete tex_blue;
+		delete mesh;
 		delete camera;
+		delete renderer_3d;
 	}
 };
 

@@ -42,7 +42,6 @@ struct RenderManager
 			glAttachShader(program->GetID(), shaders[i]->GetID());
 		}
 
-
 		glBindFragDataLocation(program->GetID(), 0, "out_colour");
 		glLinkProgram(program->GetID());
 		glUseProgram(program->GetID());

@@ -7,7 +7,7 @@ if [ $RETVAL -ne 0 ]; then
 	exit;
 fi
 
-make config=debug
+make config=release
 RETVAL=$?
 
 if [ $RETVAL -eq 0 ]; then

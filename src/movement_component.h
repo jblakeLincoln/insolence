@@ -6,6 +6,9 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+/* TODO Issue #20:	Make sure returned properties consider each other and
+ *					any changes that could have occurred.
+ */
 struct MovementComponent
 {
 private:

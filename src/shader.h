@@ -46,6 +46,7 @@ public:
 	static Shader *CreateFromString(const char *source, GLenum type)
 	{
 		Shader *output = new Shader(type);
+
 		glShaderSource(output->id, 1, &source, NULL);
 		glCompileShader(output->id);
 
@@ -62,7 +63,7 @@ public:
 	 */
 	static Shader *CreateFromFile(const char *path, GLenum type)
 	{
-		Shader *output;
+		Shader *output = NULL;
 		char *buffer;
 		FILE *file;
 		int length;
@@ -81,10 +82,11 @@ public:
 
 		buffer = new char[length+1];
 		buffer[length] = '\0';
-		fread(buffer, 1, length, file);
+		int temp = fread(buffer, 1, length, file); /* Stupid unused warn. */
 		fclose(file);
 
 		output = Shader::CreateFromString(buffer, type);
+
 		delete[] buffer;
 
 		return output;

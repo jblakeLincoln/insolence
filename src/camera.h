@@ -25,12 +25,11 @@ struct Camera : Entity
 
 	void UpdateRenderer(RenderManager *r)
 	{
-		glm::vec3 view_pos;
+		glm::vec3 view_pos = move.GetPosition();
 
 		if(r->uni_projection < 0 || r->uni_view < 0)
 			return;
 
-		view_pos = move.GetPosition();
 		if(view_pos == glm::vec3(0.f))
 			view_pos.y = 0.000001f;
 
