@@ -15,14 +15,18 @@
 struct RenderManager3D : public RenderManager
 {
 private:
-	typedef std::map<Mesh*, GLuint> mesh_def;
+	struct mesh_data_buffers {
+			GLuint vao;
+			GLuint vbo_mesh;
+			GLuint vbo_model;
+	};
+
+	typedef std::map<Mesh*, mesh_data_buffers> mesh_def;
 	typedef std::map<Texture*, std::vector<float> > tex_def;
 
 	GLint attrib_models[4];
-	GLuint vbo_data;
-	GLuint vao;
 
-	std::map<Mesh*, GLuint> mesh_buffers;
+	std::map<Mesh*, mesh_data_buffers> mesh_buffers;
 	std::map<Mesh*, std::map<Texture*, std::vector<float> > > mesh_data;
 
 public:
