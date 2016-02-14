@@ -73,20 +73,20 @@ private:
 		mesh_tri = Mesh::LoadFile("assets/tri.obj", renderer_3d->shader_program);
 
 		/* Set up a load of test entities. */
-		int max = 3;
-		int t = 2.2f;
+		int max = 3000;
+		int t = 2.1f;
 
 		for(int i = 0; i < max; ++i)
 		{
 			Mesh *m = i % 2 ? mesh_crate : mesh_tri;
 
 			e.push_back(new TestEntity(m, textures[i % 3],
-						glm::vec3(i * 2.2f, 0.f, 0.f), renderer_3d));
+						glm::vec3(i * t, 0.f, 0.f), renderer_3d));
 		}
 
 		camera = new Camera();
 		//camera->move.MoveX(-6.f);
-		camera->move.MoveZ(8.f);
+		camera->pos.MoveZ(8.f);
 	}
 
 	void Update()
@@ -98,6 +98,8 @@ private:
 
 		for(int i = 0; i < 0; ++i)
 			e[i]->Update();
+
+		camera->PanX(0.1f);
 	}
 
 	void Draw()

@@ -6,6 +6,16 @@ MovementComponent::MovementComponent()
 	scale = glm::vec3(1.f);
 }
 
+const glm::vec3& MovementComponent::GetPosition()
+{
+	const glm::mat4& m = GetModelMatrix();
+
+	for(int i = 0; i < 3; ++i)
+		position[i] = m[3][i];
+
+	return position;
+}
+
 const glm::mat4& MovementComponent::GetModelMatrix()
 {
 	if(model_changed == true)

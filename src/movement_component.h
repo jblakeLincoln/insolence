@@ -25,7 +25,7 @@ public:
 	/**
 	 * \return	vec3 of position X, Y, Z.
 	 */
-	const glm::vec3& GetPosition() const { return position; }
+	const glm::vec3& GetPosition();
 
 	/**
 	 * \return	Quaternion of orientation.
