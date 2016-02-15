@@ -69,11 +69,13 @@ private:
 		textures[1] = Texture::LoadColour(glm::vec4(0.f, 1.f, 0.f, 1.f));
 		textures[2] = Texture::LoadColour(glm::vec4(0.f, 0.f, 1.f, 1.f));
 
-		mesh_crate = Mesh::LoadFile("assets/crate.obj", renderer_3d->shader_program);
-		mesh_tri = Mesh::LoadFile("assets/tri.obj", renderer_3d->shader_program);
+		mesh_crate = Mesh::LoadFile("assets/boxy.obj",
+				renderer_3d->shader_program);
+		mesh_tri = Mesh::LoadFile("assets/tri.obj",
+				renderer_3d->shader_program);
 
 		/* Set up a load of test entities. */
-		int max = 3000;
+		int max = 300;
 		int t = 2.1f;
 
 		for(int i = 0; i < max; ++i)
@@ -85,8 +87,8 @@ private:
 		}
 
 		camera = new Camera();
-		//camera->move.MoveX(-6.f);
-		camera->pos.MoveZ(8.f);
+		camera->PanX(t * (max / 2));
+		camera->pos.Translate(glm::vec3(0.f, 4.f, 12.f));
 	}
 
 	void Update()
@@ -96,10 +98,14 @@ private:
 		else if(Input::GetKey(JKEY_KEY_W) == JKEY_RELEASE)
 			printf("Released!\n");
 
-		for(int i = 0; i < 0; ++i)
+		for(int i = 0; i < 1; ++i)
 			e[i]->Update();
 
-		camera->PanX(0.1f);
+		camera->pos.Translate(glm::vec3(0.f, -4.f, -12.f));
+		camera->pos.Rotate(0.01f, glm::vec3(0.f, 1.f, 0.f));
+		camera->pos.Translate(glm::vec3(0.f, 4.f, 12.f));
+
+		renderer_3d->SetViewPosition(camera->pos.GetPosition());
 	}
 
 	void Draw()

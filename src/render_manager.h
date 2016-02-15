@@ -39,7 +39,17 @@ struct RenderManager
 		for(int i = 0; i < 2; ++i)
 		{
 			// Log status/failure;
+			printf("Shader %d: %d\n", i, shaders[i]->GetShaderiv(
+						GL_COMPILE_STATUS));
 			glAttachShader(program->GetID(), shaders[i]->GetID());
+		}
+
+		for(int i = 0; i < 2; ++i)
+		{
+			char buffer[512];
+
+			glGetShaderInfoLog(shaders[i]->GetID(), 512, NULL, buffer);
+			printf("%d: %s\n", i, buffer);
 		}
 
 		glBindFragDataLocation(program->GetID(), 0, "out_colour");

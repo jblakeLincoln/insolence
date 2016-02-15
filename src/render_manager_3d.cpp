@@ -12,6 +12,21 @@ RenderManager3D::RenderManager3D()
 
 	uni_projection = glGetUniformLocation(shader_program->GetID(), "mat_proj");
 	uni_view = glGetUniformLocation(shader_program->GetID(), "mat_view");
+	uni_direction = glGetUniformLocation(shader_program->GetID(),
+			"dir_light.direction");
+	uni_diffuse = glGetUniformLocation(shader_program->GetID(),
+			"dir_light.diffuse");
+	uni_ambient = glGetUniformLocation(shader_program->GetID(),
+			"dir_light.ambient");
+	uni_specular = glGetUniformLocation(shader_program->GetID(),
+			"dir_light.specular");
+	uni_view_pos = glGetUniformLocation(shader_program->GetID(),
+			"view_pos");
+
+	dir_light.direction = glm::vec3(-2.f, -6.f, -12.f);
+	dir_light.diffuse = glm::vec3(1.f);
+	dir_light.specular = glm::vec3(0.0f);
+	dir_light.ambient = glm::vec3(0.1f);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -36,6 +51,13 @@ void RenderManager3D::Manage()
 	 * This looks pretty awful ... but it works to a reasonable standard
 	 * (admittedly on the low end of reasonable), so it stays for now.
 	 */
+	glUseProgram(shader_program->GetID());
+
+	glUniform3fv(uni_view_pos, 1, &view_pos[0]);
+	glUniform3fv(uni_direction, 1, &dir_light.direction[0]);
+	glUniform3fv(uni_diffuse, 1, &dir_light.diffuse[0]);
+	glUniform3fv(uni_ambient, 1, &dir_light.ambient[0]);
+	glUniform3fv(uni_specular, 1, &dir_light.specular[0]);
 
 	for(mesh_def::iterator i = mesh_buffers.begin(); i != mesh_buffers.end();
 			++i)
