@@ -2,6 +2,7 @@ solution "insolence"
 	objdir "obj"
 	targetdir "bin"
 	configurations { "Debug", "Release" }
+	buildoptions "-std=c++11"
 
 	defines {"GLM_FORCE_RADIANS"}
 	configuration {"LINUX"}

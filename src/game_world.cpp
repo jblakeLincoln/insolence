@@ -3,11 +3,13 @@
 
 #include <cstdio>
 #include <GL/glew.h>
+#include "gametime.h"
 #include "window.h"
 
 struct BaseGameWorld {
 private:
 	Window *window;
+	GameTime gametime;
 	bool running;
 
 	void BaseInitialise()
@@ -21,7 +23,8 @@ private:
 
 	void BaseUpdate()
 	{
-		Update();
+		gametime.Update();
+		Update(gametime);
 		BaseDraw();
 	}
 
@@ -55,7 +58,7 @@ private:
 
 protected:
 	virtual void Initialise()=0;
-	virtual void Update()=0;
+	virtual void Update(const GameTime& gametime)=0;
 	virtual void Draw()=0;
 	virtual void Unload()=0;
 

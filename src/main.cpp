@@ -91,8 +91,9 @@ private:
 		camera->pos.Translate(glm::vec3(0.f, 4.f, 12.f));
 	}
 
-	void Update()
+	void Update(const GameTime& gametime)
 	{
+		//printf("%d\n", gametime.GetElapsedTime().ElapsedMilliseconds());
 		if(Input::GetKey(JKEY_KEY_W) == JKEY_PRESS)
 			printf("Pressed!\n");
 		else if(Input::GetKey(JKEY_KEY_W) == JKEY_RELEASE)
