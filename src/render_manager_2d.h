@@ -19,9 +19,11 @@ struct RenderManager2D : public RenderManager
 	GLuint vbo_data;
 
 	GLint attrib_verts;
-	GLint attrib_uvs;
+	GLint attrib_uv;
 	GLint attrib_models[4];
 	GLint attrib_colour;
+	GLint attrib_model_uv;
+
 	std::map<Texture*, std::vector<float> > data;
 	std::map<Texture*, float> count;
 
@@ -36,10 +38,22 @@ struct RenderManager2D : public RenderManager
 	/**
 	 * Queue up a sprite to be drawn.
 	 *
+	 * \param tex		Pointer to texture.
 	 * \param model		Model matrix of sprite.
 	 * \param colour	colour of sprite.
 	 */
 	void Add(Texture *tex, const glm::mat4 &model, const glm::vec4& colour);
+
+	/**
+	 * Queue up a sprite to be drawn.
+	 *
+	 * \param tex		Pointer to texture.
+	 * \param model		Model matrix of sprite.
+	 * \param colour	Colour of sprite.
+	 * \param rect		Sprite rectangle.
+	 */
+	void Add(Texture *tex, const glm::mat4 &model, const glm::vec4& colour,
+			const glm::vec4& rect);
 };
 
 #endif

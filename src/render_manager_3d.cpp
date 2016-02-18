@@ -181,3 +181,9 @@ void RenderManager3D::Add(Mesh *m, Texture *t, const glm::mat4& mat)
 			mesh_data[m][t][index + (i * 4 + j)] = mat[i][j];
 
 }
+
+void RenderManager3D::SetViewPosition(const glm::vec3& vp)
+{
+	glUseProgram(shader_program->GetID());
+	view_pos = vp;
+}

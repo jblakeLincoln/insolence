@@ -11,7 +11,6 @@
 #include "texture.h"
 #include "render_manager.h"
 
-
 /* TODO Issue #21: Logging. */
 struct RenderManager3D : public RenderManager
 {
@@ -55,7 +54,12 @@ public:
 	 */
 	void Add(Mesh*, Texture*, const glm::mat4& model);
 
-	void SetViewPosition(const glm::vec3& vp) { view_pos = vp;}
+	/**
+	 * Set camera position for accurate lighting.
+	 *
+	 * \param vp	Vec3 position of camera in world space.
+	 */
+	void SetViewPosition(const glm::vec3& vp);
 
 	/**
 	 * Draw everything that has been added to the draw queue since the last

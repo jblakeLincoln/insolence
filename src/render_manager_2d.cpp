@@ -28,26 +28,20 @@ RenderManager2D::RenderManager2D()
 		// Error out.
 	}
 
-	/* TODO Issue #16: Update once we have a camera class. */
-	mat_projection = glm::perspective(1.f, 1.f, 0.1f, 10000.f);
-	mat_view = glm::lookAt(view_pos, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
-
 	uni_projection = glGetUniformLocation(shader_program->GetID(), "mat_proj");
 	uni_view = glGetUniformLocation(shader_program->GetID(), "mat_view");
-
-	glUniformMatrix4fv(uni_projection, 1, GL_FALSE, &mat_projection[0][0]);
-	glUniformMatrix4fv(uni_view, 1, GL_FALSE, &mat_view[0][0]);
 
 	/* Set up and bind all of our data that will be reused for each sprite. */
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_verts);
 	attrib_verts = glGetAttribLocation(shader_program->GetID(), "in_verts");
-	attrib_uvs = glGetAttribLocation(shader_program->GetID(), "in_uvs");
+	attrib_uv = glGetAttribLocation(shader_program->GetID(), "in_uvs");
 	glVertexAttribPointer(attrib_verts, 3, GL_FLOAT, GL_FALSE,
 		5 * sizeof(GL_FLOAT), 0);
-	glVertexAttribPointer(attrib_uvs, 2, GL_FLOAT, GL_FALSE,
+	glVertexAttribPointer(attrib_uv, 2, GL_FLOAT, GL_FALSE,
 		5 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GLfloat)));
+
 	glVertexAttribDivisor(attrib_verts, 0);
-	glVertexAttribDivisor(attrib_uvs, 0);
+	glVertexAttribDivisor(attrib_uv, 0);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STREAM_DRAW);
 
 	/* Prepare our buffers for the per-entity data. */
@@ -61,18 +55,20 @@ RenderManager2D::RenderManager2D()
 	attrib_models[3] = glGetAttribLocation(shader_program->GetID(),
 			"in_modelw");
 	attrib_colour = glGetAttribLocation(shader_program->GetID(), "in_colour");
+	attrib_model_uv = glGetAttribLocation(shader_program->GetID(), "in_rect");
 
 	glEnableVertexAttribArray(attrib_verts);
-	glEnableVertexAttribArray(attrib_uvs);
+	glEnableVertexAttribArray(attrib_uv);
+	glEnableVertexAttribArray(attrib_model_uv);
 	glEnableVertexAttribArray(attrib_colour);
 
 	for(int i = 0; i < 4; ++i)
 		glEnableVertexAttribArray(attrib_models[i]);
 	/*
-	 * m1-4 + colour
-	 * (4*4) + 4 = 20
+	 * m1-4 + colour + uvs
+	 * (4*4) + 4 + 4 = 24
 	 */
-	vbo_attrib_len = 20 * sizeof(GL_FLOAT);
+	vbo_attrib_len = 24 * sizeof(GL_FLOAT);
 	for(int i = 0; i < 4; ++i)
 		glVertexAttribPointer(attrib_models[i], 4, GL_FLOAT, GL_FALSE,
 			vbo_attrib_len, (GLvoid*)(i * 4 * sizeof(GLfloat)));
@@ -80,9 +76,14 @@ RenderManager2D::RenderManager2D()
 	glVertexAttribPointer(attrib_colour, 4, GL_FLOAT, GL_FALSE,
 			vbo_attrib_len, (GLvoid*)(16 * sizeof(GLfloat)));
 
+	glVertexAttribPointer(attrib_model_uv, 4, GL_FLOAT, GL_FALSE,
+			vbo_attrib_len, (GLvoid*)(20 * sizeof(GLfloat)));
+
 	for(int i = 0; i < 4; ++i)
 		glVertexAttribDivisor(attrib_models[i], 1);
+
 	glVertexAttribDivisor(attrib_colour, 1);
+	glVertexAttribDivisor(attrib_model_uv, 1);
 }
 
 RenderManager2D::~RenderManager2D()
@@ -95,7 +96,10 @@ RenderManager2D::~RenderManager2D()
 
 void RenderManager2D::Manage()
 {
+	glUseProgram(shader_program->GetID());
 	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_verts);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_data);
 
 	for(data_def::iterator i = data.begin(); i != data.end(); ++i)
 	{
@@ -105,7 +109,7 @@ void RenderManager2D::Manage()
 		if(i->first != NULL)
 			i->first->Bind();
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*(count[i->first]*20),
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*(count[i->first]*24),
 				&data[i->first][0],
 			GL_DYNAMIC_DRAW);
 
@@ -127,14 +131,27 @@ void RenderManager2D::Add(Texture *t, const glm::mat4& model,
 	 * stored in the renderer?
 	 */
 
-	data[t].resize((count[t]+2048)*20);
+	data[t].resize((count[t]+2048)*24);
 
 	for(int i = 0; i < 4; ++i)
 		for(int j = 0; j < 4; ++j)
-			data[t][count[t]*20+(i*4+j)] = model[i][j];
+			data[t][count[t] * 24 + (i * 4 + j)] = model[i][j];
 
 	for(int i = 0; i < 4; ++i)
-		data[t][count[t]*20+16+i] = (colour[i]);
+		data[t][count[t] * 24 + 16 + i] = (colour[i]);
 
 	count[t]++;
+}
+
+void RenderManager2D::Add(Texture *t, const glm::mat4&model,
+		const glm::vec4& colour, const glm::vec4& rect)
+{
+	Add(t, model, colour);
+
+	--count[t];
+
+	for(int i = 0; i < 4; ++i)
+		data[t][count[t]* 24 + 20 + i] = rect[i];
+
+	++count[t];
 }

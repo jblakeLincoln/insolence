@@ -5,7 +5,7 @@
 
 struct TimeSpan {
 protected:
-	double current_time;
+	long unsigned int current_time;
 
 public:
 	TimeSpan& operator+= (const TimeSpan& in);
@@ -18,7 +18,7 @@ public:
 	 *
 	 * \param	Time in microseconds.
 	 */
-	TimeSpan(double time) { current_time = time; }
+	TimeSpan(long unsigned int time) { current_time = time; }
 
 
 	/* Return milliseconds elapsed in the current cycle (i.e. 0-1000) */
@@ -34,7 +34,7 @@ public:
 	int TotalHours() const;
 
 	/* Return total number of milliseconds elapsed */
-	double ElapsedMilliseconds() const;
+	long unsigned int ElapsedMilliseconds() const;
 
 	/* Return total number of seconds elapsed */
 	int ElapsedSeconds() const;
@@ -46,10 +46,10 @@ public:
 	int ElapsedHours() const;
 
 	/* Return time in microseconds. */
-	long int GetTime() const { return current_time;}
+	long unsigned int GetTime() const { return current_time;}
 
 	void SetTime(const Time& t) { current_time = t.GetRawTime(); }
-	void SetTime(long int time) { current_time = time;}
+	void SetTime(long unsigned int time) { current_time = time;}
 };
 
 #endif

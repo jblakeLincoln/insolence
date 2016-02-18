@@ -91,21 +91,23 @@ public:
 		ilLoadImage(path);
 
 		output->width = ilGetInteger(IL_IMAGE_WIDTH);
-		output->height = ilGetInteger(IL_IMAGE_WIDTH);
+		output->height = ilGetInteger(IL_IMAGE_HEIGHT);
 
 		glGenTextures(1, &output->id);
 		output->Bind();
 
+		/* TODO Issue #25: Try ilCopyPixels to fix alpha issues. */
 		glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_FORMAT),
-				output->width, output->height, 0, ilGetInteger(IL_IMAGE_FORMAT),
+				output->width, output->height, 0,
+				ilGetInteger(IL_IMAGE_FORMAT),
 				ilGetInteger(IL_IMAGE_TYPE), ilGetData());
 
 		glGenerateMipmap(GL_TEXTURE_2D);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-				GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				GL_NEAREST_MIPMAP_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 		// Log success
 

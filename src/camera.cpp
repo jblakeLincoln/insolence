@@ -14,6 +14,9 @@ void Camera::UpdateRenderer(RenderManager *r)
 	if(r->uni_projection < 0 || r->uni_view < 0)
 		return;
 
+	/* TODO Issue #17: System for smart checking and swapping. */
+	glUseProgram(r->shader_program->GetID());
+
 	if(view_pos == glm::vec3(0.f))
 		view_pos.y = 0.000001f;
 

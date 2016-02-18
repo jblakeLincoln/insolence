@@ -10,6 +10,7 @@
 
 #include "mesh.h"
 
+#include "animation.h"
 #include "camera.h"
 #include "shader_program.h"
 #include "render_manager_3d.h"
@@ -20,6 +21,7 @@ struct TestEntity : Entity
 	Mesh *mesh;
 	RenderManager3D *renderer;
 	MovementComponent move;
+	Animation anim;
 
 	TestEntity(Mesh *m, Texture *t, const glm::vec3 &pos, RenderManager3D *r)
 	{
@@ -44,6 +46,7 @@ struct TestEntity : Entity
 struct GameWorld : BaseGameWorld
 {
 private:
+	RenderManager2D *renderer_2d;
 	RenderManager3D *renderer_3d;
 	Mesh *mesh_crate;
 	Mesh *mesh_tri;
@@ -54,13 +57,20 @@ private:
 	//Texture *tex_red;
 	//Texture *tex_blue;
 	Texture *textures[3];
+	Texture *mega;
+	Animation animation;
+	int counter = 0;
 
+		glm::mat4 model;
 	void Initialise()
 	{
 		/* Init. */
 		Texture::Init();
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		renderer_3d = new RenderManager3D();
+		renderer_2d = new RenderManager2D();
 
 		/* Load assets. */
 		//tex_red = Texture::LoadColour(glm::vec4(1.f, 0.f, 0.f, 1.f));
@@ -68,6 +78,8 @@ private:
 		textures[0] = Texture::LoadColour(glm::vec4(1.f, 0.f, 0.f, 1.f));
 		textures[1] = Texture::LoadColour(glm::vec4(0.f, 1.f, 0.f, 1.f));
 		textures[2] = Texture::LoadColour(glm::vec4(0.f, 0.f, 1.f, 1.f));
+
+		mega = Texture::LoadFile("assets/mega.png");
 
 		mesh_crate = Mesh::LoadFile("assets/boxy.obj",
 				renderer_3d->shader_program);
@@ -86,13 +98,27 @@ private:
 						glm::vec3(i * t, 0.f, 0.f), renderer_3d));
 		}
 
+
+		float ratio = 108.f/136.f;
+		float ratio2 = 136.f/108.f;
+		model = glm::translate(model, glm::vec3(2.1f * (300 / 2) - 15.f,
+					2.f, 0));
+		model = glm::scale(model, glm::vec3(ratio, ratio2, 1.f));
+
+		animation = Animation(mega, 49, 7, 150);
+
 		camera = new Camera();
 		camera->PanX(t * (max / 2));
-		camera->pos.Translate(glm::vec3(0.f, 4.f, 12.f));
+		camera->pos.Translate(glm::vec3(0.f, 0.f, 12.f));
 	}
 
 	void Update(const GameTime& gametime)
 	{
+		if(counter < gametime.GetElapsedTime().ElapsedSeconds())
+		{
+		//	printf("R: %d\n", gametime.GetElapsedTime().ElapsedMilliseconds());
+			++counter;
+		}
 		//printf("%d\n", gametime.GetElapsedTime().ElapsedMilliseconds());
 		if(Input::GetKey(JKEY_KEY_W) == JKEY_PRESS)
 			printf("Pressed!\n");
@@ -102,21 +128,36 @@ private:
 		for(int i = 0; i < 1; ++i)
 			e[i]->Update();
 
-		camera->pos.Translate(glm::vec3(0.f, -4.f, -12.f));
-		camera->pos.Rotate(0.01f, glm::vec3(0.f, 1.f, 0.f));
-		camera->pos.Translate(glm::vec3(0.f, 4.f, 12.f));
+		animation.Update(gametime.GetFrameTime());
+
+		camera->pos.Translate(glm::vec3(0.f, -4.f, -6.f));
+		camera->pos.Rotate(0.00f, glm::vec3(0.f, 1.f, 0.f));
+		camera->pos.Translate(glm::vec3(0.f, 4.f, 6.f));
+
+		camera->PanX(0.1f);
+		model = glm::translate(glm::mat4(1.f), glm::vec3(
+					camera->lookat.GetPosition().x, -1.f, 2.f));
 
 		renderer_3d->SetViewPosition(camera->pos.GetPosition());
 	}
 
 	void Draw()
 	{
-		camera->UpdateRenderer(renderer_3d);
+		renderer_2d->Add(mega, model,
+				glm::vec4(1.f), animation.GetNormalisedRect());
+
+		glm::mat4 m = glm::translate(model, glm::vec3(0.5f, 0.f, 0.f));
+
+		renderer_2d->Add(mega, m,
+				glm::vec4(1.f), animation.GetNormalisedRect());
 
 		for(int i = 0; i < e.size(); ++i)
 			e[i]->Draw();
 
+		camera->UpdateRenderer(renderer_2d);
+		camera->UpdateRenderer(renderer_3d);
 		renderer_3d->Manage();
+		renderer_2d->Manage();
 	}
 
 	void Unload()
@@ -126,6 +167,8 @@ private:
 
 		for(int i = 0; i < 3; ++i)
 			delete textures[i];
+
+		delete mega;
 
 		delete mesh_crate;
 		delete mesh_tri;
