@@ -1,74 +1,50 @@
-#ifndef GAME_WORLD_H
-#define GAME_WORLD_H
+#include "game_world.h"
 
-#include <cstdio>
-#include <GL/glew.h>
-#include "gametime.h"
-#include "window.h"
+void BaseGameWorld::BaseInitialise()
+{
+	window = Window::CreateInsolenceWindow(500, 500, "Window Title");
+	is_running = true;
 
-struct BaseGameWorld {
-private:
-	Window *window;
-	GameTime gametime;
-	bool running;
+	Initialise();
+	BaseUpdate();
+}
 
-	void BaseInitialise()
-	{
-		window = Window::CreateInsolenceWindow(500, 500, "Window Title");
-		running = true;
+void BaseGameWorld::BaseUpdate()
+{
+	gametime.Update();
+	Update(gametime);
+	BaseDraw();
+}
 
-		Initialise();
-		BaseUpdate();
-	}
+void BaseGameWorld::BaseDraw()
+{
+	is_running = !window->ShouldClose();
 
-	void BaseUpdate()
-	{
-		gametime.Update();
-		Update(gametime);
-		BaseDraw();
-	}
-
-	void BaseDraw()
-	{
-		running = !window->ShouldClose();
-
-		if(running == false)
-		{
-			Unload();
-			return;
-		}
-
-		glClearColor(0.14f, 0.01f, 0.003f, 1.f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		Draw();
-
-		window->SwapBuffers();
-		Window::PollEvents();
-
-		BaseUpdate();
-	}
-
-	void BaseUnload()
+	if(is_running == false)
 	{
 		Unload();
-
-		Window::DestroyInsolenceWindow(window);
+		return;
 	}
 
-protected:
-	virtual void Initialise()=0;
-	virtual void Update(const GameTime& gametime)=0;
-	virtual void Draw()=0;
-	virtual void Unload()=0;
+	glClearColor(0.14f, 0.01f, 0.003f, 1.f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-public:
-	void Run()
-	{
-		BaseInitialise();
-	}
+	Draw();
 
-};
+	window->SwapBuffers();
+	Window::PollEvents();
 
+	BaseUpdate();
+}
 
-#endif
+void BaseGameWorld::BaseUnload()
+{
+	Unload();
+
+	Window::DestroyInsolenceWindow(window);
+}
+
+void BaseGameWorld::Run()
+{
+	BaseInitialise();
+}

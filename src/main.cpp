@@ -2,7 +2,7 @@
 #include <bitset>
 #include <map>
 
-#include "game_world.cpp"
+#include "game_world.h"
 #include "entity.h"
 #include "sprite_renderable.h"
 #include "keys.h"
@@ -79,7 +79,7 @@ private:
 		textures[1] = Texture::LoadColour(glm::vec4(0.f, 1.f, 0.f, 1.f));
 		textures[2] = Texture::LoadColour(glm::vec4(0.f, 0.f, 1.f, 1.f));
 
-		mega = Texture::LoadFile("assets/mega.png");
+		mega = Texture::LoadFile("assets/mega_run2.png");
 
 		mesh_crate = Mesh::LoadFile("assets/boxy.obj",
 				renderer_3d->shader_program);
@@ -105,7 +105,7 @@ private:
 					2.f, 0));
 		model = glm::scale(model, glm::vec3(ratio, ratio2, 1.f));
 
-		animation = Animation(mega, 49, 7, 150);
+		animation = Animation(mega, 3, 3, 150);
 
 		camera = new Camera();
 		camera->PanX(t * (max / 2));
