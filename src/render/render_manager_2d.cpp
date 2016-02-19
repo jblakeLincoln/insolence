@@ -20,8 +20,8 @@ RenderManager2D::RenderManager2D()
 	glGenBuffers(1, &vbo_verts);
 	glGenBuffers(1, &vbo_data);
 
-	shader_program = CreateShaderProgramFromPair("shaders/2d.vs",
-			"shaders/2d.fs");
+	shader_program = CreateShaderProgramFromPair("../shaders/2d.vs",
+			"../shaders/2d.fs");
 
 	if(shader_program == NULL)
 	{

@@ -23,7 +23,7 @@ RenderManager3D::RenderManager3D()
 	uni_view_pos = glGetUniformLocation(shader_program->GetID(),
 			"view_pos");
 
-	dir_light.direction = glm::vec3(-2.f, -6.f, -12.f);
+	dir_light.direction = glm::vec3(2.f, -6.f, -6.f);
 	dir_light.diffuse = glm::vec3(1.f);
 	dir_light.specular = glm::vec3(0.0f);
 	dir_light.ambient = glm::vec3(0.1f);
