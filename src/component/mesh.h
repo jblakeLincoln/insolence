@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "shader_program.h"
+#include "../render/shader_program.h"
 
 /* TODO Issue #23: Load in normal maps. */
 struct Mesh

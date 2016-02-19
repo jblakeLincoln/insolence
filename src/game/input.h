@@ -4,9 +4,7 @@
 #include <cstdio>
 #include <map>
 #include <bitset>
-
 #include <glm/vec2.hpp>
-
 #include <GLFW/glfw3.h>
 
 #include "keys.h"

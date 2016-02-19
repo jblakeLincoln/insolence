@@ -2,18 +2,14 @@
 #include <bitset>
 #include <map>
 
-#include "game_world.h"
-#include "entity.h"
-#include "sprite_renderable.h"
-#include "keys.h"
-#include "window.h"
+#include "game/game_world.h"
 
-#include "mesh.h"
+#include "render/render_manager_3d.h"
+#include "render/render_manager_2d.h"
 
-#include "animation.h"
-#include "camera.h"
-#include "shader_program.h"
-#include "render_manager_3d.h"
+#include "component/animation.h"
+#include "component/camera.h"
+#include "component/entity.h"
 
 struct TestEntity : Entity
 {

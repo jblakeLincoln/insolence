@@ -3,8 +3,10 @@
 
 #include <GL/glew.h>
 #include <glm/matrix.hpp>
+
 #include "entity.h"
 #include "movement_component.h"
+#include "../render/render_manager.h"
 
 struct Camera : Entity
 {

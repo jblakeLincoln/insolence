@@ -3,8 +3,8 @@
 
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
-#include "texture.h"
-#include "timespan.h"
+#include "../component/texture.h"
+#include "../game/timespan.h"
 #include <cmath>
 
 struct Animation {

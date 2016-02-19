@@ -1,8 +1,9 @@
 #ifndef RENDER_MANAGER_H
 #define RENDER_MANAGER_H
 
-#include "shader_program.h"
 #include <glm/matrix.hpp>
+
+#include "shader_program.h"
 
 /* TODO Issue #13: Logging. */
 struct RenderManager

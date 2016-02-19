@@ -7,6 +7,7 @@
 #include <GLFW/glfw3.h>
 
 #include "input.h"
+#include "keys.h"
 
 struct Window
 {

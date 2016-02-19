@@ -5,10 +5,10 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
 #include <GL/glew.h>
-#include "mesh.h"
-#include "texture.h"
+
+#include "../component/mesh.h"
+#include "../component/texture.h"
 #include "render_manager.h"
 
 /* TODO Issue #21: Logging. */

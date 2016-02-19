@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "texture.h"
+#include "../component/texture.h"
 #include "render_manager.h"
 
 /* TODO Issue #13: Logging. */
