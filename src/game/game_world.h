@@ -27,7 +27,7 @@ protected:
 	 * Called once per tick. Run game logic in here.
 	 *
 	 * \param gametime	Time tracking of the game, giving things such as total
-	 * 					elapsed time and time between frames.
+	 *					elapsed time and time between frames.
 	 */
 	virtual void Update(const GameTime& gametime)=0;
 

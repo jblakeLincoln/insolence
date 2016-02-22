@@ -11,12 +11,14 @@
 #include "../../component/entity.h"
 
 #include "3d_entity.h"
+#include "entity_2d.h"
 
 #define ENTITY_NUM 300
 #define ENTITY_SPACING 2.1
 
 struct SampleMultipleRenderer : BaseGameWorld
 {
+	SampleMultipleRenderer() {}
 private:
 	RenderManager2D *renderer_2d;
 	RenderManager3D *renderer_3d;
@@ -26,8 +28,10 @@ private:
 	Mesh *mesh_tri;
 
 	std::vector<TestEntity*> entities;
+	TestEntity2D *entity_2d;
 
 	Texture *textures[3];
+	Texture *tex_mega;
 
 	void Initialise()
 	{
@@ -44,11 +48,15 @@ private:
 		textures[0] =	Texture::LoadColour(glm::vec4(1.f, 0.3f, 0.9f, 1.f));
 		textures[1] =	Texture::LoadColour(glm::vec4(0.9f, 0.8f, 0.3f, 1.f));
 		textures[2] =	Texture::LoadColour(glm::vec4(0.1f, 0.7f, 0.8f, 1.f));
+		tex_mega	=	Texture::LoadFile("assets/mega_run.png");
 
 		mesh_crate = Mesh::LoadFile("assets/boxy.obj",
 				renderer_3d->shader_program);
 		mesh_tri = Mesh::LoadFile("assets/tri.obj",
 				renderer_3d->shader_program);
+
+		entity_2d = new TestEntity2D(tex_mega, glm::vec3(20.f, 2.f, 1.f),
+				renderer_2d);
 
 		/* Set up a load of test entities. */
 
@@ -61,8 +69,10 @@ private:
 		}
 
 		camera = new Camera();
-		camera->PanX(ENTITY_SPACING * (ENTITY_NUM / 2));
-		camera->pos.Translate(glm::vec3(0.f, 0.f, 12.f));
+	//	camera->PanX(ENTITY_SPACING * (ENTITY_NUM / 2));
+		camera->PanX(20);
+		camera->pos.Translate(glm::vec3(0.f, 0.f, 24.f));
+		camera->pos.Rotate(10.f, glm::vec3(0.f, 1.f, 0.f));
 	}
 
 	void Update(const GameTime& gametime)
@@ -70,23 +80,27 @@ private:
 		for(int i = 0; i < 1; ++i)
 			entities[i]->Update();
 
-		camera->pos.Translate(glm::vec3(0.f, -4.f, -6.f));
-		camera->pos.Rotate(0.00f, glm::vec3(0.f, 1.f, 0.f));
-		camera->pos.Translate(glm::vec3(0.f, 4.f, 6.f));
-		camera->PanX(0.1f);
+		entity_2d->Update(gametime.GetFrameTime());
+		//camera->pos.Translate(glm::vec3(0.f, -4.f, -6.f));
+		//camera->pos.Rotate(0.00f, glm::vec3(0.f, 1.f, 0.f));
+		//camera->pos.Translate(glm::vec3(0.f, 4.f, 6.f));
+		//camera->PanX(0.1f);
 
 		renderer_3d->SetViewPosition(camera->pos.GetPosition());
 	}
 
 	void Draw()
 	{
-		for(int i = 0; i < entities.size(); ++i)
+		entity_2d->Draw();
+
+		for(int i = 2; i < entities.size(); ++i)
 			entities[i]->Draw();
+
 
 		camera->UpdateRenderer(renderer_2d);
 		camera->UpdateRenderer(renderer_3d);
-		renderer_3d->Manage();
 		renderer_2d->Manage();
+		renderer_3d->Manage();
 	}
 
 	void Unload()

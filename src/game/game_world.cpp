@@ -5,6 +5,8 @@ void BaseGameWorld::BaseInitialise()
 	window = Window::CreateInsolenceWindow(500, 500, "Window Title");
 	is_running = true;
 
+	gametime = GameTime();
+
 	Initialise();
 	BaseUpdate();
 }

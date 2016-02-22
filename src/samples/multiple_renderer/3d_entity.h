@@ -6,7 +6,6 @@ struct TestEntity : Entity
 	Mesh *mesh;
 	RenderManager3D *renderer;
 	MovementComponent move;
-	Animation anim;
 
 	TestEntity(Mesh *m, Texture *t, const glm::vec3 &pos, RenderManager3D *r)
 	{

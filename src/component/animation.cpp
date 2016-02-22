@@ -2,14 +2,16 @@
 
 Animation::Animation()
 {
-	}
+	tex_width = tex_height = 1;
+	rect = glm::vec4(0, 0, 1, 1);
+}
 
 Animation::~Animation()
 {
-
 }
 
-Animation::Animation(Texture *tex, int frames, int cols, int time)
+Animation::Animation(Texture *tex, int in_frames, int in_cols,
+		const glm::vec4& in_rect, int in_time)
 {
 	if(tex != NULL)
 	{
@@ -17,13 +19,15 @@ Animation::Animation(Texture *tex, int frames, int cols, int time)
 		tex_height = tex->GetHeight();
 	}
 
-	this->cols = cols;
-	this->frames = frames;
-	frame_time = time;
+	this->cols = in_cols;
+	this->frames = in_frames;
+	this->offset = glm::vec2(in_rect.x, in_rect.y);
+	this->size = glm::vec2(in_rect.z, in_rect.w);
+	rect = in_rect;
 
+	current_frame = 0;
+	frame_time = in_time;
 	timer = TimeSpan(0);
-	offset = glm::vec2(32, 58);
-	size = glm::vec2(176, 180);
 }
 
 void Animation::Update(const TimeSpan& t)
@@ -36,10 +40,10 @@ void Animation::Update(const TimeSpan& t)
 					(int)(frame_time * frames)));
 	}
 
-	current_frame = timer.ElapsedMilliseconds() / (int)(frame_time);
+	current_frame = (double)timer.ElapsedMilliseconds() / frame_time;
 
-	current_col = current_frame % cols;
-	current_row = (int)(current_frame / cols);
+	float current_col = current_frame % cols;
+	float current_row = (current_frame / cols);
 
 	rect.x = offset.x + (size.x * (float)current_col);
 	rect.y = offset.y + (size.y * (float)current_row);
@@ -51,5 +55,4 @@ glm::vec4 Animation::GetNormalisedRect()
 {
 	return glm::vec4(rect.x / tex_width, rect.y / tex_height,
 			rect.z / tex_width, rect.w / tex_height);
-	//return glm::vec4(0);//rect / glm::vec2(tex_width, tex_height);
 }
