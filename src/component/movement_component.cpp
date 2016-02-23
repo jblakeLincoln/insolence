@@ -3,26 +3,36 @@
 MovementComponent::MovementComponent()
 {
 	model_changed = false;
-	scale = glm::vec3(1.f);
+	scale = glm::mat4(1.f);
 }
 
-const glm::vec3& MovementComponent::GetPosition()
+const glm::vec3 MovementComponent::GetPosition() const
 {
-	const glm::mat4& m = GetModelMatrix();
+	glm::vec3 ret_pos;
 
 	for(int i = 0; i < 3; ++i)
-		position[i] = m[3][i];
+		ret_pos[i] = position[3][i];
 
-	return position;
+	return ret_pos;
+}
+
+const glm::vec3 MovementComponent::GetScale() const
+{
+	glm::vec3 ret_scale;
+
+	for(int i = 0; i < 3; ++i)
+		ret_scale[i] = scale[i][i];
+
+	return ret_scale;
 }
 
 const glm::mat4& MovementComponent::GetModelMatrix()
 {
 	if(model_changed == true)
 	{
-		model_matrix = glm::translate(glm::mat4(1.f), position) *
+		model_matrix = position *
 			glm::toMat4(orientation) *
-			glm::scale(glm::mat4(1.f), scale);
+			scale;
 	}
 
 	return model_matrix;
@@ -30,11 +40,27 @@ const glm::mat4& MovementComponent::GetModelMatrix()
 
 void MovementComponent::Translate(const glm::vec3 &trans)
 {
-	GetModelMatrix();
-	model_matrix = glm::translate(model_matrix, trans);
+	position = glm::translate(position, trans);
+	model_changed = true;
+}
 
+void MovementComponent::SetPosition(const glm::vec3& pos)
+{
 	for(int i = 0; i < 3; ++i)
-		position[i] = model_matrix[3][i];
+		position[3][i] = pos[i];
+	model_changed = true;
+}
+
+void MovementComponent::SetOrientation(const glm::quat& q)
+{
+	orientation = q;
+	model_changed = true;
+}
+
+void MovementComponent::SetScale(const glm::vec3& s)
+{
+	for(int i = 0; i < 3; ++i)
+		scale[i][i] = s[i];
 
 	model_changed = true;
 }
@@ -47,31 +73,35 @@ void MovementComponent::Rotate(float theta, const glm::vec3 &axes)
 
 void MovementComponent::Scale(const glm::vec3 &s)
 {
-	scale = s;
+	for(int i = 0; i < 3; ++i)
+		scale[i][i] += s[i];
+
 	model_changed = true;
 }
 
 void MovementComponent::Move(const glm::vec3 &pos)
 {
-	position += pos;
+	for(int i = 0; i < 3; ++i)
+		position[3][i] += pos[i];
+
 	model_changed = true;
 }
 
 void MovementComponent::MoveX(float f)
 {
-	position.x += f;
+	position[3].x += f;
 	model_changed = true;
 }
 
 void MovementComponent::MoveY(float f)
 {
-	position.y += f;
+	position[3].y += f;
 	model_changed = true;
 }
 
 void MovementComponent::MoveZ(float f)
 {
-	position.z += f;
+	position[3].z += f;
 	model_changed = true;
 }
 
@@ -83,18 +113,18 @@ void MovementComponent::ResetOrientation()
 
 void MovementComponent::ScaleX(float f)
 {
-	scale.x = f;
+	scale[0][0] = f;
 	model_changed = true;
 }
 
 void MovementComponent::ScaleY(float f)
 {
-	scale.y = f;
+	scale[1][1] = f;
 	model_changed = true;
 }
 
 void MovementComponent::ScaleZ(float f)
 {
-	scale.z = f;
+	scale[2][2] = f;
 	model_changed = true;
 }

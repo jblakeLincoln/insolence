@@ -15,17 +15,16 @@ private:
 	glm::mat4 model_matrix;
 	bool model_changed;
 
-	glm::vec3 position;
+	glm::mat4 position;
 	glm::quat orientation;
-	glm::vec3 scale;
-
+	glm::mat4 scale;
 public:
 	MovementComponent();
 
 	/**
 	 * \return	vec3 of position X, Y, Z.
 	 */
-	const glm::vec3& GetPosition();
+	const glm::vec3 GetPosition() const;
 
 	/**
 	 * \return	Quaternion of orientation.
@@ -35,8 +34,13 @@ public:
 	/**
 	 * \return	vec3 of scale X, Y, Z.
 	 */
-	const glm::vec3& GetScale() const { return scale; }
+	const glm::vec3 GetScale() const;
 
+	void SetOrientation(const glm::quat&);
+
+	void SetPosition(const glm::vec3&);
+
+	void SetScale(const glm::vec3& scale);
 	/**
 	 * Get the model matrix of position * rotation * scale.
 	 * Updates the matrix before sending it back if any of those
