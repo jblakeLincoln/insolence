@@ -1,24 +1,22 @@
 #ifndef RIGID_BODY_H
 #define RIGID_BODY_H
 
-#include "../component/movement_component.h"
+#include "movement_component.h"
+#include "component.h"
+#include "entity.h"
 #include "../physics/physics_manager.h"
-
 #include <btBulletDynamicsCommon.h>
 
 struct PhysicsManager;
-struct RigidBody
+struct RigidBody : public Component
 {
 private:
 	RigidBody() {}
-	PhysicsManager *physics_manager;
-	btRigidBody *rigid_body;
 
 public:
-	RigidBody(PhysicsManager*, const MovementComponent&);
+	btRigidBody *rigid_body;
+	RigidBody(PhysicsManager *phys, Entity *e);
 	~RigidBody();
-
-	void SyncMovement(MovementComponent *m);
 };
 
 #endif

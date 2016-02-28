@@ -9,7 +9,7 @@
 #include "../component/rigid_body.h"
 
 struct PhysicsManager {
-private:
+public:
 	PhysicsManager();
 	PhysicsManager(const glm::vec3 &gravity);
 
@@ -34,7 +34,7 @@ public:
 	 * Create a rigid body. Currently creates a box shape at the
 	 * position specified by the movement component.
 	 */
-	btRigidBody* CreateRigidBody(const MovementComponent& ms);
+	btRigidBody* CreateRigidBody(Entity *e);
 
 	/**
 	 * Create a physics manager - has its own gravity and controls a set of

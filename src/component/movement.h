@@ -6,10 +6,12 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+#include "component.h"
+
 /* TODO Issue #20:	Make sure returned properties consider each other and
  *					any changes that could have occurred.
  */
-struct MovementComponent
+struct Movement : public Component
 {
 private:
 	glm::mat4 model_matrix;
@@ -19,7 +21,7 @@ private:
 	glm::quat orientation;
 	glm::mat4 scale;
 public:
-	MovementComponent();
+	Movement();
 
 	/**
 	 * \return	vec3 of position X, Y, Z.

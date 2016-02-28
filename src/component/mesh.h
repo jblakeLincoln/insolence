@@ -9,9 +9,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../render/shader_program.h"
+#include "component.h"
 
 /* TODO Issue #23: Load in normal maps. */
-struct Mesh
+struct Mesh : public Component
 {
 private:
 	Mesh();

@@ -6,10 +6,11 @@
 #include <GL/glew.h>
 #include <glm/vec4.hpp>
 #include <IL/ilut.h>
+#include "component.h"
 
 /* TODO Issue #12: Logging success/error. */
 
-struct Texture
+struct Texture : public Component
 {
 private:
 	/**

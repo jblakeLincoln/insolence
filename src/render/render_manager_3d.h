@@ -34,6 +34,8 @@ private:
 	DirectionalLight dir_light;
 
 	GLint attrib_models[4];
+	GLint attrib_colour;
+
 	GLuint uni_view_pos;
 	GLuint uni_direction;
 	GLuint uni_diffuse;
@@ -52,7 +54,7 @@ public:
 	/**
 	 * Queue up a mesh to be drawn.
 	 */
-	void Add(Mesh*, Texture*, const glm::mat4& model);
+	void Add(Mesh*, Texture*, const glm::vec4& colour, const glm::mat4& model);
 
 	/**
 	 * Set camera position for accurate lighting.

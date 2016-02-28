@@ -14,8 +14,8 @@ struct Camera : Entity
 
 	glm::mat4 mat_projection;
 	glm::mat4 mat_view;
-	MovementComponent pos;
-	MovementComponent lookat;
+	Movement pos;
+	Movement lookat;
 
 	virtual void Update() {}
 	void Draw() {}

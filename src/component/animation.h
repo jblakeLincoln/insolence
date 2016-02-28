@@ -1,16 +1,13 @@
-#ifndef ANIMATION_H
-#define ANIMATION_H
+#ifndef COMPONENT_ANIMATION_H
+#define COMPONENT_ANIMATION_H
 
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
-#include "../component/texture.h"
-#include "../game/timespan.h"
-#include <cmath>
 
-struct Animation {
-private:
-	float tex_width;
-	float tex_height;
+#include "../component/component.h"
+#include "../game/timespan.h"
+
+struct Animation : public Component {
 	int current_frame;
 	int cols;
 	int frames;
@@ -25,22 +22,13 @@ public:
 	~Animation();
 
 	/**
-	 * \param tex		Pointer to animation texture.
 	 * \param frames	Number of frames in the animation.
 	 * \param cols		Number of columns in the animation.
 	 * \param in_rect	X and Y to start on texture, Z and W for size.
 	 * \param time		Time length of each frame in milliseconds.
 	 */
-	Animation(Texture *tex, int frames, int cols,
+	Animation(int frames, int cols,
 		const glm::vec4& in_rect, int time);
-
-	/**
-	 * Update the animation timer and continue the animation if necessary.
-	 *
-	 * \param t	Timespan to iterate by.
-	 */
-	void Update(const TimeSpan& t);
-	glm::vec4 GetNormalisedRect();
 };
 
 #endif

@@ -4,6 +4,8 @@ in vec3 frag_vert;
 in vec3 frag_pos;
 in vec3 frag_norm;
 in vec2 frag_uv;
+in vec4 frag_colour;
+
 uniform sampler2D tex;
 out vec4 out_colour;
 
@@ -24,7 +26,9 @@ void main() {
 
 	/* Diffuse setup. */
 	vec3 light_dir = normalize(-dir_light.direction);
+
 	vec3 norm = normalize(frag_norm);
+
 	float diff = max(dot(norm, light_dir), 0.0);
 
 	/* Specular setup. */
@@ -36,5 +40,5 @@ void main() {
 	vec3 ambient = dir_light.ambient * frag_tex;
 	vec3 specular = dir_light.specular * spec;
 
-	out_colour = vec4(ambient + diffuse + specular, 1.0);
+	out_colour = vec4(ambient + diffuse + specular, 1.0) * frag_colour;
 }

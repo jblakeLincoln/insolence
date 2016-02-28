@@ -88,7 +88,7 @@ void RenderManager3D::Manage()
 
 			glDrawArraysInstanced(GL_TRIANGLES, 0,
 					i->first->num_verts,
-					j->second.size() / 16);
+					j->second.size() / 20);
 
 			glBindVertexArray(0);
 		}
@@ -97,7 +97,8 @@ void RenderManager3D::Manage()
 	mesh_data.clear();
 }
 
-void RenderManager3D::Add(Mesh *m, Texture *t, const glm::mat4& mat)
+void RenderManager3D::Add(Mesh *m, Texture *t, const glm::vec4& colour,
+		const glm::mat4& mat)
 {
 	/* If we don't have a VBO for this mesh, create it. */
 	if(mesh_buffers.find(m) == mesh_buffers.end())
@@ -120,11 +121,16 @@ void RenderManager3D::Add(Mesh *m, Texture *t, const glm::mat4& mat)
 		attrib_models[3] = glGetAttribLocation(
 				shader_program->GetID(), "in_modelw");
 
+		attrib_colour = glGetAttribLocation(
+				shader_program->GetID(), "in_colour");
+
 		/* Vertex attribs. */
-		int vbo_attrib_len = 16 * sizeof(GL_FLOAT);
+		int vbo_attrib_len = 20 * sizeof(GL_FLOAT);
 
 		for(int i = 0; i < 4; ++i)
 			glEnableVertexAttribArray(attrib_models[i]);
+
+		glEnableVertexAttribArray(attrib_colour);
 
 		for(int i = 0; i < 4; ++i)
 		{
@@ -132,8 +138,13 @@ void RenderManager3D::Add(Mesh *m, Texture *t, const glm::mat4& mat)
 				vbo_attrib_len, (GLvoid*)(i * 4 * sizeof(GLfloat)));
 		}
 
+		glVertexAttribPointer(attrib_colour, 4, GL_FLOAT, GL_FALSE,
+			vbo_attrib_len, (GLvoid*)(16 * sizeof(GLfloat)));
+
 		for(int i = 0; i < 4; ++i)
 			glVertexAttribDivisor(attrib_models[i], 1);
+
+		glVertexAttribDivisor(attrib_colour, 1);
 
 		glBindBuffer(GL_ARRAY_BUFFER, data.vbo_mesh);
 
@@ -174,11 +185,14 @@ void RenderManager3D::Add(Mesh *m, Texture *t, const glm::mat4& mat)
 
 	/* Update our to-draw model matrix list for this mesh and texture. */
 	int index = mesh_data[m][t].size();
-	mesh_data[m][t].resize(mesh_data[m][t].size() + 16);
+	mesh_data[m][t].resize(mesh_data[m][t].size() + 20);
 
 	for(int i = 0; i < 4; ++i)
 		for(int j = 0; j < 4; ++j)
 			mesh_data[m][t][index + (i * 4 + j)] = mat[i][j];
+
+	for(int i = 0; i < 4; ++i)
+		mesh_data[m][t][index + 16 + i] = colour[i];
 
 }
 

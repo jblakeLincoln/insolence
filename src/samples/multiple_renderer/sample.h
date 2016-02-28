@@ -8,15 +8,14 @@
 #include "../../render/render_manager_2d.h"
 #include "../../component/animation.h"
 #include "../../component/camera.h"
+#include "../../component/colour.h"
 #include "../../component/entity.h"
-
-#include "3d_entity.h"
-#include "entity_2d.h"
-
+#include "../../systems/animation.h"
+#include "../../systems/rigid_body.h"
 #include "../../physics/physics_manager.h"
 
 #define ENTITY_NUM 100
-#define ENTITY_SPACING 1.5
+#define ENTITY_SPACING 0.9
 
 struct SampleMultipleRenderer : BaseGameWorld
 {
@@ -29,12 +28,14 @@ private:
 
 	Mesh *mesh_crate;
 	Mesh *mesh_tri;
-
-	std::vector<TestEntity*> entities;
-	TestEntity2D *entity_2d;
-
-	Texture *textures[3];
+	Texture *tex_white;
+	glm::vec4 colours[4];
 	Texture *tex_mega;
+
+	std::vector<Entity*> entities_3d;
+	Entity *entity_2d;
+
+	Entity *plane;
 
 	void Initialise()
 	{
@@ -46,13 +47,14 @@ private:
 
 		renderer_3d = new RenderManager3D();
 		renderer_2d = new RenderManager2D();
-		phys = PhysicsManager::Create(glm::vec3(0.f, 0.5f, 0.f));
-
+		phys = PhysicsManager::Create(glm::vec3(0.f, -9.8f, 0.f));
 
 		/* Load assets. */
-		textures[0] =	Texture::LoadColour(glm::vec4(1.f, 0.3f, 0.9f, 1.f));
-		textures[1] =	Texture::LoadColour(glm::vec4(0.9f, 0.8f, 0.3f, 1.f));
-		textures[2] =	Texture::LoadColour(glm::vec4(0.1f, 0.7f, 0.8f, 1.f));
+		colours[0]	=	glm::vec4(1.f, 0.3f, 0.9f, 1.f);
+		colours[1]	=	glm::vec4(0.9f, 0.8f, 0.3f, 1.f);
+		colours[2]	=	glm::vec4(0.1f, 0.7f, 0.8f, 1.f);
+		colours[3]	=	glm::vec4(0.f, 0.7f, 0.f, 1.f);
+		tex_white	=	Texture::LoadColour(glm::vec4(1.f));
 		tex_mega	=	Texture::LoadFile("assets/mega_run.png");
 
 		mesh_crate = Mesh::LoadFile("assets/boxy.obj",
@@ -60,50 +62,111 @@ private:
 		mesh_tri = Mesh::LoadFile("assets/tri.obj",
 				renderer_3d->shader_program);
 
-		entity_2d = new TestEntity2D(tex_mega, glm::vec3(20.f, 2.f, 1.f),
-				renderer_2d);
+		tex_mega->owner = 0;
+		tex_white->owner = 0;
+		mesh_tri->owner = 0;
+		mesh_crate->owner = 0;
+
+		entity_2d = CreateEntity2D(tex_mega, glm::vec3(20.f, 2.f, 1.f));
 
 		/* Set up a load of test entities. */
 
-		int i = 0;
-		for(i = 0; i < ENTITY_NUM; ++i)
+		for(int i = 0; i < ENTITY_NUM; ++i)
 		{
-			Mesh *m = i % 2 ? mesh_crate : mesh_tri;
+			Mesh *m = i % 2 ? mesh_crate : mesh_crate; //mesh_tri;
 
-			entities.push_back(new TestEntity(phys, m, textures[i % 3],
-						glm::vec3(i * ENTITY_SPACING, 0.f, 0.f), renderer_3d));
+			entities_3d.push_back(CreateEntity3D(
+						glm::vec3(i * ENTITY_SPACING, i*0.1f, i*0.5f),
+						glm::vec3(1.f, 1.f, 1.f),
+						colours[i % 3],
+						m, tex_white, phys));
 		}
-		printf("Count: %d\n", i);
+
+		plane = CreateEntity3D(glm::vec3(-5.f), glm::vec3(50.f, 1.f, 50.f),
+				colours[3], mesh_crate, tex_white, phys);
+		plane->Get<RigidBody>()->rigid_body->setMassProps(0.f,
+				btVector3(0.f, 0.f, 0.f));
+
+		btTransform bf(btQuaternion(), btVector3(0.f, 2.f, 0.f));
+
+		btPoint2PointConstraint *pt = new btPoint2PointConstraint(
+				*entities_3d[0]->Get<RigidBody>()->rigid_body,
+				*entities_3d[1]->Get<RigidBody>()->rigid_body,
+				btVector3(0.f, 3.f, 0.f),
+				btVector3(0.f, 3.f, 0.f));
+
+		phys->dynamics_world->addConstraint(pt);
+		entities_3d[1]->Get<RigidBody>()->rigid_body->setGravity(
+				btVector3(0.f, 18.f, 0.f));
+
+
+		btVector3 ineria(0.f, 0.f, 0.f);
+		btScalar mass = 2.f;
+
+		phys->dynamics_world->removeRigidBody(
+				entities_3d[0]->Get<RigidBody>()->rigid_body);
+		entities_3d[0]->Get<RigidBody>()->rigid_body->getCollisionShape()->
+			calculateLocalInertia(mass, ineria);
+		entities_3d[0]->Get<RigidBody>()->rigid_body->setMassProps(mass,
+				ineria);
+
+		phys->dynamics_world->addRigidBody(
+				entities_3d[0]->Get<RigidBody>()->rigid_body);
 
 		camera = new Camera();
-	//	camera->PanX(ENTITY_SPACING * (ENTITY_NUM / 2));
-		camera->PanX(20);
 		camera->pos.Translate(glm::vec3(0.f, 10.f, 24.f));
 		camera->pos.Rotate(10.f, glm::vec3(0.f, 1.f, 0.f));
+
+		//entities_3d[0]->Get<RigidBody>()->rigid_body->
+		//	setActivationState(DISABLE_DEACTIVATION);
 	}
 
 	void Update(const GameTime& gametime)
 	{
 		phys->StepSimulation(1.0/60.0);
-		for(int i = 0; i < entities.size(); ++i)
-			entities[i]->Update();
+		plane->Get<RigidBody>()->rigid_body->setLinearVelocity(
+				btVector3(0.f, 0.f, 0.f));
 
-		entity_2d->Update(gametime.GetFrameTime());
-		//camera->pos.Translate(glm::vec3(0.f, -4.f, -6.f));
-		//camera->pos.Rotate(0.00f, glm::vec3(0.f, 12.0 + 1.5.f, 0.f));
-		//camera->pos.Translate(glm::vec3(0.f, 4.f, 6.f));
-		//camera->PanX(0.1f);
+		glm::vec3 force;
+
+		if(Input::GetKey(JKEY_KEY_W) >= JKEY_PRESS)
+			force.z = -30.f;
+		if(Input::GetKey(JKEY_KEY_S) >= JKEY_PRESS)
+			force.z = 30.f;
+		if(Input::GetKey(JKEY_KEY_A) >= JKEY_PRESS)
+			force.x = -30.f;
+		if(Input::GetKey(JKEY_KEY_D) >= JKEY_PRESS)
+			force.x = 30.f;
+
+		force *= 3.f;
+
+		entities_3d[0]->Get<RigidBody>()->rigid_body->
+			setActivationState(ACTIVE_TAG);
+
+		entities_3d[0]->Get<RigidBody>()->rigid_body->
+			applyCentralForce(btVector3(force.x, force.y, force.z));
+
+		for(int i = 0; i < entities_3d.size(); ++i)
+			SyncMovementToRigidBody(entities_3d[i]);
+
+		for(int i = 0; i < entities_3d.size(); ++i)
+			SyncMovementToRigidBody(plane);
+
+
+		ProgressAnimation(entity_2d, gametime.GetFrameTime());
 
 		renderer_3d->SetViewPosition(camera->pos.GetPosition());
 	}
 
 	void Draw()
 	{
-		//entity_2d->Draw();
+		for(int i = 0; i < entities_3d.size(); ++i)
+			DrawEntity3D(entities_3d[i]);
 
-		for(int i = 2; i < entities.size(); ++i)
-			entities[i]->Draw();
+		DrawEntity3D(plane);
 
+		renderer_2d->Add(tex_mega, glm::mat4(), glm::vec4(1.f),
+				GetAnimationRectangle(entity_2d, tex_mega));
 
 		camera->UpdateRenderer(renderer_2d);
 		camera->UpdateRenderer(renderer_3d);
@@ -111,19 +174,50 @@ private:
 		renderer_3d->Manage();
 	}
 
+	void DrawEntity3D(Entity *e)
+	{
+			renderer_3d->Add(e->Get<Mesh>(),
+					e->Get<Texture>(),
+					e->Get<Colour>()->colour,
+					e->Get<Movement>()->GetModelMatrix());
+	}
+
 	void Unload()
 	{
-		for(int i = 0; i < entities.size(); ++i)
-			delete entities[i];
-
-		for(int i = 0; i < 3; ++i)
-			delete textures[i];
+		for(int i = 0; i < entities_3d.size(); ++i)
+			delete entities_3d[i];
 
 		delete mesh_crate;
 		delete mesh_tri;
 		delete camera;
 		delete phys;
 		delete renderer_3d;
+	}
+
+	static Entity* CreateEntity2D(Texture *t, const glm::vec3& pos)
+	{
+		Entity *e = new Entity();
+		e->Add(new Animation(3, 3, glm::vec4(30, 64, 180, 180), 100));
+
+		return e;
+	}
+
+	static Entity* CreateEntity3D(const glm::vec3& pos, const glm::vec3& scale,
+			const glm::vec4& color, Mesh *m, Texture *t, PhysicsManager *p)
+	{
+		glm::vec4 c = glm::vec4((color.x + color.y + color.z)/3.f);
+		c.w = color.w;
+
+		Entity *e = new Entity();
+		e->Add(new Movement());
+		e->Add(m);
+		e->Add(t);
+		e->Add(new Colour());
+		e->Get<Movement>()->Move(pos);
+		e->Get<Movement>()->SetScale(scale);
+		e->Get<Colour>()->colour = c;
+		e->Add(new RigidBody(p, e));
+		return e;
 	}
 };
 
