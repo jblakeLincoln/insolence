@@ -24,9 +24,17 @@ RenderManager3D::RenderManager3D()
 			"view_pos");
 
 	dir_light.direction = glm::vec3(2.f, -6.f, -6.f);
-	dir_light.diffuse = glm::vec3(1.f);
+	dir_light.diffuse = glm::vec3(2.f);
 	dir_light.specular = glm::vec3(0.0f);
-	dir_light.ambient = glm::vec3(0.1f);
+	dir_light.ambient = glm::vec3(0.0f);
+
+	glUniform1i(glGetUniformLocation(shader_program->GetID(), "tex_diffuse"),
+			0);
+	glUniform1i(glGetUniformLocation(shader_program->GetID(), "tex_normal"),
+			1);
+
+	is_normal_map = glGetUniformLocation(shader_program->GetID(),
+			"normal_map");
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -75,7 +83,27 @@ void RenderManager3D::Manage()
 			 * that represent what they are or something.
 			 */
 
-			j->first->Bind();
+			if(j->first == NULL)
+				continue;
+
+			glActiveTexture(GL_TEXTURE0);
+
+			if(j->first->diffuse != NULL)
+				j->first->diffuse->Bind();
+			else
+				glBindTexture(GL_TEXTURE_2D, 0);
+
+			glActiveTexture(GL_TEXTURE1);
+			if(j->first->normal != NULL)
+			{
+				j->first->normal->Bind();
+				glUniform1i(is_normal_map, true);
+			}
+			else
+			{
+				glBindTexture(GL_TEXTURE_2D, 0);
+				glUniform1i(is_normal_map, false);
+			}
 
 
 			glBindVertexArray(i->second.vao);
@@ -97,7 +125,7 @@ void RenderManager3D::Manage()
 	mesh_data.clear();
 }
 
-void RenderManager3D::Add(Mesh *m, Texture *t, const glm::vec4& colour,
+void RenderManager3D::Add(Mesh *m, Material *t, const glm::vec4& colour,
 		const glm::mat4& mat)
 {
 	/* If we don't have a VBO for this mesh, create it. */

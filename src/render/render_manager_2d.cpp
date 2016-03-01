@@ -97,6 +97,7 @@ RenderManager2D::~RenderManager2D()
 void RenderManager2D::Manage()
 {
 	glUseProgram(shader_program->GetID());
+	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_verts);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_data);

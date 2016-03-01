@@ -1,7 +1,7 @@
 #ifndef RIGID_BODY_H
 #define RIGID_BODY_H
 
-#include "movement_component.h"
+#include "movement.h"
 #include "component.h"
 #include "entity.h"
 #include "../physics/physics_manager.h"

@@ -2,7 +2,7 @@
 
 Camera::Camera()
 {
-	mat_projection = glm::perspective(1.f, 1.f, 0.1f, 1000.f);
+	mat_projection = glm::perspective(1.f, 720.f/540.f, 0.1f, 1000.f);
 	//mat_view = glm::lookAt(move.GetPosition(), glm::vec3(0.f),
 	//		glm::vec3(0.f, 1.f, 0.f));
 }

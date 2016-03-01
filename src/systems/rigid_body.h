@@ -1,7 +1,6 @@
 #ifndef SYSTEM_RIGID_BODY_H
 #define SYSTEM_RIGID_BODY_H
 
-#include "../component/movement_component.h"
 #include "../component/rigid_body.h"
 
 void SyncMovementToRigidBody(Entity *e)

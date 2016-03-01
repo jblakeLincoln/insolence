@@ -5,7 +5,7 @@
 #include <glm/matrix.hpp>
 
 #include "entity.h"
-#include "movement_component.h"
+#include "movement.h"
 #include "../render/render_manager.h"
 
 struct Camera : Entity

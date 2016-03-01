@@ -8,7 +8,7 @@
 #include <GL/glew.h>
 
 #include "../component/mesh.h"
-#include "../component/texture.h"
+#include "../component/material.h"
 #include "render_manager.h"
 
 /* TODO Issue #21: Logging. */
@@ -29,23 +29,25 @@ private:
 	};
 
 	typedef std::map<Mesh*, mesh_data_buffers> mesh_def;
-	typedef std::map<Texture*, std::vector<float> > tex_def;
+	typedef std::map<Material*, std::vector<float> > tex_def;
 
 	DirectionalLight dir_light;
 
 	GLint attrib_models[4];
 	GLint attrib_colour;
 
-	GLuint uni_view_pos;
-	GLuint uni_direction;
-	GLuint uni_diffuse;
-	GLuint uni_ambient;
-	GLuint uni_specular;
+	GLint uni_view_pos;
+	GLint uni_direction;
+	GLint uni_diffuse;
+	GLint uni_ambient;
+	GLint uni_specular;
+
+	GLint is_normal_map;
 
 	glm::vec3 view_pos;
 
 	std::map<Mesh*, mesh_data_buffers> mesh_buffers;
-	std::map<Mesh*, std::map<Texture*, std::vector<float> > > mesh_data;
+	std::map<Mesh*, std::map<Material*, std::vector<float> > > mesh_data;
 
 public:
 	RenderManager3D();
@@ -54,7 +56,7 @@ public:
 	/**
 	 * Queue up a mesh to be drawn.
 	 */
-	void Add(Mesh*, Texture*, const glm::vec4& colour, const glm::mat4& model);
+	void Add(Mesh*, Material*, const glm::vec4& colour, const glm::mat4& model);
 
 	/**
 	 * Set camera position for accurate lighting.

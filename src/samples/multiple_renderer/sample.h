@@ -10,11 +10,12 @@
 #include "../../component/camera.h"
 #include "../../component/colour.h"
 #include "../../component/entity.h"
+#include "../../component/material.h"
 #include "../../systems/animation.h"
 #include "../../systems/rigid_body.h"
 #include "../../physics/physics_manager.h"
 
-#define ENTITY_NUM 100
+#define ENTITY_NUM 20
 #define ENTITY_SPACING 0.9
 
 struct SampleMultipleRenderer : BaseGameWorld
@@ -28,6 +29,8 @@ private:
 
 	Mesh *mesh_crate;
 	Mesh *mesh_tri;
+	Material *material_crate;
+	Material *material_white;
 	Texture *tex_white;
 	glm::vec4 colours[4];
 	Texture *tex_mega;
@@ -57,7 +60,7 @@ private:
 		tex_white	=	Texture::LoadColour(glm::vec4(1.f));
 		tex_mega	=	Texture::LoadFile("assets/mega_run.png");
 
-		mesh_crate = Mesh::LoadFile("assets/boxy.obj",
+		mesh_crate = Mesh::LoadFile("assets/crate.obj",
 				renderer_3d->shader_program);
 		mesh_tri = Mesh::LoadFile("assets/tri.obj",
 				renderer_3d->shader_program);
@@ -69,6 +72,16 @@ private:
 
 		entity_2d = CreateEntity2D(tex_mega, glm::vec3(20.f, 2.f, 1.f));
 
+		material_crate = new Material();
+		material_crate->owner = 0;
+		material_crate->diffuse = Texture::LoadFile("assets/crate.png");
+		material_crate->normal = Texture::LoadFile("assets/crate_n.png");
+
+		material_white = new Material();
+		material_white->owner = 0;
+		material_white->diffuse = tex_white;
+		material_white->normal = material_crate->normal;
+
 		/* Set up a load of test entities. */
 
 		for(int i = 0; i < ENTITY_NUM; ++i)
@@ -79,14 +92,16 @@ private:
 						glm::vec3(i * ENTITY_SPACING, i*0.1f, i*0.5f),
 						glm::vec3(1.f, 1.f, 1.f),
 						colours[i % 3],
-						m, tex_white, phys));
+						m, material_crate, phys));
 		}
 
 		plane = CreateEntity3D(glm::vec3(-5.f), glm::vec3(50.f, 1.f, 50.f),
-				colours[3], mesh_crate, tex_white, phys);
+				colours[3], mesh_crate, material_white, phys);
 		plane->Get<RigidBody>()->rigid_body->setMassProps(0.f,
 				btVector3(0.f, 0.f, 0.f));
+		plane->Get<Colour>()->colour = glm::vec4(0.6f, 0.1f, 0.2f, 1.f);
 
+		/*
 		btTransform bf(btQuaternion(), btVector3(0.f, 2.f, 0.f));
 
 		btPoint2PointConstraint *pt = new btPoint2PointConstraint(
@@ -112,9 +127,9 @@ private:
 
 		phys->dynamics_world->addRigidBody(
 				entities_3d[0]->Get<RigidBody>()->rigid_body);
-
+*/
 		camera = new Camera();
-		camera->pos.Translate(glm::vec3(0.f, 10.f, 24.f));
+		camera->pos.Translate(glm::vec3(0.f, 20.f, 60.f));
 		camera->pos.Rotate(10.f, glm::vec3(0.f, 1.f, 0.f));
 
 		//entities_3d[0]->Get<RigidBody>()->rigid_body->
@@ -138,7 +153,7 @@ private:
 		if(Input::GetKey(JKEY_KEY_D) >= JKEY_PRESS)
 			force.x = 30.f;
 
-		force *= 3.f;
+		force *= 1.1f;
 
 		entities_3d[0]->Get<RigidBody>()->rigid_body->
 			setActivationState(ACTIVE_TAG);
@@ -177,7 +192,7 @@ private:
 	void DrawEntity3D(Entity *e)
 	{
 			renderer_3d->Add(e->Get<Mesh>(),
-					e->Get<Texture>(),
+					e->Get<Material>(),
 					e->Get<Colour>()->colour,
 					e->Get<Movement>()->GetModelMatrix());
 	}
@@ -203,7 +218,7 @@ private:
 	}
 
 	static Entity* CreateEntity3D(const glm::vec3& pos, const glm::vec3& scale,
-			const glm::vec4& color, Mesh *m, Texture *t, PhysicsManager *p)
+			const glm::vec4& color, Mesh *m, Material *mat, PhysicsManager *p)
 	{
 		glm::vec4 c = glm::vec4((color.x + color.y + color.z)/3.f);
 		c.w = color.w;
@@ -211,7 +226,7 @@ private:
 		Entity *e = new Entity();
 		e->Add(new Movement());
 		e->Add(m);
-		e->Add(t);
+		e->Add(mat);
 		e->Add(new Colour());
 		e->Get<Movement>()->Move(pos);
 		e->Get<Movement>()->SetScale(scale);

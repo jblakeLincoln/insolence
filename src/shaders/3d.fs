@@ -6,7 +6,9 @@ in vec3 frag_norm;
 in vec2 frag_uv;
 in vec4 frag_colour;
 
-uniform sampler2D tex;
+uniform sampler2D tex_diffuse;
+uniform sampler2D tex_normal;
+uniform bool normal_map;
 out vec4 out_colour;
 
 struct DirLight {
@@ -22,12 +24,20 @@ uniform vec3 view_pos;
 
 void main() {
 
-	vec3 frag_tex = texture(tex, frag_uv).xyz;
+	vec3 frag_tex = texture(tex_diffuse, frag_uv).xyz;
 
 	/* Diffuse setup. */
 	vec3 light_dir = normalize(-dir_light.direction);
 
-	vec3 norm = normalize(frag_norm);
+	vec3 norm;
+
+	if(normal_map == false)
+		norm = normalize(frag_norm);
+	else
+	{
+		norm = texture(tex_normal, frag_uv).xyz;
+		norm = normalize(norm * 2.0 - 1.0);
+	}
 
 	float diff = max(dot(norm, light_dir), 0.0);
 

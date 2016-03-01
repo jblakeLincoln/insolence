@@ -76,7 +76,7 @@ btRigidBody* PhysicsManager::CreateRigidBody(Entity *e)
 	btRigidBody::btRigidBodyConstructionInfo box_rb_info(mass,
 			box_motion_state, box_shape, local_inertia);
 
-	box_rb_info.m_friction = 1.f;
+	box_rb_info.m_friction = 0.8f;
 	btRigidBody *rigid_body = new btRigidBody(box_rb_info);
 
 	if(!rigid_body)
