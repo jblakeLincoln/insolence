@@ -30,9 +30,20 @@ PhysicsManager::~PhysicsManager()
 	}
 
 	for (int i = 0; i < collision_shapes.size(); ++i)
+	{
 		delete collision_shapes[i];
+		collision_shapes[i] = 0;
+	}
+
+	for(int i = 0; i < constraints.size(); ++i)
+	{
+		delete constraints[i];
+		constraints[i] = 0;
+	}
+
 
 	collision_shapes.clear();
+	constraints.clear();
 
 	delete dynamics_world;
 	delete solver;
@@ -89,3 +100,79 @@ btRigidBody* PhysicsManager::CreateRigidBody(Entity *e)
 	return rigid_body;
 }
 
+btPoint2PointConstraint* PhysicsManager::CreateConstraint(Entity *e1,
+		Entity *e2, const glm::vec3& c1, const glm::vec3& c2)
+{
+	btRigidBody *r1 = e1->Get<RigidBody>()->rigid_body;
+	btRigidBody *r2 = e2->Get<RigidBody>()->rigid_body;
+
+	if(r1 == NULL || r2 == NULL)
+		return NULL;
+
+	btPoint2PointConstraint *pt = new btPoint2PointConstraint(
+			*e1->Get<RigidBody>()->rigid_body,
+			*e2->Get<RigidBody>()->rigid_body,
+			btVector3(c1.x, c1.y, c1.z),
+			btVector3(c2.x, c2.y, c2.z));
+
+	dynamics_world->addConstraint(pt);
+	constraints.push_back(pt);
+
+	return pt;
+}
+
+void PhysicsManager::ChangeMass(Entity *e, float mass)
+{
+	btRigidBody *r = e->Get<RigidBody>()->rigid_body;
+
+	if(r == NULL)
+		return;
+	dynamics_world->removeRigidBody(r);
+	btVector3 inertia = btVector3(0.f, 0.f, 0.f);
+
+	r->getCollisionShape()->calculateLocalInertia(mass, inertia);
+	r->setMassProps(mass, inertia);
+	dynamics_world->addRigidBody(r);
+}
+
+void PhysicsManager::Activate(Entity *e)
+{
+	btRigidBody *r = e->Get<RigidBody>()->rigid_body;
+
+	if(r == NULL)
+		return;
+
+	r->setActivationState(ACTIVE_TAG);
+}
+
+void PhysicsManager::Deactivate(Entity *e)
+{
+	ChangeMass(e, 0);
+}
+
+void PhysicsManager::Make2D(Entity *e)
+{
+	btRigidBody *r = e->Get<RigidBody>()->rigid_body;
+
+	if(r == NULL)
+		return;
+
+	r->setLinearFactor(btVector3(1, 1, 0));
+	r->setAngularFactor(btVector3(0, 0, 1));
+}
+
+bool PhysicsManager::IsSleeping(Entity *e)
+{
+	btRigidBody *r = e->Get<RigidBody>()->rigid_body;
+
+	if(r == NULL)
+		return true;
+
+	switch(r->getActivationState())
+	{
+		case ISLAND_SLEEPING:
+			return false;
+		default:
+			return true;
+	}
+}

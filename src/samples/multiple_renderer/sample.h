@@ -93,6 +93,7 @@ private:
 						glm::vec3(1.f, 1.f, 1.f),
 						colours[i % 3],
 						m, material_crate, phys));
+			phys->Make2D(entities_3d[i]);
 		}
 
 		plane = CreateEntity3D(glm::vec3(-5.f), glm::vec3(50.f, 1.f, 50.f),
@@ -101,39 +102,18 @@ private:
 				btVector3(0.f, 0.f, 0.f));
 		plane->Get<Colour>()->colour = glm::vec4(0.6f, 0.1f, 0.2f, 1.f);
 
+		phys->ChangeMass(entities_3d[0], 2.f);
+
 		/*
-		btTransform bf(btQuaternion(), btVector3(0.f, 2.f, 0.f));
-
-		btPoint2PointConstraint *pt = new btPoint2PointConstraint(
-				*entities_3d[0]->Get<RigidBody>()->rigid_body,
-				*entities_3d[1]->Get<RigidBody>()->rigid_body,
-				btVector3(0.f, 3.f, 0.f),
-				btVector3(0.f, 3.f, 0.f));
-
-		phys->dynamics_world->addConstraint(pt);
-		entities_3d[1]->Get<RigidBody>()->rigid_body->setGravity(
-				btVector3(0.f, 18.f, 0.f));
-
-
-		btVector3 ineria(0.f, 0.f, 0.f);
-		btScalar mass = 2.f;
-
-		phys->dynamics_world->removeRigidBody(
-				entities_3d[0]->Get<RigidBody>()->rigid_body);
-		entities_3d[0]->Get<RigidBody>()->rigid_body->getCollisionShape()->
-			calculateLocalInertia(mass, ineria);
-		entities_3d[0]->Get<RigidBody>()->rigid_body->setMassProps(mass,
-				ineria);
-
-		phys->dynamics_world->addRigidBody(
-				entities_3d[0]->Get<RigidBody>()->rigid_body);
-*/
+		phys->CreateConstraint(
+				entities_3d[0], entities_3d[1],
+				glm::vec3(5.f), glm::vec3(5.f));
+				*/
 		camera = new Camera();
 		camera->pos.Translate(glm::vec3(0.f, 20.f, 60.f));
 		camera->pos.Rotate(10.f, glm::vec3(0.f, 1.f, 0.f));
 
-		//entities_3d[0]->Get<RigidBody>()->rigid_body->
-		//	setActivationState(DISABLE_DEACTIVATION);
+		//phys->Deactivate(entities_3d[1]);
 	}
 
 	void Update(const GameTime& gametime)
@@ -152,20 +132,39 @@ private:
 			force.x = -30.f;
 		if(Input::GetKey(JKEY_KEY_D) >= JKEY_PRESS)
 			force.x = 30.f;
+		if(Input::GetKey(JKEY_KEY_E) >= JKEY_PRESS)
+			force.y = 30.f;
 
 		force *= 1.1f;
 
-		entities_3d[0]->Get<RigidBody>()->rigid_body->
-			setActivationState(ACTIVE_TAG);
+		if(force != glm::vec3(0))
+		{
+			entities_3d[0]->Get<RigidBody>()->rigid_body->
+				setActivationState(ACTIVE_TAG);
+			entities_3d[0]->Get<RigidBody>()->rigid_body->
+				applyCentralForce(btVector3(force.x, force.y, force.z));
+		}
 
-		entities_3d[0]->Get<RigidBody>()->rigid_body->
-			applyCentralForce(btVector3(force.x, force.y, force.z));
+		phys->IsSleeping(entities_3d[0]);
 
 		for(int i = 0; i < entities_3d.size(); ++i)
 			SyncMovementToRigidBody(entities_3d[i]);
 
 		for(int i = 0; i < entities_3d.size(); ++i)
+		{
 			SyncMovementToRigidBody(plane);
+
+			if(phys->IsSleeping(entities_3d[i]))
+			{
+				entities_3d[i]->Get<Colour>()->colour =
+					glm::vec4(0.8f, 0.1f, 0.f, 1.f);
+			}
+			else
+			{
+				entities_3d[i]->Get<Colour>()->colour =
+					glm::vec4(0.1f, 0.8f, 0.f, 1.f);
+			}
+		}
 
 
 		ProgressAnimation(entity_2d, gametime.GetFrameTime());
