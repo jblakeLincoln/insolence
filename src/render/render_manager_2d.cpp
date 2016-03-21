@@ -84,6 +84,8 @@ RenderManager2D::RenderManager2D()
 
 	glVertexAttribDivisor(attrib_colour, 1);
 	glVertexAttribDivisor(attrib_model_uv, 1);
+
+	Camera::Setup(shader_program);
 }
 
 RenderManager2D::~RenderManager2D()
@@ -94,9 +96,10 @@ RenderManager2D::~RenderManager2D()
 	glDeleteVertexArrays(1, &vao);
 }
 
-void RenderManager2D::Manage()
+void RenderManager2D::Flush()
 {
 	glUseProgram(shader_program->GetID());
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_verts);
@@ -138,6 +141,10 @@ void RenderManager2D::Add(Texture *t, const glm::mat4& model,
 		for(int j = 0; j < 4; ++j)
 			data[t][count[t] * 24 + (i * 4 + j)] = model[i][j];
 
+	if(data[t][count[t] * 24 + 14] == 0)
+		data[t][count[t] * 24 + 14] = count[t] * 0.1;
+
+
 	for(int i = 0; i < 4; ++i)
 		data[t][count[t] * 24 + 16 + i] = (colour[i]);
 
@@ -155,4 +162,64 @@ void RenderManager2D::Add(Texture *t, const glm::mat4&model,
 		data[t][count[t]* 24 + 20 + i] = rect[i];
 
 	++count[t];
+}
+
+void RenderManager2D::AddText(Font *f, const char *str, const glm::vec2& pos,
+		const glm::vec4& col, FontAlign origin, glm::vec2 scale)
+{
+	float offset = 0;
+
+	float length = 0;
+
+	if(scale == glm::vec2())
+		scale = glm::vec2(1.f);
+
+	/* Calculate the length of the string in pixels. */
+	for(int i = 0; i < strlen(str); ++i)
+	{
+		const Font::FontInfo c = f->GetGlyph(str[i]);
+
+		length +=
+			c.l + c.ax;
+
+		if(i == strlen(str)-1)
+		{
+			length -= c.ax;
+			length -= c.l;
+			length += c.w;
+		}
+	}
+
+	if(origin == FontAlign::CENTRE)
+		offset -= length / 2.0;
+	else if (origin == FontAlign::RIGHT)
+		offset -= length;
+
+	for(int i = 0; i < strlen(str); ++i)
+	{
+		glm::mat4 m;
+		const Font::FontInfo glyph = f->GetGlyph(str[i]);
+		char c = str[i];
+
+		offset += glyph.w * scale.x/2;
+		offset += glyph.l * scale.x;
+
+		m = glm::translate(m, glm::vec3(offset + pos.x,
+					((f->GetAtlasHeight() - glyph.h) / f->GetAtlasHeight() +
+					 glyph.t - (glyph.h/2)) * scale.y + pos.y,
+					0.f));
+
+		m = glm::scale(m, glm::vec3(glyph.w * scale.x,
+					glyph.h * scale.y, 1.f));
+
+		glm::vec4 rect = glm::vec4(glyph.x/f->GetAtlasWidth(),
+				0,
+				glyph.w/f->GetAtlasWidth(),
+				glyph.h / f->GetAtlasHeight());
+
+		Add(f->mat->diffuse, m, col, rect);
+
+		offset += glyph.ax * scale.x;
+		offset -= glyph.w * scale.x / 2;
+	}
 }

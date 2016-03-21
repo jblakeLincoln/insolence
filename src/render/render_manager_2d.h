@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "../component/font.h"
 #include "../component/texture.h"
 #include "render_manager.h"
 
@@ -33,7 +34,7 @@ struct RenderManager2D : public RenderManager
 	/**
 	 * Virtual from RenderManager - deals with flushing the draw.
 	 */
-	void Manage();
+	void Flush();
 
 	/**
 	 * Queue up a sprite to be drawn.
@@ -54,6 +55,20 @@ struct RenderManager2D : public RenderManager
 	 */
 	void Add(Texture *tex, const glm::mat4 &model, const glm::vec4& colour,
 			const glm::vec4& rect);
+
+	/**
+	 * Queue up text sprites to be drawn.
+	 *
+	 * \param f		Font to draw.
+	 * \param text	Text to draw from ASCII range 32 to 128.
+	 * \param pos	Position to start drawing from (considering alignment).
+	 * \param col	Colour to draw.
+	 * \param align	Alignment of font, affecting draw position.
+	 * \param scale	Scaling of text, default 1.
+	 */
+	void AddText(Font* f, const char *text, const glm::vec2& pos,
+			const glm::vec4& colour, FontAlign align,
+			glm::vec2 scale=glm::vec2());
 };
 
 #endif

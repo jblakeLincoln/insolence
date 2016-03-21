@@ -1,7 +1,9 @@
 #version 150
 
-uniform mat4 mat_proj;
-uniform mat4 mat_view;
+layout(std140) uniform Camera {
+	mat4 mat_proj;
+	mat4 mat_view;
+};
 
 in vec3 in_verts;
 in vec2 in_uvs;

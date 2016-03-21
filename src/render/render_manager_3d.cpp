@@ -37,6 +37,8 @@ RenderManager3D::RenderManager3D()
 			"normal_map");
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	Camera::Setup(shader_program);
 }
 
 RenderManager3D::~RenderManager3D()
@@ -53,7 +55,7 @@ RenderManager3D::~RenderManager3D()
 	}
 }
 
-void RenderManager3D::Manage()
+void RenderManager3D::Flush()
 {
 	/*
 	 * This looks pretty awful ... but it works to a reasonable standard

@@ -10,6 +10,7 @@
 #include "../../component/camera.h"
 #include "../../component/colour.h"
 #include "../../component/entity.h"
+#include "../../component/font.h"
 #include "../../component/material.h"
 #include "../../systems/animation.h"
 #include "../../systems/rigid_body.h"
@@ -39,6 +40,8 @@ private:
 	Entity *entity_2d;
 
 	Entity *plane;
+
+	Font *f;
 
 	void Initialise()
 	{
@@ -110,9 +113,10 @@ private:
 				glm::vec3(5.f), glm::vec3(5.f));
 				*/
 		camera = new Camera();
-		camera->pos.Translate(glm::vec3(0.f, 20.f, 60.f));
+		camera->pos.Translate(glm::vec3(0.f, 0.f, 16.f));
 		camera->pos.Rotate(10.f, glm::vec3(0.f, 1.f, 0.f));
 
+		f = Font::Load("/usr/share/fonts/truetype/tlwg/Kinnari-Bold.ttf", 172);
 		//phys->Deactivate(entities_3d[1]);
 	}
 
@@ -155,17 +159,12 @@ private:
 			SyncMovementToRigidBody(plane);
 
 			if(phys->IsSleeping(entities_3d[i]))
-			{
 				entities_3d[i]->Get<Colour>()->colour =
 					glm::vec4(0.8f, 0.1f, 0.f, 1.f);
-			}
 			else
-			{
 				entities_3d[i]->Get<Colour>()->colour =
 					glm::vec4(0.1f, 0.8f, 0.f, 1.f);
-			}
 		}
-
 
 		ProgressAnimation(entity_2d, gametime.GetFrameTime());
 
@@ -178,22 +177,25 @@ private:
 			DrawEntity3D(entities_3d[i]);
 
 		DrawEntity3D(plane);
+		glm::mat4 model;
+		model = glm::translate(model, glm::vec3(0, 0, 1.009f));
 
-		renderer_2d->Add(tex_mega, glm::mat4(), glm::vec4(1.f),
+		renderer_2d->AddText(f, "MrotavatorW", glm::vec2(-10, 0), glm::vec4(0.f,
+					0.f, 0.f, 1.f), FontAlign::LEFT, glm::vec2(0.05f));
+		renderer_2d->Add(tex_mega, model, glm::vec4(1.f),
 				GetAnimationRectangle(entity_2d, tex_mega));
 
-		camera->UpdateRenderer(renderer_2d);
-		camera->UpdateRenderer(renderer_3d);
-		renderer_2d->Manage();
-		renderer_3d->Manage();
+		camera->Post();
+		renderer_3d->Flush();
+		renderer_2d->Flush();
 	}
 
 	void DrawEntity3D(Entity *e)
 	{
-			renderer_3d->Add(e->Get<Mesh>(),
-					e->Get<Material>(),
-					e->Get<Colour>()->colour,
-					e->Get<Movement>()->GetModelMatrix());
+		renderer_3d->Add(e->Get<Mesh>(),
+				e->Get<Material>(),
+				e->Get<Colour>()->colour,
+				e->Get<Movement>()->GetModelMatrix());
 	}
 
 	void Unload()

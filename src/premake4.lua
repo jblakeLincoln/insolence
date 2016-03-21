@@ -17,7 +17,8 @@ solution "insolence"
 
 	configuration "LINUX"
 		includedirs {
-			"/usr/include/bullet"
+			"/usr/include/bullet",
+			"/usr/include/freetype2"
 		}
 
 		libdirs {
@@ -27,7 +28,7 @@ solution "insolence"
 		links {
 			"glfw3", "GLEW", "GL", "GLU", "openal", "alut", "vorbisfile",
 			"X11", "Xxf86vm", "Xinerama", "Xcursor", "Xrandr", "pthread", "Xi",
-			"assimp", "IL", "ILU", "ILUT", "BulletDynamics", "BulletCollision", "LinearMath"
+			"assimp", "IL", "ILU", "ILUT", "BulletDynamics", "BulletCollision", "LinearMath", "freetype"
 		}
 
 	configuration { "WINDOWS" }

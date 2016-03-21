@@ -54,9 +54,15 @@ public:
 	~RenderManager3D();
 
 	/**
+	 * Virtual from RenderManager - deals with flushing the draw.
+	 */
+	void Flush();
+
+	/**
 	 * Queue up a mesh to be drawn.
 	 */
-	void Add(Mesh*, Material*, const glm::vec4& colour, const glm::mat4& model);
+	void Add(Mesh*, Material*, const glm::vec4& colour,
+			const glm::mat4& model);
 
 	/**
 	 * Set camera position for accurate lighting.
@@ -64,12 +70,6 @@ public:
 	 * \param vp	Vec3 position of camera in world space.
 	 */
 	void SetViewPosition(const glm::vec3& vp);
-
-	/**
-	 * Draw everything that has been added to the draw queue since the last
-	 * call to Manage.
-	 */
-	void Manage();
 };
 
 #endif
