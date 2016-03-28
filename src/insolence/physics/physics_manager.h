@@ -9,9 +9,8 @@
 #include "../component/rigid_body.h"
 
 struct PhysicsManager {
-public:
-	PhysicsManager();
-	PhysicsManager(const glm::vec3 &gravity);
+private:
+	PhysicsManager() {}
 
 	btDynamicsWorld *dynamics_world;
 	btDefaultCollisionConfiguration *collision_config;
@@ -22,6 +21,7 @@ public:
 	btConstraintSolver *solver;
 
 public:
+	PhysicsManager(const glm::vec3 &gravity);
 	~PhysicsManager();
 
 	/**

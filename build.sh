@@ -11,5 +11,9 @@ make config=release
 RETVAL=$?
 
 if [ $RETVAL -eq 0 ]; then
-	bin/insolence
+	cd bin
+	ln -sf ../src/insolence/assets
+	ln -sf ../src/insolence/shaders
+	export LD_LIBRARY_PATH=.
+	#./insolence_samples
 fi

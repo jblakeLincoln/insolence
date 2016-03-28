@@ -4,10 +4,10 @@
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
-#include "../component/component.h"
 #include "../game/timespan.h"
+#include "../game/texture.h"
 
-struct Animation : public Component {
+struct Animation {
 	int current_frame;
 	int cols;
 	int frames;
@@ -29,6 +29,9 @@ public:
 	 */
 	Animation(int frames, int cols,
 		const glm::vec4& in_rect, int time);
+
+	void Progress(int frame_time);
+	glm::vec4 GetAnimationRectangle(Texture *t);
 };
 
 #endif

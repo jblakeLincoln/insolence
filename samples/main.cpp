@@ -2,19 +2,16 @@
 #include <map>
 #include <vector>
 
-#include "../../game/game_world.h"
-
-#include "../../render/render_manager_3d.h"
-#include "../../render/render_manager_2d.h"
-#include "../../component/animation.h"
-#include "../../component/camera.h"
-#include "../../component/colour.h"
-#include "../../component/entity.h"
-#include "../../component/font.h"
-#include "../../component/material.h"
-#include "../../systems/animation.h"
-#include "../../systems/rigid_body.h"
-#include "../../physics/physics_manager.h"
+#include <insolence/game/game_world.h>
+#include <insolence/render/render_manager_3d.h>
+#include <insolence/render/render_manager_2d.h>
+#include <insolence/component/animation.h>
+#include <insolence/game/camera.h>
+#include <insolence/game/entity.h>
+#include <insolence/game/font.h>
+#include <insolence/game/material.h>
+#include <insolence/systems/rigid_body.h>
+#include <insolence/physics/physics_manager.h>
 
 #define ENTITY_NUM 20
 #define ENTITY_SPACING 0.9
@@ -96,7 +93,7 @@ private:
 						glm::vec3(1.f, 1.f, 1.f),
 						colours[i % 3],
 						m, material_crate, phys));
-			phys->Make2D(entities_3d[i]);
+			//phys->Make2D(entities_3d[i]);
 		}
 
 		plane = CreateEntity3D(glm::vec3(-5.f), glm::vec3(50.f, 1.f, 50.f),
@@ -237,3 +234,13 @@ private:
 	}
 };
 
+
+int main()
+{
+	SampleMultipleRenderer* world = new SampleMultipleRenderer();
+
+	world->Run();
+
+	delete world;
+	return 0;
+}

@@ -3,8 +3,10 @@
 
 #include <typeinfo>
 #include <vector>
+#include <stdint.h>
 
-#include "component.h"
+#include "../component/component.h"
+#include "../component/movement.h"
 
 static uint32_t id_count = 0;
 
@@ -17,9 +19,6 @@ struct Entity
 	void Add(Component *c)
 	{
 		components.push_back(c);
-
-		if(c->owner == -1)
-			c->SetOwner(this->id);
 	}
 
 	template <typename T>
@@ -42,15 +41,20 @@ struct Entity
 		return false;
 	}
 
+	int NumComponents() { return components.size(); }
+
+	Component* GetComponentByNum(int i) { return components[i]; }
+
 	Entity() {
 		id = id_count++;
+		Add(new Movement());
 	}
 	~Entity()
 	{
 		for(int i = 0; i < components.size(); ++i)
 		{
-			if(components[i]->owner != id)
-				continue;
+			//if(components[i]->owner != id)
+			//	continue;
 
 			delete components[i];
 			components[i] = 0;

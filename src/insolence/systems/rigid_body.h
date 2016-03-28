@@ -8,6 +8,7 @@ void SyncMovementToRigidBody(Entity *e)
 	Movement *m = e->Get<Movement>();
 	RigidBody *r = e->Get<RigidBody>();
 
+
 	if(m == NULL || r == NULL)
 		return;
 

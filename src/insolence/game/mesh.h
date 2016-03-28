@@ -7,13 +7,10 @@
 #include <btBulletDynamicsCommon.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
-#include "../render/shader_program.h"
-#include "component.h"
+#include <GL/gl.h>
 
 /* TODO Issue #23: Load in normal maps. */
-struct Mesh : public Component
-{
+struct Mesh {
 private:
 	Mesh();
 	Mesh(float* data_in, int vert_count);
@@ -24,7 +21,7 @@ public:
 	const GLuint num_verts;
 	const float *data;
 
-	static Mesh* LoadFile(const char *file, ShaderProgram *program)
+	static Mesh* LoadFile(const char *file)
 	{
 		const aiScene *scene = aiImportFile(file,
 			aiProcess_CalcTangentSpace |

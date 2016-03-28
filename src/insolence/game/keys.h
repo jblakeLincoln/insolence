@@ -88,4 +88,34 @@
 #define JKEY_KEY_F16				127
 #define JKEY_KEY_NUMLOCK			144
 
+
+#define JPAD_ONE					0
+#define JPAD_TWO					0
+#define JPAD_THREE					0
+#define JPAD_FOUR					0
+
+#define JPAD_BTN_A					0
+#define JPAD_BTN_B					1
+#define JPAD_BTN_X					2
+#define JPAD_BTN_Y					3
+#define JPAD_BTN_LB					4
+#define JPAD_BTN_RB					5
+#define JPAD_BTN_BACK				6
+#define JPAD_BTN_START				7
+#define JPAD_BTN_HOME				8
+#define JPAD_BTN_LS					9
+#define JPAD_BTN_RS					10
+
+#define JPAD_AXIS_LS_H				0
+#define JPAD_AXIS_LS_V				1
+#define JPAD_AXIS_LT				2
+#define JPAD_AXIS_RS_H				3
+#define JPAD_AXIS_RS_V				4
+#define JPAD_AXIS_RT				5
+
+#define JBTN_RELEASE				-1
+#define JBTN_PRESS					1
+#define JBTN_HOLD					2
+
+
 #endif

@@ -3,7 +3,7 @@
 
 #include <glm/matrix.hpp>
 
-#include "../component/camera.h"
+#include "../game/camera.h"
 #include "shader_program.h"
 
 /* TODO Issue #13: Logging. */

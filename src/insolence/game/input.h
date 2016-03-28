@@ -9,6 +9,11 @@
 
 #include "keys.h"
 
+#define PAD_BTN_COUNT	11
+#define PAD_AXES_COUNT	6
+#define JOYPAD_COUNT	4
+#define PAD_TOTAL_BTNS	JOYPAD_COUNT * PAD_BTN_COUNT
+
 struct Input
 {
 private:
@@ -56,6 +61,14 @@ private:
 	static std::bitset<3> mouse_up;
 	static std::bitset<3> mouse_down;
 
+	/* We assume 11 button inputs and 6 axes inputs for four controllers. */
+	static std::bitset<PAD_TOTAL_BTNS> pad_btns;
+	static std::bitset<PAD_TOTAL_BTNS> pad_btns_prev;
+	static std::bitset<PAD_TOTAL_BTNS> pad_btns_up;
+	static std::bitset<PAD_TOTAL_BTNS> pad_btns_down;
+
+	static float pad_axes[JOYPAD_COUNT * PAD_AXES_COUNT];
+
 	static GLFWwindow *active_window;
 
 public:
@@ -80,6 +93,7 @@ public:
 	{
 		std::bitset<256> key_changes = keys ^ keys_prev;
 		std::bitset<3> mouse_changes = mouse ^ mouse_prev;
+		std::bitset<PAD_TOTAL_BTNS> pad_changes = pad_btns ^ pad_btns_prev;
 
 		keys_down = key_changes & keys;
 		keys_up = key_changes & (~keys);
@@ -89,7 +103,37 @@ public:
 		mouse_up = mouse_changes & (~mouse);
 		mouse_prev = mouse;
 
-		double cursor_x, cursor_y;
+		for(int i = 0; i < 4; ++i)
+		{
+			if(IsPadPresent(i) == false)
+			{
+				for(int j = 0; j < PAD_BTN_COUNT; ++j)
+					pad_btns[i * PAD_BTN_COUNT + j] = 0;
+
+				for(int j = 0; j < PAD_AXES_COUNT; ++j)
+					pad_axes[i * PAD_AXES_COUNT + j] = 0;
+
+				continue;
+			}
+
+			int btn_count = PAD_BTN_COUNT;
+			int axes_count = PAD_AXES_COUNT;
+			const unsigned char *btn_values =
+				glfwGetJoystickButtons(i, &btn_count);
+			const float *axes_values =
+				glfwGetJoystickAxes(0, &axes_count);
+
+			for(int j = 0; j < PAD_BTN_COUNT; ++j)
+				pad_btns[i * PAD_BTN_COUNT + j] = btn_values[j];
+
+			for(int j = 0; j < PAD_AXES_COUNT; ++j)
+				pad_axes[i * PAD_AXES_COUNT + j] =
+					axes_values[j];
+		}
+
+		pad_btns_down = pad_changes & pad_btns;
+		pad_btns_up = pad_changes & (~pad_btns);
+		pad_btns_prev = pad_btns;
 	}
 
 	static int GetKey(int key)
@@ -132,6 +176,39 @@ public:
 		glfwGetCursorPos(active_window, &x, &y);
 
 		return glm::vec2(x, y);
+	}
+
+	static bool IsPadPresent(int i)
+	{
+		return glfwJoystickPresent(i);
+	}
+
+	static const char* GetPadName(int i)
+	{
+		return glfwGetJoystickName(i);
+	}
+
+	static int GetPadButton(int i)
+	{
+		if(i < 0 || i >= PAD_BTN_COUNT)
+			return 0;
+
+		if(pad_btns_down[i])
+			return JBTN_PRESS;
+		if(pad_btns_up[i])
+			return JBTN_RELEASE;
+		if(pad_btns[i])
+			return JBTN_HOLD;
+
+		return 0;
+	}
+
+	static float GetPadAxes(int i)
+	{
+		if(i < 0 || i >= PAD_AXES_COUNT)
+			return 0;
+
+		return pad_axes[i];
 	}
 
 private:

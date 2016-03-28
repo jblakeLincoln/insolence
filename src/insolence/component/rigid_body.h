@@ -3,19 +3,18 @@
 
 #include "movement.h"
 #include "component.h"
-#include "entity.h"
+#include "../game/entity.h"
 #include "../physics/physics_manager.h"
 #include <btBulletDynamicsCommon.h>
 
-struct PhysicsManager;
 struct RigidBody : public Component
 {
 private:
-	RigidBody() {}
-
 public:
 	btRigidBody *rigid_body;
-	RigidBody(PhysicsManager *phys, Entity *e);
+	RigidBody() :
+		rigid_body(0)
+	{}
 	~RigidBody();
 };
 

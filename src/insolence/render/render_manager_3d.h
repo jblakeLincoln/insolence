@@ -7,8 +7,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <GL/glew.h>
 
-#include "../component/mesh.h"
-#include "../component/material.h"
+#include "../game/mesh.h"
+#include "../game/material.h"
 #include "render_manager.h"
 
 /* TODO Issue #21: Logging. */

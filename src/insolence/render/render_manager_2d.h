@@ -6,8 +6,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "../component/font.h"
-#include "../component/texture.h"
+#include "../game/font.h"
+#include "../game/texture.h"
 #include "render_manager.h"
 
 /* TODO Issue #13: Logging. */

@@ -141,8 +141,11 @@ void RenderManager2D::Add(Texture *t, const glm::mat4& model,
 		for(int j = 0; j < 4; ++j)
 			data[t][count[t] * 24 + (i * 4 + j)] = model[i][j];
 
+	/* Way bad. */
+	/*
 	if(data[t][count[t] * 24 + 14] == 0)
 		data[t][count[t] * 24 + 14] = count[t] * 0.1;
+	*/
 
 
 	for(int i = 0; i < 4; ++i)
