@@ -4,12 +4,11 @@
 #include <GL/glew.h>
 #include <glm/matrix.hpp>
 
-#include "entity.h"
 #include "../component/movement.h"
 #include "../render/shader_program.h"
 #include "../render/render_manager.h"
 
-struct Camera : Entity
+struct Camera
 {
 private:
 	struct CameraBlock {

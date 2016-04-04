@@ -1,4 +1,7 @@
 solution "insolence"
+	premake.gcc.cc = 'clang'
+	premake.gcc.cxx = 'clang++'
+
 	objdir "obj"
 	targetdir ( "bin" )
 	configurations { "Debug", "Release" }

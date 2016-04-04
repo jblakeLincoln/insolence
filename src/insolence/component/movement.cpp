@@ -1,9 +1,21 @@
 #include "movement.h"
 
-Movement::Movement()
+void Movement::Construct()
 {
 	model_changed = false;
 	scale = glm::mat4(1.f);
+}
+
+Movement::Movement()
+{
+	Construct();
+}
+
+Movement::Movement(const glm::vec3& pos)
+{
+	Construct();
+
+	SetPosition(pos);
 }
 
 const glm::vec3 Movement::GetPosition() const

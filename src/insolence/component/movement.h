@@ -5,15 +5,17 @@
 #include <glm/matrix.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <cstdio>
 
 #include "component.h"
 
 /* TODO Issue #20:	Make sure returned properties consider each other and
  *					any changes that could have occurred.
  */
-struct Movement : public Component
-{
+struct Movement : Component {
 private:
+	void Construct();
+
 	glm::mat4 model_matrix;
 	bool model_changed;
 
@@ -22,6 +24,7 @@ private:
 	glm::mat4 scale;
 public:
 	Movement();
+	Movement(const glm::vec3& pos);
 
 	/**
 	 * \return	vec3 of position X, Y, Z.

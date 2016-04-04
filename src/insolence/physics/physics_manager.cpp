@@ -57,13 +57,8 @@ void PhysicsManager::StepSimulation(float step)
 	dynamics_world->stepSimulation(step);
 }
 
-btRigidBody* PhysicsManager::CreateRigidBody(Entity *e)
+btRigidBody* PhysicsManager::CreateRigidBody(Movement *m)
 {
-	Movement* m = e->Get<Movement>();
-
-	if(m == NULL)
-		m = new Movement();
-
 	btCollisionShape *box_shape = new btBoxShape(btVector3
 			(m->GetScale().x, m->GetScale().y, m->GetScale().z));
 
@@ -100,6 +95,7 @@ btRigidBody* PhysicsManager::CreateRigidBody(Entity *e)
 	return rigid_body;
 }
 
+/*
 btPoint2PointConstraint* PhysicsManager::CreateConstraint(Entity *e1,
 		Entity *e2, const glm::vec3& c1, const glm::vec3& c2)
 {
@@ -176,3 +172,4 @@ bool PhysicsManager::IsSleeping(Entity *e)
 			return true;
 	}
 }
+*/

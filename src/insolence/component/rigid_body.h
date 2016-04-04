@@ -1,10 +1,7 @@
-#ifndef RIGID_BODY_H
-#define RIGID_BODY_H
+#ifndef COMPONENT_RIGID_BODY_H
+#define COMPONENT_RIGID_BODY_H
 
-#include "movement.h"
 #include "component.h"
-#include "../game/entity.h"
-#include "../physics/physics_manager.h"
 #include <btBulletDynamicsCommon.h>
 
 struct RigidBody : public Component
@@ -14,8 +11,12 @@ public:
 	btRigidBody *rigid_body;
 	RigidBody() :
 		rigid_body(0)
-	{}
-	~RigidBody();
+	{
+	}
+	~RigidBody() {
+	//	delete rigid_body;
+
+	}
 };
 
 #endif

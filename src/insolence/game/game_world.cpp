@@ -1,4 +1,5 @@
 #include "game_world.h"
+#include "entity_manager.cpp"
 
 void BaseGameWorld::BaseInitialise()
 {
@@ -6,6 +7,7 @@ void BaseGameWorld::BaseInitialise()
 	is_running = true;
 
 	gametime = GameTime();
+	entity_manager = new EntityManager();
 
 	Initialise();
 	BaseUpdate();
@@ -15,6 +17,7 @@ void BaseGameWorld::BaseUpdate()
 {
 	gametime.Update();
 	Update(gametime);
+	entity_manager->Manage(gametime);
 	BaseDraw();
 }
 
@@ -32,6 +35,7 @@ void BaseGameWorld::BaseDraw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	Draw();
+	entity_manager->FlushDraw();
 
 	window->SwapBuffers();
 	Window::PollEvents();
@@ -49,4 +53,12 @@ void BaseGameWorld::BaseUnload()
 void BaseGameWorld::Run()
 {
 	BaseInitialise();
+}
+
+Entity* BaseGameWorld::CreateEntity()
+{
+	Entity *e = new Entity(entity_manager);
+	e->Add<Movement>(glm::vec3(12));
+
+	return e;
 }
