@@ -147,10 +147,10 @@ private:
 
 public:
 
+	Entity(EntityManager *m);
 	/**
 	 * Create an Entity with systems managed by a particular EntityManager.
 	 */
-	Entity(EntityManager *m);
 	~Entity() {}
 
 	uint32_t id;

@@ -5,12 +5,12 @@
 #include <insolence/game/game_world.h>
 #include <insolence/render/render_manager_3d.h>
 #include <insolence/render/render_manager_2d.h>
-#include <insolence/component/animation.h>
+#include <insolence/game/animation.h>
 #include <insolence/game/camera.h>
 #include <insolence/game/entity.h>
 #include <insolence/game/font.h>
 #include <insolence/game/material.h>
-#include <insolence/systems/rigid_body.h>
+#include <insolence/systems/rigid_body_system.h>
 #include <insolence/physics/physics_manager.h>
 
 #define ENTITY_NUM 20
@@ -60,25 +60,13 @@ private:
 		tex_white	=	Texture::LoadColour(glm::vec4(1.f));
 		tex_mega	=	Texture::LoadFile("assets/mega_run.png");
 
-		mesh_crate = Mesh::LoadFile("assets/crate.obj",
-				renderer_3d->shader_program);
-		mesh_tri = Mesh::LoadFile("assets/tri.obj",
-				renderer_3d->shader_program);
-
-		tex_mega->owner = 0;
-		tex_white->owner = 0;
-		mesh_tri->owner = 0;
-		mesh_crate->owner = 0;
-
 		entity_2d = CreateEntity2D(tex_mega, glm::vec3(20.f, 2.f, 1.f));
 
 		material_crate = new Material();
-		material_crate->owner = 0;
 		material_crate->diffuse = Texture::LoadFile("assets/crate.png");
 		material_crate->normal = Texture::LoadFile("assets/crate_n.png");
 
 		material_white = new Material();
-		material_white->owner = 0;
 		material_white->diffuse = tex_white;
 		material_white->normal = material_crate->normal;
 
@@ -96,6 +84,7 @@ private:
 			//phys->Make2D(entities_3d[i]);
 		}
 
+		/*
 		plane = CreateEntity3D(glm::vec3(-5.f), glm::vec3(50.f, 1.f, 50.f),
 				colours[3], mesh_crate, material_white, phys);
 		plane->Get<RigidBody>()->rigid_body->setMassProps(0.f,
@@ -103,7 +92,7 @@ private:
 		plane->Get<Colour>()->colour = glm::vec4(0.6f, 0.1f, 0.2f, 1.f);
 
 		phys->ChangeMass(entities_3d[0], 2.f);
-
+*/
 		/*
 		phys->CreateConstraint(
 				entities_3d[0], entities_3d[1],
@@ -119,6 +108,7 @@ private:
 
 	void Update(const GameTime& gametime)
 	{
+		/*
 		phys->StepSimulation(1.0/60.0);
 		plane->Get<RigidBody>()->rigid_body->setLinearVelocity(
 				btVector3(0.f, 0.f, 0.f));
@@ -166,6 +156,7 @@ private:
 		ProgressAnimation(entity_2d, gametime.GetFrameTime());
 
 		renderer_3d->SetViewPosition(camera->pos.GetPosition());
+		*/
 	}
 
 	void Draw()
@@ -179,8 +170,6 @@ private:
 
 		renderer_2d->AddText(f, "MrotavatorW", glm::vec2(-10, 0), glm::vec4(0.f,
 					0.f, 0.f, 1.f), FontAlign::LEFT, glm::vec2(0.05f));
-		renderer_2d->Add(tex_mega, model, glm::vec4(1.f),
-				GetAnimationRectangle(entity_2d, tex_mega));
 
 		camera->Post();
 		renderer_3d->Flush();
@@ -189,10 +178,12 @@ private:
 
 	void DrawEntity3D(Entity *e)
 	{
+		/*
 		renderer_3d->Add(e->Get<Mesh>(),
 				e->Get<Material>(),
 				e->Get<Colour>()->colour,
 				e->Get<Movement>()->GetModelMatrix());
+				*/
 	}
 
 	void Unload()
@@ -209,10 +200,12 @@ private:
 
 	static Entity* CreateEntity2D(Texture *t, const glm::vec3& pos)
 	{
+		/*
 		Entity *e = new Entity();
 		e->Add(new Animation(3, 3, glm::vec4(30, 64, 180, 180), 100));
+		*/
 
-		return e;
+		//return e;
 	}
 
 	static Entity* CreateEntity3D(const glm::vec3& pos, const glm::vec3& scale,
@@ -221,6 +214,7 @@ private:
 		glm::vec4 c = glm::vec4((color.x + color.y + color.z)/3.f);
 		c.w = color.w;
 
+		/*
 		Entity *e = new Entity();
 		e->Add(new Movement());
 		e->Add(m);
@@ -231,6 +225,7 @@ private:
 		e->Get<Colour>()->colour = c;
 		e->Add(new RigidBody(p, e));
 		return e;
+		*/
 	}
 };
 

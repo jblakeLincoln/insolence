@@ -31,6 +31,8 @@ public:
 	 */
 	const glm::vec3 GetPosition() const;
 
+	const glm::vec2 GetPositionXY() const;
+
 	/**
 	 * \return	Quaternion of orientation.
 	 */

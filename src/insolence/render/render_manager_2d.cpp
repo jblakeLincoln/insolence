@@ -171,7 +171,6 @@ void RenderManager2D::AddText(Font *f, const char *str, const glm::vec2& pos,
 		const glm::vec4& col, FontAlign origin, glm::vec2 scale)
 {
 	float offset = 0;
-
 	float length = 0;
 
 	if(scale == glm::vec2())
@@ -196,7 +195,7 @@ void RenderManager2D::AddText(Font *f, const char *str, const glm::vec2& pos,
 	if(origin == FontAlign::CENTRE)
 		offset -= length / 2.0;
 	else if (origin == FontAlign::RIGHT)
-		offset -= length;
+		offset += length;
 
 	for(int i = 0; i < strlen(str); ++i)
 	{

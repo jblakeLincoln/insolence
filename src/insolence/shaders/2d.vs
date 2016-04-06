@@ -1,4 +1,4 @@
-#version 150
+#version 140
 
 layout(std140) uniform Camera {
 	mat4 mat_proj;

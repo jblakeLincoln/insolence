@@ -15,6 +15,8 @@
 #include "../render/render_manager_2d.h"
 #include "../render/render_manager_3d.h"
 #include "../systems/mesh_renderable_system.h"
+#include "../systems/sprite_renderable_system.h"
+#include "../systems/text_renderable_system.h"
 #include "../systems/rigid_body_system.h"
 
 #include <cstddef>
@@ -45,10 +47,24 @@ public:
 		physics_manager = PhysicsManager::Create(glm::vec3(0.f, -9.8f, 0.f));
 
 		systems[typeid(Movement).hash_code()] = new System<Movement>();
+
+		systems[typeid(SpriteRenderable).hash_code()] =
+			new SpriteRenderableSystem(renderer_2d);
+
+		systems[typeid(TextRenderable).hash_code()] =
+			new TextRenderableSystem(renderer_2d);
+
 		systems[typeid(MeshRenderable).hash_code()] =
 			new MeshRenderableSystem(renderer_3d);
+
 		systems[typeid(RigidBody).hash_code()] =
 			new RigidBodySystem(physics_manager);
+	}
+
+	Entity* CreateEntity()
+	{
+		entities.push_back(new Entity(this));
+		return entities.back();
 	}
 
 	/**

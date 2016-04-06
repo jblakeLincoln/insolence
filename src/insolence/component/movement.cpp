@@ -28,6 +28,16 @@ const glm::vec3 Movement::GetPosition() const
 	return ret_pos;
 }
 
+const glm::vec2 Movement::GetPositionXY() const
+{
+	glm::vec2 ret_pos;
+
+	for(int i = 0; i < 2; ++i)
+		ret_pos[i] = position[3][i];
+
+	return ret_pos;
+}
+
 const glm::vec3 Movement::GetScale() const
 {
 	glm::vec3 ret_scale;

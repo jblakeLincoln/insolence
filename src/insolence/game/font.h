@@ -57,7 +57,7 @@ public:
 		}
 
 		out->mat = new Material();
-		out->mat->diffuse = Texture::LoadColour(glm::vec4(1.f));
+		out->mat->diffuse = Texture::LoadColour(glm::vec4(0.f));
 
 		if(FT_New_Face(ft, path, 0, &face))
 		{
@@ -67,7 +67,6 @@ public:
 		}
 
 		FT_Set_Pixel_Sizes(face, 0, size);
-		FT_Pixel_Mode(FT_PIXEL_MODE_GRAY);
 		FT_GlyphSlot g = face->glyph;
 
 		out->w = 0;
@@ -89,7 +88,7 @@ public:
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glBindTexture(GL_TEXTURE_2D, out->mat->diffuse->GetID());
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, out->w,
-				out->h, 0, GL_ALPHA, GL_UNSIGNED_BYTE, 0);
+				out->h, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 0);
 
 		/*
 		 * Place each glyph into the correct place in the newly generated
@@ -111,9 +110,25 @@ public:
 			out->c[i].h = g->bitmap.rows;
 			out->c[i].l = g->bitmap_left;
 			out->c[i].t = g->bitmap_top;
+
+			/* Go over our font data and change it to render white. */
+			GLubyte *buf = new GLubyte[2 * g->bitmap.width * g->bitmap.rows];
+			for(int j = 0; j < g->bitmap.rows; ++j)
+			{
+				for(int i = 0; i < g->bitmap.width; ++i)
+				{
+					buf[2 * (i + j * g->bitmap.width)] = 255;
+					buf[2 * (i + j * g->bitmap.width) + 1] =
+						(i >= g->bitmap.width || j >= g->bitmap.rows) ? 0 :
+						g->bitmap.buffer[i + g->bitmap.width * j];
+				}
+			}
+
 			glTexSubImage2D(GL_TEXTURE_2D, 0, x, 0, out->c[i].w,
-					out->c[i].h, GL_ALPHA, GL_UNSIGNED_BYTE,
-					g->bitmap.buffer);
+					out->c[i].h, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE,
+					buf);
+
+			delete[] buf;
 
 			x += out->c[i].w;
 		}

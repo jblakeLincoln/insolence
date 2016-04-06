@@ -1,8 +1,13 @@
 #include "animation.h"
 
 Animation::Animation()
+:
+	frames(0),
+	cols(0),
+	offset(glm::vec2(0)),
+	rect(glm::vec4(0, 0, 1, 1)),
+	frame_time(0)
 {
-	rect = glm::vec4(0, 0, 1, 1);
 }
 
 Animation::~Animation()
@@ -19,9 +24,12 @@ Animation::Animation(int in_frames, int in_cols,
 	timer(0)
 {}
 
-void Animation::Progress(int frame_time)
+void Animation::Progress(const TimeSpan& frametime)
 {
-	timer += frame_time;
+	if(frames == 0)
+		return;
+
+	timer += frametime;
 
 	if(timer.ElapsedMilliseconds() >= frame_time * frames)
 	{

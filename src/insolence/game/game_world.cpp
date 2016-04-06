@@ -57,8 +57,8 @@ void BaseGameWorld::Run()
 
 Entity* BaseGameWorld::CreateEntity()
 {
-	Entity *e = new Entity(entity_manager);
-	e->Add<Movement>(glm::vec3(12));
+	Entity *e = entity_manager->CreateEntity();
+	e->Add<Movement>();
 
 	return e;
 }

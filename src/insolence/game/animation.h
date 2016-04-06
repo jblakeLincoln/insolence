@@ -30,7 +30,12 @@ public:
 	Animation(int frames, int cols,
 		const glm::vec4& in_rect, int time);
 
-	void Progress(int frame_time);
+	void Progress(const TimeSpan& frametime);
+
+	/**
+	 * Returns a normalised rectangle based on the animation and the texture
+	 * height.
+	 */
 	glm::vec4 GetAnimationRectangle(Texture *t);
 };
 
