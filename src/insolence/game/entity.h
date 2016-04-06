@@ -57,7 +57,10 @@ private:
 	TComponent* CreateTComponent(Entity *e, const TComponent* comp)
 	{
 		components.emplace(e, *comp);
-		return &(components.find(e)->second);
+		TComponent *t = &(components.find(e)->second);
+		EndCreation(e, t);
+
+		return t;
 
 		/* Square bracket overload wants a constructor. */
 		//return &(components[e] = (TComponent)(*comp));
@@ -90,6 +93,8 @@ public:
 		Remove();
 		components.erase(e);
 	}
+
+	virtual void EndCreation(Entity* e, TComponent *c) {}
 };
 
 struct Entity

@@ -4,6 +4,16 @@ RigidBodySystem::RigidBodySystem(PhysicsManager *p)
 :	physics_manager(p)
 {}
 
+void RigidBodySystem::EndCreation(Entity *e, RigidBody *c)
+{
+	Movement *m = e->Get<Movement>();
+
+	c->manager = physics_manager;
+
+	if(c->rigid_body == NULL && m != NULL)
+		c->rigid_body = physics_manager->CreateRigidBody(m);
+}
+
 void RigidBodySystem::Manage(const GameTime& gametime)
 {
 	for(it = components.begin(); it != components.end(); ++it)
@@ -12,11 +22,8 @@ void RigidBodySystem::Manage(const GameTime& gametime)
 		RigidBody *r = &it->second;
 		Movement *m = e->Get<Movement>();
 
-		if(m == NULL || r == NULL)
+		if(m == NULL || r == NULL || r->rigid_body == NULL)
 			return;
-
-		if(r->rigid_body == NULL)
-			r->rigid_body = physics_manager->CreateRigidBody(m);
 
 		glm::vec3 position = glm::vec3(
 				r->rigid_body->getCenterOfMassPosition().x(),

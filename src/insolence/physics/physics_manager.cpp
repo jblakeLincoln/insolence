@@ -116,60 +116,8 @@ btPoint2PointConstraint* PhysicsManager::CreateConstraint(Entity *e1,
 
 	return pt;
 }
-
-void PhysicsManager::ChangeMass(Entity *e, float mass)
-{
-	btRigidBody *r = e->Get<RigidBody>()->rigid_body;
-
-	if(r == NULL)
-		return;
-	dynamics_world->removeRigidBody(r);
-	btVector3 inertia = btVector3(0.f, 0.f, 0.f);
-
-	r->getCollisionShape()->calculateLocalInertia(mass, inertia);
-	r->setMassProps(mass, inertia);
-	dynamics_world->addRigidBody(r);
-}
-
-void PhysicsManager::Activate(Entity *e)
-{
-	btRigidBody *r = e->Get<RigidBody>()->rigid_body;
-
-	if(r == NULL)
-		return;
-
-	r->setActivationState(ACTIVE_TAG);
-}
-
-void PhysicsManager::Deactivate(Entity *e)
-{
-	ChangeMass(e, 0);
-}
-
-void PhysicsManager::Make2D(Entity *e)
-{
-	btRigidBody *r = e->Get<RigidBody>()->rigid_body;
-
-	if(r == NULL)
-		return;
-
-	r->setLinearFactor(btVector3(1, 1, 0));
-	r->setAngularFactor(btVector3(0, 0, 1));
-}
-
-bool PhysicsManager::IsSleeping(Entity *e)
-{
-	btRigidBody *r = e->Get<RigidBody>()->rigid_body;
-
-	if(r == NULL)
-		return true;
-
-	switch(r->getActivationState())
-	{
-		case ISLAND_SLEEPING:
-			return false;
-		default:
-			return true;
-	}
-}
 */
+
+
+
+

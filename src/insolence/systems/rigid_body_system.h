@@ -14,6 +14,7 @@ private:
 public:
 	RigidBodySystem(PhysicsManager*);
 	void Manage(const GameTime&);
+	void EndCreation(Entity*, RigidBody*);
 };
 
 #endif

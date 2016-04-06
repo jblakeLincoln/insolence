@@ -1,6 +1,7 @@
 #ifndef PHYSICS_MANAGER_H
 #define PHYSICS_MANAGER_H
 
+#include "../game/entity.h"
 #include "../component/movement.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -8,7 +9,10 @@
 
 #include <btBulletDynamicsCommon.h>
 
+struct Entity;
+struct RigidBody;
 struct PhysicsManager {
+	friend RigidBody;
 private:
 	PhysicsManager() {}
 
@@ -40,14 +44,6 @@ public:
 	btRigidBody* CreateRigidBody(Movement *m);
 
 	/**
-	 * Change the mass of an entity. 0 makes the entity static.
-	 *
-	 * \param e		Entity to affect.
-	 * \param mass	Mass to apply.
-	 */
-	//void ChangeMass(Entity *e, float mass);
-
-	/**
 	 * Create a constraint between two entities. The constraint is tracked
 	 * by the manager and will be deleted at manager destruction.
 	 *
@@ -59,30 +55,6 @@ public:
 	 */
 	//btPoint2PointConstraint* CreateConstraint(Entity *e1, Entity *e2,
 	//		const glm::vec3& c1, const glm::vec3& c2);
-
-	/**
-	 * Activate an entity.
-	 */
-	//void Activate(Entity *e);
-
-	/**
-	 * Deactivate an entity.
-	 */
-	//void Deactivate(Entity *e);
-
-	/**
-	 * Constrain the rigid body to move only on the X and Y axis, and only
-	 * rotate on the Y axis.
-	 */
-	//void Make2D(Entity *e);
-
-	/**
-	 * Check if the rigid body of an entity is sleeping.
-	 *
-	 * \return	True if sleeping (btRigidBody state ISLAND_SLEEPING),
-	 *			otherwise false.
-	 */
-	//bool IsSleeping(Entity *e);
 
 	/**
 	 * Create a physics manager - has its own gravity and controls a set of
