@@ -14,6 +14,12 @@ void RigidBodySystem::EndCreation(Entity *e, RigidBody *c)
 		c->rigid_body = physics_manager->CreateRigidBody(m);
 }
 
+void RigidBodySystem::RemoveOverride(Entity *e, RigidBody *c)
+{
+	if(physics_manager != NULL && c->rigid_body != NULL)
+		c->manager->RemoveRigidBody(c->rigid_body);
+}
+
 void RigidBodySystem::Manage(const GameTime& gametime)
 {
 	for(it = components.begin(); it != components.end(); ++it)

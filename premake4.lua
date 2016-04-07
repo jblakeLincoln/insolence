@@ -13,4 +13,4 @@ solution "insolence"
 		defines "LINUX"
 
 	dofile("./src/insolence.lua")
-	--dofile("./samples/samples.lua")
+	dofile("./samples/samples.lua")

@@ -95,6 +95,18 @@ btRigidBody* PhysicsManager::CreateRigidBody(Movement *m)
 	return rigid_body;
 }
 
+void PhysicsManager::RemoveRigidBody(btRigidBody *r)
+{
+	if(r == NULL)
+		return;
+
+	dynamics_world->removeRigidBody(r);
+
+	delete r;
+	r = 0;
+}
+
+
 /*
 btPoint2PointConstraint* PhysicsManager::CreateConstraint(Entity *e1,
 		Entity *e2, const glm::vec3& c1, const glm::vec3& c2)

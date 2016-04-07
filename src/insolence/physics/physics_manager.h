@@ -28,6 +28,8 @@ public:
 	PhysicsManager(const glm::vec3 &gravity);
 	~PhysicsManager();
 
+	void RemoveRigidBody(btRigidBody *r);
+
 	/**
 	 * Progress the simulation.
 	 *

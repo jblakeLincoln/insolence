@@ -103,6 +103,15 @@ public:
 		}
 	}
 
+	void Remove(Entity *e)
+	{
+		if(entities.size() > 0)
+		{
+			entities.erase(std::remove(entities.begin(), entities.end(),
+					e), entities.end());
+		}
+	}
+
 	/**
 	 * Remove a component for a specified entity from its system.
 	 *

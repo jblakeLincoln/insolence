@@ -15,5 +15,5 @@ if [ $RETVAL -eq 0 ]; then
 	ln -sf ../src/insolence/assets
 	ln -sf ../src/insolence/shaders
 	export LD_LIBRARY_PATH=.
-	#./insolence_samples
+	./insolence_samples
 fi

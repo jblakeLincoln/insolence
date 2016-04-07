@@ -22,6 +22,11 @@ void Entity::RemoveFromManager(size_t hash)
 	return manager->Remove(this, hash);
 }
 
+void Entity::RemoveEntityFromManager(Entity*)
+{
+	manager->Remove(this);
+}
+
 void Entity::SendSystemToManager(ISystem *sys, size_t hash)
 {
 	manager->AddSystem(sys, hash);

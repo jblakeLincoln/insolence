@@ -6,7 +6,7 @@ MeshRenderableSystem::MeshRenderableSystem(RenderManager3D* r)
 
 void MeshRenderableSystem::Manage(const GameTime& gametime)
 {
-	for(it = components.begin(); it!= components.end(); ++it)
+	for(it = components.begin(); it != components.end(); ++it)
 	{
 		Movement *m = it->first->Get<Movement>();
 

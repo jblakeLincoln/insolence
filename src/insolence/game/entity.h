@@ -83,14 +83,14 @@ public:
 	/**
 	 * Overload this function for specialised removal.
 	 */
-	virtual void Remove() {}
+	virtual void RemoveOverride(Entity *e, TComponent *c) {}
 
 	/**
 	 *	Calls Remove and erases the component attached to the sent entity from
 	 *	the storage container.
 	 */
 	void Remove(Entity *e) final {
-		Remove();
+		RemoveOverride(e, &components.find(e)->second);
 		components.erase(e);
 	}
 
@@ -140,23 +140,42 @@ private:
 	 */
 	void RemoveFromManager(size_t);
 
+	void RemoveEntityFromManager(Entity*);
+
 	/**
 	 * Removes this entity from the manager - the manager will handle
 	 * getting rid of all the components from the relevant systems.
 	 *
 	 * TODO
 	 */
-	void Destroy();
 
 	Entity() {}
 
 public:
+	void Destroy()
+	{
+		delete this;
+	}
 
 	Entity(EntityManager *m);
 	/**
 	 * Create an Entity with systems managed by a particular EntityManager.
 	 */
-	~Entity() {}
+	~Entity() {
+		typename std::unordered_map<size_t, Component*>::iterator it;
+
+		it = components.begin();
+
+		while(components.size() != 0)
+		{
+			it = components.begin();
+			const size_t hash = typeid(*it->second).hash_code();
+			RemoveFromManager(hash);
+			components.erase(hash);
+		}
+
+		RemoveEntityFromManager(this);
+	}
 
 	uint32_t id;
 
@@ -211,8 +230,11 @@ template<typename T>
 void Entity::Remove()
 {
 	const size_t hash = typeid(T).hash_code();
+	printf("Removing from manager\n");
 	RemoveFromManager(hash);
+	printf("Removed from manager\n");
 	components.erase(hash);
+	printf("Erased\n");
 }
 
 #endif
