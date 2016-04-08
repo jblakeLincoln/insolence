@@ -105,11 +105,11 @@ public:
 
 	void Remove(Entity *e)
 	{
-		if(entities.size() > 0)
-		{
-			entities.erase(std::remove(entities.begin(), entities.end(),
-					e), entities.end());
-		}
+		if(entities.size() == 0)
+			return;
+
+		entities.erase(std::remove(entities.begin(), entities.end(),
+				e), entities.end());
 	}
 
 	/**

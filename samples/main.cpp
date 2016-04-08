@@ -21,7 +21,7 @@ struct Game1 : BaseGameWorld
 	Material *material;
 
 	int counter = 0;
-	float count = 500.f;
+	float count = 100.f;
 
 	void Initialise()
 	{
@@ -72,12 +72,15 @@ struct Game1 : BaseGameWorld
 
 		if(entities.size() > 0)
 		{
-
 			if(++counter > count)
 				counter = 0;
-			entities[0]->Destroy();
-			entities.erase(entities.begin());
-			Spawn(counter);
+
+			for(int i = 0; i < count; ++i)
+			{
+				entities[0]->Destroy();
+				entities.erase(entities.begin());
+				Spawn(counter);
+			}
 		}
 
 		entity_manager->renderer_3d->SetViewPosition(camera->pos.GetPosition());

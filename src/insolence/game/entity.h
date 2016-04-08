@@ -151,7 +151,11 @@ private:
 
 	Entity() {}
 
+	uint32_t id;
 public:
+
+	uint32_t GetID() { return id; }
+
 	void Destroy()
 	{
 		delete this;
@@ -161,23 +165,7 @@ public:
 	/**
 	 * Create an Entity with systems managed by a particular EntityManager.
 	 */
-	~Entity() {
-		typename std::unordered_map<size_t, Component*>::iterator it;
-
-		it = components.begin();
-
-		while(components.size() != 0)
-		{
-			it = components.begin();
-			const size_t hash = typeid(*it->second).hash_code();
-			RemoveFromManager(hash);
-			components.erase(hash);
-		}
-
-		RemoveEntityFromManager(this);
-	}
-
-	uint32_t id;
+	~Entity();
 
 	/**
 	 * Functions for interacting with components.

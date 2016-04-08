@@ -21,7 +21,7 @@ PhysicsManager::~PhysicsManager()
 		btCollisionObject *obj = dynamics_world->getCollisionObjectArray()[i];
 		btRigidBody *body = btRigidBody::upcast(obj);
 
-		if (body && body->getMotionState())
+		if(body && body->getMotionState())
 			delete body->getMotionState();
 
 		dynamics_world->removeCollisionObject(obj);
@@ -101,9 +101,17 @@ void PhysicsManager::RemoveRigidBody(btRigidBody *r)
 		return;
 
 	dynamics_world->removeRigidBody(r);
+	collision_shapes.remove(r->getCollisionShape());
+
+	btCollisionShape *obj = r->getCollisionShape();
+	btMotionState *m = r->getMotionState();
 
 	delete r;
+	delete obj;
+	delete m;
 	r = 0;
+	obj = 0;
+	m = 0;
 }
 
 

@@ -7,6 +7,22 @@ Entity::Entity(EntityManager *m)
 	manager(m)
 {}
 
+
+Entity::~Entity()
+{
+	typename std::unordered_map<size_t, Component*>::iterator it;
+
+	while(components.size() != 0)
+	{
+		it = components.begin();
+		const size_t hash = typeid(*it->second).hash_code();
+		RemoveFromManager(hash);
+		components.erase(hash);
+	}
+
+	manager->Remove(this);
+}
+
 Component* Entity::SendToManager(const Component *c, size_t hash)
 {
 	return manager->Add(this, c, hash);
@@ -20,11 +36,6 @@ bool Entity::CheckSystemExists(size_t hash)
 void Entity::RemoveFromManager(size_t hash)
 {
 	return manager->Remove(this, hash);
-}
-
-void Entity::RemoveEntityFromManager(Entity*)
-{
-	manager->Remove(this);
 }
 
 void Entity::SendSystemToManager(ISystem *sys, size_t hash)
