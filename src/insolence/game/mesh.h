@@ -1,6 +1,8 @@
 #ifndef MESH_H
 #define MESH_H
 
+#include "../game/log.h"
+
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -31,7 +33,8 @@ public:
 
 		if(scene == NULL)
 		{
-			// Log failure.
+			log(Log::FATAL, "Mesh (%s) - Failed to initialise aiImportFile.",
+					__FUNCTION__);
 			return NULL;
 		}
 
@@ -53,15 +56,27 @@ public:
 					mesh_data[(attrib_length * i) + 3 + j] =
 						scene->mMeshes[0]->mNormals[i][j];
 		}
+		else
+			log(Log::WARN, "Mesh (%s) - %s has no normal data.",
+					__FUNCTION__, file);
 
-		for(int i = 0; i < vert_count; ++i)
+		if(scene->mMeshes[0]->mTextureCoords != NULL)
 		{
-			for(int j = 0; j < 2; ++j)
-				mesh_data[(attrib_length * i) + 6 + j] =
-					scene->mMeshes[0]->mTextureCoords[0][i][j];
+			for(int i = 0; i < vert_count; ++i)
+			{
+				for(int j = 0; j < 2; ++j)
+					mesh_data[(attrib_length * i) + 6 + j] =
+						scene->mMeshes[0]->mTextureCoords[0][i][j];
+			}
 		}
+		else
+			log(Log::WARN, "Mesh (%s) - %s has no tex coord data.",
+					__FUNCTION__, file);
 
 		aiReleaseImport(scene);
+
+		log(Log::INFO, "Mesh (%s) - Loaded %s successfully.",
+				__FUNCTION__, file);
 
 		return new Mesh(mesh_data, vert_count);
 	}

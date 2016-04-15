@@ -1,13 +1,14 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include <cstdio>
-#include <stdlib.h>
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
+#include "../game/log.h"
 #include "input.h"
 #include "keys.h"
+
+#include <cstdio>
+#include <stdlib.h>
+#include <GLFW/glfw3.h>
 
 struct Window
 {
@@ -20,8 +21,6 @@ private:
 	GLuint width;
 	GLuint height;
 	bool should_close;
-
-	/* TODO Issue #4: Add window options. */
 
 public:
 	bool ShouldClose() { return glfwWindowShouldClose(glfw_window); }
@@ -44,14 +43,11 @@ public:
 		int gl_minor = 1;
 
 		/* TODO Issue #2: Log success/failure. */
-		if(glfwInit() == GL_TRUE)
+		if(glfwInit() != GL_TRUE)
 		{
-			// Log success
-		}
-		else
-		{
-			// Log failure
-			exit(-1);
+			log(Log::FATAL, "Window (%s) - Failed to initialise GLFW",
+					__FUNCTION__);
+			return NULL;
 		}
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_major);
@@ -73,12 +69,16 @@ public:
 
 		if(glewInit() != GLEW_OK)
 		{
-			// Log GLEW failure
-			exit(-1);
+			log(Log::FATAL, "Window (%s) - Failed to initialise GLEW.",
+					__FUNCTION__);
+			return NULL;
 		}
 
 		Input::AttachWindowToKeyboard(output->glfw_window);
 		Input::SetMouseWindow(output->glfw_window);
+
+		log(Log::INFO, "Window (%s) - Successful window creation",
+				__FUNCTION__);
 
 		// Log window creation success.
 		return output;

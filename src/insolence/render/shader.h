@@ -1,6 +1,8 @@
 #ifndef SHADER_H
 #define SHADER_H
 
+#include "../game/log.h"
+
 #include <stdio.h>
 #include <GL/glew.h>
 
@@ -72,7 +74,8 @@ public:
 
 		if(file == NULL)
 		{
-			// Log error
+			log(Log::ERR, "Shader (%s) - Failed to find file %s",
+					__FUNCTION__, path);
 			return new Shader(type);
 		}
 
@@ -88,6 +91,9 @@ public:
 		output = Shader::CreateFromString(buffer, type);
 
 		delete[] buffer;
+
+		log(Log::INFO, "Shader (%s) - Successfully created %s",
+				__FUNCTION__, path);
 
 		return output;
 	}

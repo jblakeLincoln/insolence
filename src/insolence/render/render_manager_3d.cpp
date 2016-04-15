@@ -7,7 +7,8 @@ RenderManager3D::RenderManager3D()
 
 	if(shader_program == NULL)
 	{
-		// Error out.
+		log(Log::FATAL, "RenderManager3D - Failed to create shader program");
+		return;
 	}
 
 	uni_projection = glGetUniformLocation(shader_program->GetID(), "mat_proj");

@@ -2,6 +2,8 @@
 #define TEXTURE_H
 #define ILUT_USE_OPENGL
 
+#include "../game/log.h"
+
 #include <stdio.h>
 #include <GL/glew.h>
 #include <glm/vec4.hpp>
@@ -80,7 +82,9 @@ public:
 			fclose(f);
 		else
 		{
-			// Log file does not exist.
+			log(Log::FATAL, "Texture (%s) - File %s cannot be found",
+					__FUNCTION__, path);
+			output->id = INT_MAX;
 			return output;
 		}
 
@@ -107,7 +111,8 @@ public:
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
 				GL_LINEAR_MIPMAP_LINEAR);
 
-		// Log success
+		log(Log::INFO, "Texture (%s) - loaded %s successfully",
+				__FUNCTION__, path);
 
 		return output;
 	}

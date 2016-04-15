@@ -25,7 +25,8 @@ RenderManager2D::RenderManager2D()
 
 	if(shader_program == NULL)
 	{
-		// Error out.
+		log(Log::FATAL, "RenderManager2D - Failed to create shader program");
+		return;
 	}
 
 	uni_projection = glGetUniformLocation(shader_program->GetID(), "mat_proj");

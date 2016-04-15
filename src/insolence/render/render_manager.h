@@ -1,10 +1,11 @@
 #ifndef RENDER_MANAGER_H
 #define RENDER_MANAGER_H
 
-#include <glm/matrix.hpp>
-
 #include "../game/camera.h"
+#include "../game/log.h"
 #include "shader_program.h"
+
+#include <glm/matrix.hpp>
 
 /* TODO Issue #13: Logging. */
 struct RenderManager
@@ -34,24 +35,41 @@ struct RenderManager
 	{
 		Shader **shaders = new Shader*[2];
 		ShaderProgram *program = new ShaderProgram();
+		bool success = true;
 
 		shaders[0] = Shader::CreateFromFile(vert_path, GL_VERTEX_SHADER);
 		shaders[1] = Shader::CreateFromFile(frag_path, GL_FRAGMENT_SHADER);
 
 		for(int i = 0; i < 2; ++i)
 		{
-			// Log status/failure;
-			printf("Shader %d: %d\n", i, shaders[i]->GetShaderiv(
-						GL_COMPILE_STATUS));
+			GLint status = shaders[i]->GetShaderiv(GL_COMPILE_STATUS);
 			glAttachShader(program->GetID(), shaders[i]->GetID());
+
+			if(status != GL_TRUE)
+			{
+				log(Log::ERR, "RenderManager (%s) - shader %d compile failed",
+						__FUNCTION__, i);
+			}
+
+			success = status & success;
 		}
 
-		for(int i = 0; i < 2; ++i)
+		if(success == false)
 		{
-			char buffer[512];
+			for(int i = 0; i < 2; ++i)
+			{
+				char buf[1024];
+				int length = 0;
+				glGetShaderInfoLog(shaders[i]->GetID(), 1024, &length, buf);
 
-			glGetShaderInfoLog(shaders[i]->GetID(), 512, NULL, buffer);
-			printf("%d: %s\n", i, buffer);
+				if(length == 0)
+					continue;
+
+				buf[length-1] = '\0';
+
+				log(Log::ERR, "RenderManager (%s) - Shader %d log: %s",
+						__FUNCTION__, i, buf);
+			}
 		}
 
 		glBindFragDataLocation(program->GetID(), 0, "out_colour");
@@ -63,7 +81,8 @@ struct RenderManager
 
 		delete[] shaders;
 
-		// Log success
+		log(Log::INFO, "RenderManager (%s) - Successfully created pair",
+				__FUNCTION__);
 
 		return program;
 	}
