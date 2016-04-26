@@ -49,7 +49,6 @@ template <typename TComponent>
 struct System : ISystem {
 private:
 
-
 	/**
 	 * Makes a copy of the received component and adds it to our component
 	 * map.
@@ -61,9 +60,6 @@ private:
 		EndCreation(e, t);
 
 		return t;
-
-		/* Square bracket overload wants a constructor. */
-		//return &(components[e] = (TComponent)(*comp));
 	}
 
 protected:
@@ -94,13 +90,24 @@ public:
 		components.erase(e);
 	}
 
+	/**
+	 * Override function for performing final actions just before adding.
+	 */
 	virtual void EndCreation(Entity* e, TComponent *c) {}
+
+	/**
+	 * \return	hashed value of the component type.
+	 */
+	static size_t GetTypeHash() {
+		return typeid(TComponent).hash_code();
+	}
 };
 
 struct Entity
 {
 private:
 	std::unordered_map<size_t, Component*> components;
+	uint32_t id;
 	EntityManager *manager;
 
 	/**
@@ -140,56 +147,55 @@ private:
 	 */
 	void RemoveFromManager(size_t);
 
-	void RemoveEntityFromManager(Entity*);
-
 	/**
-	 * Removes this entity from the manager - the manager will handle
-	 * getting rid of all the components from the relevant systems.
+	 * Removes an entity and everything related to it from the manager.
 	 *
-	 * TODO
+	 * \param e		Entity for removal.
 	 */
+	void RemoveEntityFromManager(Entity*);
 
 	Entity() {}
 
-	uint32_t id;
+	~Entity();
+
 public:
 
 	uint32_t GetID() { return id; }
 
-	void Destroy()
-	{
-		delete this;
-	}
-
-	Entity(EntityManager *m);
 	/**
 	 * Create an Entity with systems managed by a particular EntityManager.
 	 */
-	~Entity();
+	Entity(EntityManager *m);
+
+	void Destroy() {
+		delete this;
+	}
 
 	/**
-	 * Functions for interacting with components.
-	 * Declared and commented at the bottom of the file.
+	 * Adds a type of component to the relevant system. If no system exists to
+	 * handle it, create one. The attached component must implement at least one
+	 * constructor and be using it. An object of the component will be created,
+	 * then passed through and copied to the system.
+	 *
+	 * \param T		Type of component to attach.
+	 * \param Args	Arguments for the desired constructor of the component.
 	 */
 	template<typename T, typename... Args>
 	void Add(Args... args);
 
+	/**
+	 * If the desired component exists, return it. Otherwise return 0;
+	 */
 	template <typename T>
 	T* Get();
 
+	/**
+	 * Remove the desired component from its system, and the entity.
+	 */
 	template<typename T>
 	void Remove();
 };
 
-/**
- * Adds a type of component to the relevant system. If no system exists to
- * handle it, create one. The attached component must implement at least one
- * constructor and be using it. An object of the component will be created,
- * then passed through and copied to the system.
- *
- * \param T		Type of component to attach.
- * \param Args	Arguments for the desired constructor of the component.
- */
 template<typename T, typename... Args>
 void Entity::Add(Args... args)
 {
@@ -202,27 +208,19 @@ void Entity::Add(Args... args)
 	components[hash] = (T*)SendToManager(&component, hash);
 }
 
-/**
- * If the desired component exists, return it. Otherwise return 0;
- */
 template <typename T>
 T* Entity::Get()
 {
 	return (T*)components[typeid(T).hash_code()];
 }
 
-/**
- * Remove the desired component from its system, and the entity.
- */
 template<typename T>
 void Entity::Remove()
 {
 	const size_t hash = typeid(T).hash_code();
-	printf("Removing from manager\n");
+
 	RemoveFromManager(hash);
-	printf("Removed from manager\n");
 	components.erase(hash);
-	printf("Erased\n");
 }
 
 #endif

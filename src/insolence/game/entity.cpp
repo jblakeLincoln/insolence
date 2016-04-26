@@ -7,7 +7,6 @@ Entity::Entity(EntityManager *m)
 	manager(m)
 {}
 
-
 Entity::~Entity()
 {
 	typename std::unordered_map<size_t, Component*>::iterator it;

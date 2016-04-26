@@ -46,21 +46,43 @@ public:
 		renderer_3d = new RenderManager3D();
 		physics_manager = PhysicsManager::Create(glm::vec3(0.f, -9.8f, 0.f));
 
-		systems[typeid(Movement).hash_code()] = new System<Movement>();
-
-		systems[typeid(SpriteRenderable).hash_code()] =
-			new SpriteRenderableSystem(renderer_2d);
-
-		systems[typeid(TextRenderable).hash_code()] =
-			new TextRenderableSystem(renderer_2d);
-
-		systems[typeid(MeshRenderable).hash_code()] =
-			new MeshRenderableSystem(renderer_3d);
-
-		systems[typeid(RigidBody).hash_code()] =
-			new RigidBodySystem(physics_manager);
+		/* Default systems for this EntityManager. */
+		AddSystemContainer<Movement>();
+		AddSystem<SpriteRenderableSystem>(renderer_2d);
+		AddSystem<TextRenderableSystem>(renderer_2d);
+		AddSystem<MeshRenderableSystem>(renderer_3d);
+		AddSystem<RigidBodySystem>(physics_manager);
 	}
 
+	/**
+	 * Creates a container system that will simply store all types of
+	 * components. Not entirely necessary to call since if a component is made
+	 * for a system that doesn't exist, one of these will be automatically
+	 * created.
+	 */
+	template<typename T>
+	void AddSystemContainer() {
+		const size_t hash = typeid(T).hash_code();
+		if(systems.find(hash) != systems.end())
+			return;
+
+		systems[hash] = new System<T>();
+	}
+
+	/**
+	 * Adds an implemented system for a component. If the system already
+	 * exists, we bail without doing anything.
+	 */
+	template<typename T, typename... Args> void AddSystem(Args... args) {
+		if(systems.find(T::GetTypeHash()) != systems.end())
+			return;
+
+		systems[T::GetTypeHash()] = new T(args...);
+	}
+
+	/**
+	 * Creates an entity owned by this manager and returns a reference.
+	 */
 	Entity* CreateEntity()
 	{
 		entities.push_back(new Entity(this));
@@ -125,8 +147,7 @@ public:
 	/**
 	 * Tell all renderers to draw everything they've got.
 	 */
-	void FlushDraw()
-	{
+	void FlushDraw() {
 		renderer_2d->Flush();
 		renderer_3d->Flush();
 	}
@@ -139,8 +160,7 @@ public:
 	 * \param sys	System to hand over.
 	 * \param hash	Hash of component type of the system.
 	 */
-	void AddSystem(ISystem* sys, size_t hash)
-	{
+	void AddSystem(ISystem* sys, size_t hash) {
 		systems[hash] = sys;
 	}
 
@@ -150,8 +170,7 @@ public:
 	 * \param hash	Type of component to check for.
 	 * \return		True if system for component exists, otherwise false.
 	 */
-	bool HasSystem(size_t hash)
-	{
+	bool HasSystem(size_t hash) {
 		return systems.find(hash) != systems.end();
 	}
 
@@ -165,8 +184,7 @@ public:
 	 *
 	 * \return		Pointer to component if created successfully, otherwise 0.
 	 */
-	Component* Add(Entity *e, const Component* c, size_t hash)
-	{
+	Component* Add(Entity *e, const Component* c, size_t hash) {
 		sys_iterator it = systems.find(hash);
 
 		if(it == systems.end())
