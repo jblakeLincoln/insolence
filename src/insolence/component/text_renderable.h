@@ -24,6 +24,17 @@ struct TextRenderable : Component {
 		scale(scale)
 	{}
 
+	void Text(const char *format, ...)
+	{
+		char *buf;
+		va_list va;
+		va_start(va, format);
+		vasprintf(&buf, format, va);
+		va_end(va);
+
+		text = buf;
+		delete buf;
+	}
 };
 
 #endif

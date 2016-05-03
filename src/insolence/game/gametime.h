@@ -14,7 +14,7 @@ private:
 	long unsigned int time_current;
 
 	TimeSpan frame_time;
-	TimeSpan timespan;
+	TimeSpan elapsed_time;
 
 public:
 	GameTime() {
@@ -32,11 +32,11 @@ public:
 			(chrono_hrc::now().time_since_epoch()).count();
 
 		frame_time.SetTime(time_current - time_last);
-		timespan.SetTime(time_current - start);
+		elapsed_time.SetTime(time_current - start);
 	}
 
 	const TimeSpan& GetElapsedTime() const {
-		return timespan;
+		return elapsed_time;
 	}
 
 	const TimeSpan& GetFrameTime() const {

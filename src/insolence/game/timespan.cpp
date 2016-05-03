@@ -1,6 +1,5 @@
 #include "timespan.h"
 
-#include <cstdio>
 TimeSpan::TimeSpan()
 {
 	current_time = 0;
@@ -20,29 +19,29 @@ TimeSpan& TimeSpan::operator-=(const TimeSpan& in)
 	return *this;
 }
 
-long unsigned int TimeSpan::ElapsedMilliseconds() const
+int TimeSpan::ElapsedMilliseconds() const
 {
-	return (current_time / 1000);
+	return current_time / 1000;
 }
 
 int TimeSpan::ElapsedSeconds() const
 {
-	return (current_time / 1000000.f);
+	return current_time / 1000000;
 }
 
 int TimeSpan::ElapsedMinutes() const
 {
-	return ((current_time / 1000000.f) / 60.f);
+	return ElapsedSeconds() / 60;
 }
 
 int TimeSpan::ElapsedHours() const
 {
-	return (int)(current_time / (1000*60*60));
+	return ElapsedSeconds() / 3600;
 }
 
 int TimeSpan::TotalMilliseconds() const
 {
-	return (int)ElapsedMilliseconds() % 1000;
+	return ElapsedMilliseconds() % 1000;
 }
 
 int TimeSpan::TotalSeconds() const
@@ -52,11 +51,11 @@ int TimeSpan::TotalSeconds() const
 
 int TimeSpan::TotalMinutes() const
 {
-	return (((ElapsedMinutes()) / 1000) / 60 % 60);
+	return ElapsedMinutes() % 60;
 }
 
 int TimeSpan::TotalHours() const
 {
-	return (int) ((ElapsedHours() / (1000*60*60)) % 24);
+	return ElapsedHours() % 24;
 }
 

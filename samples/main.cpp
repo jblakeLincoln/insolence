@@ -23,6 +23,10 @@ struct Game1 : BaseGameWorld
 	int counter = 0;
 	float count = 100.f;
 
+	Entity *text;
+
+	Font *font;
+
 	void Initialise()
 	{
 		Texture::Init();
@@ -39,8 +43,15 @@ struct Game1 : BaseGameWorld
 		camera->pos.MoveZ(800.f);
 		camera->PanX(count / 2.f * 1.2f);
 
-		for(int i = 0; i < count; ++i)
-			Spawn(i);
+		font = Font::Load(
+				"/usr/share/fonts/truetype/tlwg/Kinnari.ttf", 80);
+				//"/usr/share/fonts/truetype/droid/DroidSansMono.ttf", 80);
+		text = CreateEntity();
+		text->Add<TextRenderable>(font, "test");
+		text->Get<TextRenderable>()->align = FontAlign::LEFT;
+
+		//for(int i = 0; i < count; ++i)
+		//	Spawn(i);
 	}
 
 	void Spawn(int i)
@@ -79,9 +90,16 @@ struct Game1 : BaseGameWorld
 			{
 				entities[0]->Destroy();
 				entities.erase(entities.begin());
-				Spawn(counter);
+				//Spawn(counter);
 			}
 		}
+
+		const TimeSpan &et = time.GetElapsedTime();
+		text->Get<TextRenderable>()->Text("%02d:%02d:%02d:%04d",
+				et.ElapsedHours(),
+				et.TotalMinutes(),
+				et.TotalSeconds(),
+				et.TotalMilliseconds());
 
 		entity_manager->renderer_3d->SetViewPosition(camera->pos.GetPosition());
 		camera->Post();

@@ -9,16 +9,17 @@ protected:
 
 public:
 	Time() : time(0), modifier(1) {}
+
 	Time(double in) { time = in; }
 
 	/* Returns time in Microseconds. */
 	double GetRawTime() const { return time; }
 
 	/* Get time in format of derived class. */
-	virtual long double Get() const { return time / modifier; }
+	virtual double Get() const { return time / modifier; }
 
 	/* Set time in format of derived class. */
-	virtual void Set(long double in) { time = in * modifier; }
+	virtual void Set(double in) { time = in * modifier; }
 
 	bool operator >(const double& b) const
 	{
@@ -33,7 +34,7 @@ public:
 
 struct Milliseconds : Time
 {
-	Milliseconds(long double in) { modifier = 1000.0; Set(in); }
+	Milliseconds(double in) { modifier = 1000.0; Set(in); }
 
 };
 
