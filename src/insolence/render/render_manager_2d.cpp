@@ -193,10 +193,13 @@ void RenderManager2D::AddText(Font *f, const char *str, const glm::vec2& pos,
 		}
 	}
 
+	if(f->IsMonospace() == true)
+		length = strlen(str) * f->GetMaxGlyphWidth();
+
 	if(origin == FontAlign::CENTRE)
 		offset -= length / 2.0;
 	else if (origin == FontAlign::RIGHT)
-		offset += length;
+		offset -= length;
 
 	for(int i = 0; i < strlen(str); ++i)
 	{
@@ -204,12 +207,19 @@ void RenderManager2D::AddText(Font *f, const char *str, const glm::vec2& pos,
 		const Font::FontInfo glyph = f->GetGlyph(str[i]);
 		char c = str[i];
 
-		offset += glyph.w * scale.x/2;
-		offset += glyph.l * scale.x;
+		if(f->IsMonospace() == true)
+		{
+			offset += f->GetMaxGlyphWidth() / 2 * scale.x;
+		}
+		else
+		{
+			offset += glyph.l * scale.x;
+			offset += glyph.w * scale.x / 2;
+		}
 
 		m = glm::translate(m, glm::vec3(offset + pos.x,
 					((f->GetAtlasHeight() - glyph.h) / f->GetAtlasHeight() +
-					 glyph.t - (glyph.h/2)) * scale.y + pos.y,
+					 glyph.t - (glyph.h / 2)) * scale.y + pos.y,
 					0.f));
 
 		m = glm::scale(m, glm::vec3(glyph.w * scale.x,
@@ -222,7 +232,15 @@ void RenderManager2D::AddText(Font *f, const char *str, const glm::vec2& pos,
 
 		Add(f->mat->diffuse, m, col, rect);
 
-		offset += glyph.ax * scale.x;
-		offset -= glyph.w * scale.x / 2;
+		if(f->IsMonospace() == true)
+		{
+			offset += f->GetMaxGlyphWidth() / 2 * scale.x;
+		}
+		else
+		{
+			offset += glyph.ax * scale.x;
+			offset -= glyph.w * scale.x / 2;
+		}
+
 	}
 }

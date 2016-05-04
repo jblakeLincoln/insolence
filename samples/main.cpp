@@ -23,9 +23,10 @@ struct Game1 : BaseGameWorld
 	int counter = 0;
 	float count = 100.f;
 
-	Entity *text;
-
+	std::vector<Entity*> texts;
 	Font *font;
+
+	Entity *centre;
 
 	void Initialise()
 	{
@@ -37,18 +38,35 @@ struct Game1 : BaseGameWorld
 		mesh = Mesh::LoadFile("assets/crate.obj");
 		material = new Material();
 		material->diffuse =
-			Texture::LoadColour(glm::vec4(1.f));
+			Texture::LoadColour(glm::vec4(0.f, 0.f, 0.f, 1.f));
 
 		camera = new Camera();
-		camera->pos.MoveZ(800.f);
-		camera->PanX(count / 2.f * 1.2f);
+		camera->pos.MoveZ(1000.f);
+		//camera->PanX(500);
 
 		font = Font::Load(
-				"/usr/share/fonts/truetype/tlwg/Kinnari.ttf", 80);
-				//"/usr/share/fonts/truetype/droid/DroidSansMono.ttf", 80);
-		text = CreateEntity();
-		text->Add<TextRenderable>(font, "test");
-		text->Get<TextRenderable>()->align = FontAlign::LEFT;
+				//"/usr/share/fonts/truetype/tlwg/Kinnari.ttf", 80);
+				"/usr/share/fonts/truetype/droid/DroidSansMono.ttf", 40);
+		for(int i = 0; i < 3; ++i)
+		{
+			texts.push_back(CreateEntity());
+			texts[i]->Add<TextRenderable>(font, "test");
+			texts[i]->Get<TextRenderable>()->colour = glm::vec4(0.f, 0.f, 0.f, 1.f);
+			texts[i]->Get<Movement>()->MoveY(-(i * 64));
+		}
+
+		texts[0]->Get<TextRenderable>()->align = FontAlign::LEFT;
+		texts[1]->Get<TextRenderable>()->align = FontAlign::CENTRE;
+		texts[2]->Get<TextRenderable>()->align = FontAlign::RIGHT;
+
+
+		centre = CreateEntity();
+
+		centre->Get<Movement>()->Scale(glm::vec3(20.f));
+		/*
+		centre->Add<SpriteRenderable>();
+		centre->Get<SpriteRenderable>()->texture = material->diffuse;
+		*/
 
 		//for(int i = 0; i < count; ++i)
 		//	Spawn(i);
@@ -95,11 +113,16 @@ struct Game1 : BaseGameWorld
 		}
 
 		const TimeSpan &et = time.GetElapsedTime();
-		text->Get<TextRenderable>()->Text("%02d:%02d:%02d:%04d",
+
+		for(int i = 0; i < 3; ++i)
+		{
+		texts[i]->Get<TextRenderable>()->Text(
+				"MrotavatorM%02d:%02d:%02d:%03dWrotavatorW",
 				et.ElapsedHours(),
 				et.TotalMinutes(),
 				et.TotalSeconds(),
 				et.TotalMilliseconds());
+		}
 
 		entity_manager->renderer_3d->SetViewPosition(camera->pos.GetPosition());
 		camera->Post();

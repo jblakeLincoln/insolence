@@ -36,41 +36,56 @@ private:
 	double w;
 	double h;
 
+	int max_glyph_width;
+	bool is_monospace;
+	int kerning;
+
 public:
 	Material *mat;
 
+	const int GetMaxGlyphWidth() const { return max_glyph_width; }
+	const bool IsMonospace() const { return is_monospace; }
 	const double GetAtlasWidth() const { return w; }
 	const double GetAtlasHeight() const { return h; }
 	const FontInfo& GetGlyph(char i) const { return c[i]; }
 
 	static Font* Load(const char *path, int size)
 	{
-		Font *out = new Font();
-
+		Font *out;
 		FT_Library ft;
 		FT_Face face;
+		FT_GlyphSlot g;
+		int glyph_padding;
 
 		/* Init Freetype. */
 		if(FT_Init_FreeType(&ft)){
-			// Log FreeType failed.
-			exit(1);
+			log(Log::FATAL, "FreeType failed to initialise");
 		}
-
-		out->mat = new Material();
-		out->mat->diffuse = Texture::LoadColour(glm::vec4(0.f));
 
 		if(FT_New_Face(ft, path, 0, &face))
 		{
-			// Log can't load font.
-			delete out;
+			log(Log::FATAL, "Font (%d) - Couldn't generate face from %d",
+				   __func__, path);
 			return NULL;
 		}
 
+		out = new Font();
+		out->mat = new Material();
+		out->mat->diffuse = Texture::LoadColour(glm::vec4(0.f));
+
 		FT_Set_Pixel_Sizes(face, 0, size);
-		FT_GlyphSlot g = face->glyph;
+		g = face->glyph;
+
+		/*
+		 * Texture bleeding is a problem at larger sizes and this seems like
+		 * a safe bet.
+		 */
+		glyph_padding = std::max(size / 20, 1);
 
 		out->w = 0;
 		out->h = 0;
+		out->max_glyph_width = 0;
+		out->is_monospace = FT_IS_FIXED_WIDTH(face);
 
 		/*
 		 * Find out the width for the whole texture, and create an empty
@@ -81,7 +96,10 @@ public:
 			if(FT_Load_Char(face, i, FT_LOAD_RENDER))
 				continue;
 
-			out->w += g->bitmap.width + 1;
+			out->max_glyph_width = out->max_glyph_width < g->bitmap.width ?
+				g->bitmap.width : out->max_glyph_width;
+
+			out->w += g->bitmap.width + glyph_padding;
 			out->h = std::max(out->h, (double)g->bitmap.rows);
 		}
 
@@ -101,7 +119,7 @@ public:
 			if(FT_Load_Char(face, i, FT_LOAD_RENDER))
 				continue;
 
-			x += 1;
+			x += glyph_padding;
 
 			out->c[i].ax = g->advance.x >> 6;
 			out->c[i].ay = g->advance.y >> 6;
@@ -137,7 +155,7 @@ public:
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 				GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-				GL_LINEAR_MIPMAP_LINEAR);
+				GL_LINEAR);
 
 		FT_Done_Face(face);
 		FT_Done_FreeType(ft);
