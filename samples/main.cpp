@@ -30,11 +30,6 @@ struct Game1 : BaseGameWorld
 
 	void Initialise()
 	{
-		Texture::Init();
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		mesh = Mesh::LoadFile("assets/crate.obj");
 		material = new Material();
 		material->diffuse =
@@ -116,16 +111,13 @@ struct Game1 : BaseGameWorld
 
 		for(int i = 0; i < 3; ++i)
 		{
-		texts[i]->Get<TextRenderable>()->Text(
+				texts[i]->Get<TextRenderable>()->Text(
 				"MrotavatorM%02d:%02d:%02d:%03dWrotavatorW",
 				et.ElapsedHours(),
 				et.TotalMinutes(),
 				et.TotalSeconds(),
 				et.TotalMilliseconds());
 		}
-
-		entity_manager->renderer_3d->SetViewPosition(camera->pos.GetPosition());
-		camera->Post();
 	}
 
 	void Unload()

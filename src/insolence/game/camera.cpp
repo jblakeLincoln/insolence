@@ -1,11 +1,15 @@
 #include "camera.h"
 
 GLint Camera::uni_block = -1;
+Camera* Camera::active_camera = 0;
 
 Camera::Camera()
 {
 	block.proj = glm::perspective(1.f, 720.f/540.f, 0.1f, 10000.f);
 	glGenBuffers(1, &ubo);
+
+	if(active_camera == NULL)
+		active_camera = this;
 }
 
 void Camera::Post()

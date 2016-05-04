@@ -11,6 +11,7 @@
 struct Camera
 {
 private:
+
 	struct CameraBlock {
 		glm::mat4 proj;
 		glm::mat4 view;
@@ -18,6 +19,7 @@ private:
 
 	GLuint ubo;
 	static GLint uni_block;
+	static Camera *active_camera;
 
 public:
 	Camera();
@@ -25,6 +27,14 @@ public:
 	CameraBlock block;
 	Movement pos;
 	Movement lookat;
+
+	static Camera* GetActiveCamera() {
+		return active_camera;
+	}
+
+	static void SetActiveCamera(Camera* c) {
+		active_camera = c;
+	}
 
 	static void Setup(ShaderProgram *p)
 	{

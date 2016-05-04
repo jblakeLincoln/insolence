@@ -5,6 +5,7 @@
 #include "../game/log.h"
 #include "input.h"
 #include "keys.h"
+#include "texture.h"
 
 #include <cstdio>
 #include <stdlib.h>
@@ -76,6 +77,12 @@ public:
 
 		Input::AttachWindowToKeyboard(output->glfw_window);
 		Input::SetMouseWindow(output->glfw_window);
+
+		/* Initialise texture loading libs and add default blending. */
+		Texture::Init();
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		log(Log::INFO, "Window (%s) - Successful window creation",
 				__FUNCTION__);

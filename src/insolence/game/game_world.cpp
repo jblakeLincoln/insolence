@@ -35,6 +35,10 @@ void BaseGameWorld::BaseDraw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	Draw();
+
+	if(Camera::GetActiveCamera() != NULL)
+		Camera::GetActiveCamera()->Post();
+
 	entity_manager->FlushDraw();
 
 	window->SwapBuffers();
