@@ -1,16 +1,11 @@
 solution "insolence"
-	premake.gcc.cc = 'clang'
-	premake.gcc.cxx = 'clang++'
-
 	objdir "obj"
-	targetdir ( "bin" )
-	configurations { "Debug", "Release" }
-
-	configuration "WINDOWS"
-		defines "WINDOWS"
-
-	configuration "LINUX"
-		defines "LINUX"
+	targetdir "bin"
 
 	dofile("./src/insolence.lua")
+
+solution "insolence_samples"
+	objdir "obj"
+	targetdir "bin"
+
 	dofile("./samples/samples.lua")

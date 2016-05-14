@@ -33,10 +33,10 @@ struct Game1 : BaseGameWorld
 		mesh = Mesh::LoadFile("assets/crate.obj");
 		material = new Material();
 		material->diffuse =
-			Texture::LoadColour(glm::vec4(0.f, 0.f, 0.f, 1.f));
+			Texture::LoadColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
 
 		camera = new Camera();
-		camera->pos.MoveZ(1000.f);
+		camera->pos.MoveZ(100.f);
 		//camera->PanX(500);
 
 		font = Font::Load(
@@ -71,10 +71,7 @@ struct Game1 : BaseGameWorld
 	{
 		entities.push_back(CreateEntity());
 		entities.back()->Add<MeshRenderable>(mesh, material,
-				glm::vec4(i % 128 / 255.f,
-					i % 64 / 255.f,
-					i % 32 / 255.f,
-					1.f));
+				glm::vec4(0.3f, 0.6f, 0.1f, 1.f));
 		entities.back()->Get<Movement>()->Move(
 				glm::vec3(i * 1.2f, 1.f, 0.f));
 		entities.back()->Get<Movement>()->Scale(glm::vec3(20.f));
@@ -85,10 +82,10 @@ struct Game1 : BaseGameWorld
 	void Update(const GameTime& time)
 	{
 
-		if(Input::GetKey(JKEY_KEY_S))
+		if(Input::GetKey(JKEY_KEY_S) == JKEY_PRESS)
 			Spawn(0);
 
-		if(Input::GetKey(JKEY_KEY_D) && entities.size() > 0)
+		if(Input::GetKey(JKEY_KEY_D) == JKEY_PRESS && entities.size() > 0)
 		{
 			entities[0]->Destroy();
 			entities.erase(entities.begin());
@@ -99,12 +96,14 @@ struct Game1 : BaseGameWorld
 			if(++counter > count)
 				counter = 0;
 
+			/*
 			for(int i = 0; i < count; ++i)
 			{
 				entities[0]->Destroy();
 				entities.erase(entities.begin());
 				//Spawn(counter);
 			}
+			*/
 		}
 
 		const TimeSpan &et = time.GetElapsedTime();
