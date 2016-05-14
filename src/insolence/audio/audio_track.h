@@ -1,6 +1,8 @@
 #ifndef AUDIO_TRACK_H
 #define AUDIO_TRACK_H
 
+#include "../insolence_dll.h"
+
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <AL/alut.h>
@@ -8,7 +10,7 @@
 #include "audio_track.h"
 
 /* TODO Issue #19: Logging. */
-struct AudioTrack
+struct INSOLENCE_API AudioTrack
 {
 friend class AudioManager;
 protected:

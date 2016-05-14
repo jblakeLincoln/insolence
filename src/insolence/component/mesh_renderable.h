@@ -1,11 +1,13 @@
 #ifndef COMPONENT_MESH_RENDERABLE_H
 #define COMPONENT_MESH_RENDERABLE_H
 
+#include "../insolence_dll.h"
+
 #include "component.h"
 #include "../game/material.h"
 #include "../game/mesh.h"
 
-struct MeshRenderable : Component {
+struct INSOLENCE_API MeshRenderable : Component {
 	Mesh *mesh;
 	Material *material;
 	glm::vec4 colour;

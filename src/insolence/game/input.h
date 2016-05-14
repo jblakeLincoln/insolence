@@ -1,6 +1,8 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
+#include "../insolence_dll.h"
+
 #include <cstdio>
 #include <map>
 #include <bitset>
@@ -14,7 +16,7 @@
 #define JOYPAD_COUNT	4
 #define PAD_TOTAL_BTNS	JOYPAD_COUNT * PAD_BTN_COUNT
 
-struct Input
+struct INSOLENCE_API Input
 {
 private:
 	Input() {}

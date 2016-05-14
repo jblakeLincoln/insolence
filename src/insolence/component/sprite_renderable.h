@@ -1,9 +1,11 @@
 #ifndef COMPONENT_SPRITE_RENDERABLE_H
 #define COMPONENT_SPRITE_RENDERABLE_H
 
+#include "../insolence_dll.h"
+
 #include "../game/animation.h"
 
-struct SpriteRenderable : Component {
+struct INSOLENCE_API SpriteRenderable : Component {
 	Texture *texture;
 	Animation animation;
 	glm::vec4 colour;

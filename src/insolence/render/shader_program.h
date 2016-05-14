@@ -1,11 +1,13 @@
 #ifndef SHADER_PROGRAM_H
 #define SHADER_PROGRAM_H
 
+#include "../insolence_dll.h"
+
 #include <GL/glew.h>
 
 #include "shader.h"
 
-struct ShaderProgram
+struct INSOLENCE_API ShaderProgram
 {
 private:
 	GLuint id;

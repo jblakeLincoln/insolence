@@ -1,6 +1,8 @@
 #ifndef COMPONENT_FONT_H
 #define COMPONENT_FONT_H
 
+#include "../insolence_dll.h"
+
 #include <freetype2/ft2build.h>
 #include FT_FREETYPE_H
 
@@ -13,7 +15,7 @@ enum FontAlign {
 	CENTRE,
 };
 
-struct Font {
+struct INSOLENCE_API Font {
 	/* Struct of individual glyph information. */
 	struct FontInfo {
 		/* Advance X/Y. */

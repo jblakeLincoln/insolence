@@ -1,7 +1,9 @@
 #ifndef TIME_H
 #define TIME_H
 
-struct Time
+#include "../insolence_dll.h"
+
+struct INSOLENCE_API Time
 {
 protected:
 	double time;

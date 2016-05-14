@@ -1,6 +1,8 @@
 #ifndef PHYSICS_MANAGER_H
 #define PHYSICS_MANAGER_H
 
+#include "../insolence_dll.h"
+
 #include "../game/entity.h"
 #include "../component/movement.h"
 #include <glm/glm.hpp>
@@ -11,7 +13,7 @@
 
 struct Entity;
 struct RigidBody;
-struct PhysicsManager {
+struct INSOLENCE_API PhysicsManager {
 	friend RigidBody;
 private:
 	PhysicsManager() {}

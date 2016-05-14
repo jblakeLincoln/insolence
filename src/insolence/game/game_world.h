@@ -1,13 +1,15 @@
 #ifndef GAME_WORLD_H
 #define GAME_WORLD_H
 
+#include "../insolence_dll.h"
+
 #include "entity.h"
 #include "window.h"
 #include "gametime.h"
 
 struct Entity;
 struct EntityManager;
-struct BaseGameWorld {
+struct INSOLENCE_API BaseGameWorld {
 private:
 	Window *window;
 	GameTime gametime;

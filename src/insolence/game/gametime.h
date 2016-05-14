@@ -1,10 +1,12 @@
 #ifndef GAMETIME_H
 #define GAMETIME_H
 
+#include "../insolence_dll.h"
+
 #include <chrono>
 #include "timespan.h"
 
-struct GameTime {
+struct INSOLENCE_API GameTime {
 private:
 	typedef std::chrono::high_resolution_clock chrono_hrc;
 	typedef std::chrono::time_point<chrono_hrc> chrono_time_point;

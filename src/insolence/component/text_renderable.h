@@ -1,10 +1,12 @@
 #ifndef COMPONENT_TEXT_RENDERABLE_H
 #define COMPONENT_TEXT_RENDERABLE_H
 
+#include "../insolence_dll.h"
+
 #include "../game/font.h"
 #include <string>
 
-struct TextRenderable : Component {
+struct INSOLENCE_API TextRenderable : Component {
 	Font *font;
 	std::string text;
 	glm::vec4 colour;

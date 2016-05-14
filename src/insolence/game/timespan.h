@@ -1,9 +1,11 @@
 #ifndef TIMESPAN_H
 #define TIMESPAN_H
 
+#include "../insolence_dll.h"
+
 #include "time.h"
 
-struct TimeSpan {
+struct INSOLENCE_API TimeSpan {
 protected:
 	double current_time;
 

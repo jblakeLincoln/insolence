@@ -1,6 +1,8 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include "../insolence_dll.h"
+
 #include <GL/glew.h>
 #include <glm/matrix.hpp>
 
@@ -8,7 +10,7 @@
 #include "../render/shader_program.h"
 #include "../render/render_manager.h"
 
-struct Camera
+struct INSOLENCE_API Camera
 {
 private:
 

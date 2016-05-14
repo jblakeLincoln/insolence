@@ -1,13 +1,15 @@
 #ifndef SHADER_H
 #define SHADER_H
 
+#include "../insolence_dll.h"
+
 #include "../game/log.h"
 
 #include <stdio.h>
 #include <GL/glew.h>
 
 /* TODO Issue #10: Logging. */
-struct Shader
+struct INSOLENCE_API Shader
 {
 private:
 	/**

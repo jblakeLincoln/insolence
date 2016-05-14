@@ -1,13 +1,15 @@
 #ifndef COMPONENT_RIGID_BODY_H
 #define COMPONENT_RIGID_BODY_H
 
+#include "../insolence_dll.h"
+
 #include "component.h"
 #include "../physics/physics_manager.h"
 #include <btBulletDynamicsCommon.h>
 
 struct PhysicsManager;
 struct RigidBodySystem;
-struct RigidBody : public Component
+struct INSOLENCE_API RigidBody : public Component
 {
 	friend PhysicsManager;
 	friend RigidBodySystem;

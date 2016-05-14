@@ -1,6 +1,8 @@
 #ifndef AUDIO_MANAGER_H
 #define AUDIO_MANAGER_H
 
+#include "../insolence_dll.h"
+
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <AL/alut.h>
@@ -13,7 +15,7 @@
 
 /* TODO Issue #17: How much should AudioManager hold? */
 /* TODO Issue #18: AudioManager logging. */
-struct AudioManager
+struct INSOLENCE_API AudioManager
 {
 private:
 	ALCdevice *device;

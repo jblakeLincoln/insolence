@@ -1,6 +1,8 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include "../insolence_dll.h"
+
 #include <GL/glew.h>
 #include "../game/log.h"
 #include "input.h"
@@ -11,7 +13,7 @@
 #include <stdlib.h>
 #include <GLFW/glfw3.h>
 
-struct Window
+struct INSOLENCE_API Window
 {
 private:
 	GLFWwindow *glfw_window;

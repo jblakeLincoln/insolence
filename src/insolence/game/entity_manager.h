@@ -10,6 +10,8 @@
  * started.
  */
 
+#include "../insolence_dll.h"
+
 #include "gametime.h"
 #include "../physics/physics_manager.h"
 #include "../render/render_manager_2d.h"
@@ -24,7 +26,7 @@
 #include <unordered_map>
 
 struct Entity;
-struct EntityManager {
+struct INSOLENCE_API EntityManager {
 private:
 	typedef std::unordered_map<size_t, ISystem*>::iterator sys_iterator;
 

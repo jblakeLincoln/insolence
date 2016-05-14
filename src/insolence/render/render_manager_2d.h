@@ -1,6 +1,8 @@
 #ifndef RENDER_MANAGER_2D
 #define RENDER_MANAGER_2D
 
+#include "../insolence_dll.h"
+
 #include <map>
 #include <vector>
 #include <glm/glm.hpp>
@@ -11,7 +13,7 @@
 #include "render_manager.h"
 
 /* TODO Issue #13: Logging. */
-struct RenderManager2D : public RenderManager
+struct INSOLENCE_API RenderManager2D : public RenderManager
 {
 	typedef std::map<Texture*, std::vector<float> > data_def;
 

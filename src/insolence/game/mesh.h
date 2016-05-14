@@ -1,6 +1,7 @@
 #ifndef MESH_H
 #define MESH_H
 
+#include "../insolence_dll.h"
 #include "../game/log.h"
 
 #include <assimp/cimport.h>
@@ -12,7 +13,7 @@
 #include <GL/gl.h>
 
 /* TODO Issue #23: Load in normal maps. */
-struct Mesh {
+struct INSOLENCE_API Mesh {
 private:
 	Mesh();
 	Mesh(float* data_in, int vert_count);

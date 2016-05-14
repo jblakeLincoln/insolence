@@ -1,6 +1,8 @@
 #ifndef MOVEMENT_COMPONENT
 #define MOVEMENT_COMPONENT
 
+#include "../insolence_dll.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/matrix.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -12,7 +14,7 @@
 /* TODO Issue #20:	Make sure returned properties consider each other and
  *					any changes that could have occurred.
  */
-struct Movement : Component {
+struct INSOLENCE_API Movement : Component {
 private:
 	void Construct();
 

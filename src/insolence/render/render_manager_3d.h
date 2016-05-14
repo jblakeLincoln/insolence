@@ -1,6 +1,8 @@
 #ifndef RENDER_MANAGER_3D
 #define RENDER_MANAGER_3D
 
+#include "../insolence_dll.h"
+
 #include <map>
 #include <vector>
 #include <glm/glm.hpp>
@@ -12,7 +14,7 @@
 #include "render_manager.h"
 
 /* TODO Issue #21: Logging. */
-struct RenderManager3D : public RenderManager
+struct INSOLENCE_API RenderManager3D : public RenderManager
 {
 private:
 	struct mesh_data_buffers {

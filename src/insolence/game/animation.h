@@ -1,13 +1,15 @@
 #ifndef COMPONENT_ANIMATION_H
 #define COMPONENT_ANIMATION_H
 
+#include "../insolence_dll.h"
+
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
 #include "../game/timespan.h"
 #include "../game/texture.h"
 
-struct Animation {
+struct INSOLENCE_API Animation {
 	int current_frame;
 	int cols;
 	int frames;

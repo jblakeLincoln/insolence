@@ -2,6 +2,7 @@
 #define TEXTURE_H
 #define ILUT_USE_OPENGL
 
+#include "../insolence_dll.h"
 #include "../game/log.h"
 
 #include <stdio.h>
@@ -11,7 +12,7 @@
 
 /* TODO Issue #12: Logging success/error. */
 
-struct Texture {
+struct INSOLENCE_API Texture {
 private:
 	/**
 	 * Initialises ID to zero;

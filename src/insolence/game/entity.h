@@ -7,6 +7,8 @@
  * functionality is worth it.
  */
 
+#include "../insolence_dll.h"
+
 #include <cstddef>
 #include <typeinfo>
 #include <unordered_map>
@@ -24,7 +26,7 @@ struct EntityManager;
 /**
  * Interface for creating vectors/maps of templated type "System".
  */
-struct ISystem {
+struct INSOLENCE_API ISystem {
 	virtual ~ISystem() {}
 
 	/**
@@ -46,7 +48,7 @@ struct ISystem {
 };
 
 template <typename TComponent>
-struct System : ISystem {
+struct INSOLENCE_API System : ISystem {
 private:
 
 	/**
@@ -103,7 +105,7 @@ public:
 	}
 };
 
-struct Entity
+struct INSOLENCE_API Entity
 {
 private:
 	std::unordered_map<size_t, Component*> components;

@@ -1,6 +1,8 @@
 #ifndef RENDER_MANAGER_H
 #define RENDER_MANAGER_H
 
+#include "../insolence_dll.h"
+
 #include "../game/camera.h"
 #include "../game/log.h"
 #include "shader_program.h"
@@ -8,7 +10,7 @@
 #include <glm/matrix.hpp>
 
 /* TODO Issue #13: Logging. */
-struct RenderManager
+struct INSOLENCE_API RenderManager
 {
 	ShaderProgram *shader_program;
 	glm::mat4 mat_projection;
