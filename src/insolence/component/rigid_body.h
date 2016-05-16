@@ -1,3 +1,4 @@
+#ifdef INSOLENCE_LINK_BULLET
 #ifndef COMPONENT_RIGID_BODY_H
 #define COMPONENT_RIGID_BODY_H
 
@@ -59,4 +60,5 @@ public:
 	void Make2D();
 };
 
+#endif
 #endif

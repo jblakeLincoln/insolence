@@ -1,3 +1,4 @@
+#ifdef INSOLENCE_LINKS_BULLET
 #include "rigid_body_system.h"
 
 RigidBodySystem::RigidBodySystem(PhysicsManager *p)
@@ -44,3 +45,5 @@ void RigidBodySystem::Manage(const GameTime& gametime)
 		m->SetOrientation(rotation);
 	}
 }
+
+#endif

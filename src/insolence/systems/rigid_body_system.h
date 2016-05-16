@@ -1,3 +1,4 @@
+#ifdef INSOLENCE_LINKS_BULLET
 #ifndef SYSTEM_RIGID_BODY_H
 #define SYSTEM_RIGID_BODY_H
 
@@ -20,4 +21,5 @@ public:
 	void EndCreation(Entity*, RigidBody*);
 };
 
+#endif
 #endif

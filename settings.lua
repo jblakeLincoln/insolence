@@ -1,58 +1,77 @@
-	language "C++"
-	defines {"GLM_FORCE_RADIANS"}
-	objdir "obj"
-	targetdir "bin"
-	configurations { "Debug", "Release" }
+local include_bullet = false
+local include_openal = false
 
-	configuration "LINUX"
-		defines {"LINUX"}
-		buildoptions "-std=c++11"
+language "C++"
+objdir "obj"
+targetdir "bin"
 
-		includedirs {
-			"/usr/include/bullet",
-			"/usr/include/freetype2"
-		}
+if os.get() == "windows" then
+	debugdir "bin"
+end
 
-		libdirs {
-			"/usr/local/include",
-		}
+configurations { "Debug", "Release" }
 
-		links {
-			"GLEW", "GL", "GLU",
-			"glfw3",
-			"openal", "alut", "vorbisfile",
-			"X11", "Xxf86vm", "Xinerama", "Xcursor", "Xrandr", "pthread", "Xi",
-			"assimp",
-			"IL", "ILU", "ILUT",
-			"BulletDynamics", "BulletCollision", "LinearMath",
-			"freetype"
-		}
+defines {"GLM_FORCE_RADIANS"}
 
-	configuration { "WINDOWS" }
-		defines {"WINDOWS"}
-		defines {"GLFW_DLL"}
+if include_bullet == true then
+	defines{"INSOLENCE_LINKS_BULLET"}
+	links {"BulletDynamics", "BulletCollision", "LinearMath"}
+end
 
-		includedirs {
-			"../include"
-		}
+if include_openal == true then
+	defines{"INSOLENCE_LINKS_OPENAL"}
+	links {"openal", "alut", "vorbisfile"}
+end
 
-		libdirs {
-			"../lib"
-		}
+configuration "LINUX"
+	defines {"LINUX"}
+	buildoptions "-std=c++11"
 
-		links {
-			"opengl32","GLU32", "glew32",
-			"glfw3dll",
-			"DevIL", "ILU", "ILUT",
-			"assimp",
-			"BulletDynamics", "BulletCollision", "LinearMath",
-			"freetype"
-		}
+	includedirs {
+		"/usr/include/bullet",
+		"/usr/include/freetype2"
+	}
 
-	configuration "Debug"
-		defines {"DEBUG"}
-		flags {"Symbols"}
+	libdirs {
+		"/usr/local/include",
+	}
 
-	configuration "Release"
-		defines {"NDEBUG"}
-		flags {"Optimize"}
+	links {
+		"GLEW", "GL", "GLU",
+		"glfw3",
+		"X11", "Xxf86vm", "Xinerama", "Xcursor", "Xrandr", "pthread", "Xi",
+		"assimp",
+		"IL", "ILU", "ILUT",
+		"freetype"
+	}
+
+configuration { "WINDOWS" }
+	defines {"WINDOWS"}
+	defines {"NOMINMAX"}
+	defines {"GLFW_DLL"}
+
+	includedirs {
+		"include",
+		"include/freetype2"
+	}
+
+	libdirs {
+		"lib",
+		"bin"
+	}
+
+	links {
+		"opengl32","GLU32", "glew32",
+		"glfw3dll",
+		"DevIL", "ILU", "ILUT",
+		"assimp",
+		"freetype"
+	}
+
+configuration "Debug"
+	defines {"DEBUG"}
+	flags {"Symbols"}
+
+configuration "Release"
+	defines {"NDEBUG"}
+	flags {"Optimize"}

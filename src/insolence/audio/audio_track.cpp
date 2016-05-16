@@ -1,3 +1,5 @@
+#ifdef INSOLENCE_LINKS_OPENAL
+
 #include "audio_track.h"
 
 AudioTrack::~AudioTrack()
@@ -16,3 +18,5 @@ void AudioTrack::ShouldLoop(bool b)
 {
 	alSourcei(source, AL_LOOPING, b);
 }
+
+#endif

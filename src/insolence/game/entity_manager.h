@@ -13,13 +13,13 @@
 #include "../insolence_dll.h"
 
 #include "gametime.h"
-#include "../physics/physics_manager.h"
+//#include "../physics/physics_manager.h"
 #include "../render/render_manager_2d.h"
 #include "../render/render_manager_3d.h"
 #include "../systems/mesh_renderable_system.h"
 #include "../systems/sprite_renderable_system.h"
 #include "../systems/text_renderable_system.h"
-#include "../systems/rigid_body_system.h"
+//#include "../systems/rigid_body_system.h"
 
 #include <cstddef>
 #include <typeindex>
@@ -36,7 +36,7 @@ public:
 
 	RenderManager2D *renderer_2d;
 	RenderManager3D *renderer_3d;
-	PhysicsManager *physics_manager;
+//	PhysicsManager *physics_manager;
 
 	/**
 	 * Set up our manager. By default we want 2D and 3D renderers available,
@@ -46,14 +46,14 @@ public:
 	{
 		renderer_2d = new RenderManager2D();
 		renderer_3d = new RenderManager3D();
-		physics_manager = PhysicsManager::Create(glm::vec3(0.f, -9.8f, 0.f));
+//		physics_manager = PhysicsManager::Create(glm::vec3(0.f, -9.8f, 0.f));
 
 		/* Default systems for this EntityManager. */
 		AddSystemContainer<Movement>();
 		AddSystem<SpriteRenderableSystem>(renderer_2d);
 		AddSystem<TextRenderableSystem>(renderer_2d);
 		AddSystem<MeshRenderableSystem>(renderer_3d);
-		AddSystem<RigidBodySystem>(physics_manager);
+//		AddSystem<RigidBodySystem>(physics_manager);
 	}
 
 	/**
@@ -105,7 +105,7 @@ public:
 
 		delete renderer_2d;
 		delete renderer_3d;
-		delete physics_manager;
+//		delete physics_manager;
 	}
 
 	/**
@@ -117,7 +117,7 @@ public:
 	 */
 	void Manage(const GameTime& gametime)
 	{
-		physics_manager->StepSimulation(1.f/60.f);
+//		physics_manager->StepSimulation(1.f/60.f);
 
 		for(sys_iterator it = systems.begin();
 				it != systems.end(); ++it)

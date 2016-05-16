@@ -6,7 +6,7 @@
 #include <insolence/component/sprite_renderable.h>
 #include <insolence/component/text_renderable.h>
 #include <insolence/component/rigid_body.h>
-#include <insolence/physics/physics_manager.h>
+//#include <insolence/physics/physics_manager.h>
 #include <insolence/render/render_manager_2d.h>
 #include <glm/glm.hpp>
 
@@ -40,12 +40,15 @@ struct Game1 : BaseGameWorld
 		//camera->PanX(500);
 
 		font = Font::Load(
-				//"/usr/share/fonts/truetype/tlwg/Kinnari.ttf", 80);
-				"/usr/share/fonts/truetype/droid/DroidSansMono.ttf", 40);
+			//"/usr/share/fonts/truetype/tlwg/Kinnari.ttf", 80);
+			//"/usr/share/fonts/truetype/droid/DroidSansMono.ttf", 40);
+			"arial.ttf", 40);
+
 		for(int i = 0; i < 3; ++i)
 		{
 			texts.push_back(CreateEntity());
-			texts[i]->Add<TextRenderable>(font, "test");
+			texts[i]->Add<TextRenderable>(font);
+			texts[i]->Get<TextRenderable>()->Text("Hello");
 			texts[i]->Get<TextRenderable>()->colour = glm::vec4(0.f, 0.f, 0.f, 1.f);
 			texts[i]->Get<Movement>()->MoveY(-(i * 64));
 		}
@@ -75,8 +78,8 @@ struct Game1 : BaseGameWorld
 		entities.back()->Get<Movement>()->Move(
 				glm::vec3(i * 1.2f, 1.f, 0.f));
 		entities.back()->Get<Movement>()->Scale(glm::vec3(20.f));
-		entities.back()->Add<RigidBody>();
-		entities.back()->Get<RigidBody>()->Make2D();
+		//entities.back()->Add<RigidBody>();
+		//entities.back()->Get<RigidBody>()->Make2D();
 	}
 
 	void Update(const GameTime& time)

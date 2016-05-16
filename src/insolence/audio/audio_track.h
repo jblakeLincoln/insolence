@@ -1,3 +1,4 @@
+#ifdef INSOLENCE_LINKS_OPENAL
 #ifndef AUDIO_TRACK_H
 #define AUDIO_TRACK_H
 
@@ -32,4 +33,5 @@ public:
 	void ShouldLoop(bool b);
 };
 
+#endif
 #endif

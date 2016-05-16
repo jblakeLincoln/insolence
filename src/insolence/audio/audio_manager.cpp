@@ -1,3 +1,5 @@
+#ifdef INSOLENCE_LINKS_OPENAL
+
 #include "audio_manager.h"
 
 AudioManager::~AudioManager()
@@ -34,3 +36,5 @@ AudioTrack* AudioManager::LoadTrack(const char *filename)
 
 	return output;
 }
+
+#endif

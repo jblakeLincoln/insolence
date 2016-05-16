@@ -67,7 +67,7 @@ public:
 		if(FT_New_Face(ft, path, 0, &face))
 		{
 			log(Log::FATAL, "Font (%d) - Couldn't generate face from %d",
-				   __func__, path);
+				   __FUNCTION__, path);
 			return NULL;
 		}
 

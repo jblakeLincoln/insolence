@@ -1,3 +1,4 @@
+#ifdef INSOLENCE_LINKS_BULLET
 #include "rigid_body.h"
 
 void RigidBody::Activate()
@@ -48,3 +49,5 @@ void RigidBody::Make2D()
 	rigid_body->setLinearFactor(btVector3(1, 1, 0));
 	rigid_body->setAngularFactor(btVector3(0, 0, 1));
 }
+
+#endif

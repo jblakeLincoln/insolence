@@ -7,10 +7,9 @@
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include <btBulletDynamicsCommon.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <GL/gl.h>
+#include <GL/glew.h>
 
 /* TODO Issue #23: Load in normal maps. */
 struct INSOLENCE_API Mesh {

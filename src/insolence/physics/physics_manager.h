@@ -1,3 +1,4 @@
+#ifdef INSOLENCE_LINK_BULLET
 #ifndef PHYSICS_MANAGER_H
 #define PHYSICS_MANAGER_H
 
@@ -74,4 +75,5 @@ public:
 
 };
 
+#endif
 #endif

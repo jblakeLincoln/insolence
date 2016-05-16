@@ -1,3 +1,4 @@
+#ifdef INSOLENCE_LINKS_BULLET
 #include "physics_manager.h"
 
 PhysicsManager::PhysicsManager(const glm::vec3& gravity)
@@ -138,6 +139,4 @@ btPoint2PointConstraint* PhysicsManager::CreateConstraint(Entity *e1,
 }
 */
 
-
-
-
+#endif
