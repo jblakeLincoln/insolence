@@ -11,10 +11,10 @@ void TextRenderableSystem::Manage(const GameTime& gametime)
 		TextRenderable *t = &it->second;
 		Movement *m = it->first->Get<Movement>();
 
-		if(m == NULL || t->font == 0)
+		if(m == NULL || t->font == NULL || t->text == NULL)
 			continue;
 
-		renderer->AddText(t->font, t->text.c_str(), m->GetPositionXY(),
+		renderer->AddText(t->font, t->text, m->GetPositionXY(),
 				t->colour, t->align, t->scale);
 	}
 }
