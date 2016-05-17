@@ -181,9 +181,11 @@ public:
 	 *
 	 * \param T		Type of component to attach.
 	 * \param Args	Arguments for the desired constructor of the component.
+	 *
+	 * \return		Pointer to created component, otherwise 0.
 	 */
 	template<typename T, typename... Args>
-	void Add(Args... args);
+	T* Add(Args... args);
 
 	/**
 	 * If the desired component exists, return it. Otherwise return 0;
@@ -199,7 +201,7 @@ public:
 };
 
 template<typename T, typename... Args>
-void Entity::Add(Args... args)
+T* Entity::Add(Args... args)
 {
 	const size_t hash = typeid(T).hash_code();
 	T component(args...);
@@ -207,7 +209,7 @@ void Entity::Add(Args... args)
 	if(CheckSystemExists(hash) == false)
 		SendSystemToManager((ISystem*)new System<T>(), hash);
 
-	components[hash] = (T*)SendToManager(&component, hash);
+	return (T*)(components[hash] = (T*)SendToManager(&component, hash));
 }
 
 template <typename T>
