@@ -6,7 +6,6 @@ void BaseGameWorld::BaseInitialise()
 	window = Window::CreateInsolenceWindow(720, 540, "Window Title");
 	is_running = true;
 
-	gametime = GameTime();
 	entity_manager = new EntityManager();
 
 	Initialise();
@@ -14,9 +13,8 @@ void BaseGameWorld::BaseInitialise()
 
 void BaseGameWorld::BaseUpdate()
 {
-	gametime.Update();
+	Window::PollEvents();
 	Update(gametime);
-	entity_manager->Manage(gametime);
 }
 
 void BaseGameWorld::BaseDraw()
@@ -24,15 +22,13 @@ void BaseGameWorld::BaseDraw()
 	glClearColor(224.f / 255.f, 1.f, 1.f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	Draw();
-
 	if(Camera::GetActiveCamera() != NULL)
 		Camera::GetActiveCamera()->Post();
 
+	entity_manager->Manage(gametime);
 	entity_manager->FlushDraw();
 
 	window->SwapBuffers();
-	Window::PollEvents();
 }
 
 void BaseGameWorld::BaseUnload()
@@ -44,13 +40,25 @@ void BaseGameWorld::BaseUnload()
 
 void BaseGameWorld::Run()
 {
+	double accumulator = 0;
+
 	BaseInitialise();
-	BaseUpdate();
 
 	while(window->ShouldClose() == false)
 	{
-		BaseUpdate();
+		int frame_time_start = Time::NowMilliseconds();
+
+		while(accumulator >= FRAME_TIME)
+		{
+			BaseUpdate();
+
+			accumulator -= FRAME_TIME;
+		}
+
 		BaseDraw();
+		gametime.Update();
+
+		accumulator += Time::NowMilliseconds() - frame_time_start;
 	}
 
 	BaseUnload();

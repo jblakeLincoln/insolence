@@ -3,6 +3,7 @@
 
 #include "../insolence_dll.h"
 
+#include <algorithm>
 #include <chrono>
 #include "timespan.h"
 

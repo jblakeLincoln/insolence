@@ -3,6 +3,10 @@
 
 #include "../insolence_dll.h"
 
+#include <chrono>
+
+typedef std::chrono::high_resolution_clock chrono_hrc;
+
 struct INSOLENCE_API Time
 {
 protected:
@@ -31,6 +35,12 @@ public:
 	bool operator <(const double& b) const
 	{
 		return (Get() > b);
+	}
+
+	static int NowMilliseconds()
+	{
+		return std::chrono::duration_cast<std::chrono::milliseconds>
+			(chrono_hrc::now().time_since_epoch()).count();
 	}
 };
 

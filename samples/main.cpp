@@ -84,7 +84,6 @@ struct Game1 : BaseGameWorld
 
 	void Update(const GameTime& time)
 	{
-
 		if(Input::GetKey(JKEY_KEY_S) == JKEY_PRESS)
 			Spawn(0);
 
@@ -94,10 +93,16 @@ struct Game1 : BaseGameWorld
 			entities.erase(entities.begin());
 		}
 
+		if (Input::GetPadButton(JPAD_BTN_Y) && entities.size() > 0)
+			entities[0]->Get<Movement>()->MoveY(0.1f);
+		if (Input::GetPadButton(JPAD_BTN_A) && entities.size() > 0)
+			entities[0]->Get<Movement>()->MoveY(-0.1f);
+
 		if(entities.size() > 0)
 		{
-			entities[0]->Get<Movement>()->Rotate(0.01f, glm::vec3(0.f, 1.f, 0.f));
-			//entities[0]->Get<Movement>()->MoveX(0.1f);
+			entities[0]->Get<Movement>()->Rotate(0.005f,
+					glm::vec3(0.f, 1.f, 0.f));
+			//entities[0]->Get<Movement>()->MoveX(0.1f * time.GetDeltaTime());
 
 			if(++counter > count)
 				counter = 0;

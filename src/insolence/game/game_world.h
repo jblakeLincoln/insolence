@@ -2,7 +2,7 @@
 #define GAME_WORLD_H
 
 #include "../insolence_dll.h"
-
+#include <chrono>
 #include "entity.h"
 #include "window.h"
 #include "gametime.h"
@@ -11,6 +11,8 @@ struct Entity;
 struct EntityManager;
 struct INSOLENCE_API BaseGameWorld {
 private:
+	const double FRAME_TIME = 1000.f / 60.f;
+
 	Window *window;
 	GameTime gametime;
 	bool is_running = false;
@@ -41,6 +43,7 @@ private:
 
 public:
 	virtual ~BaseGameWorld() {}
+
 	Entity *CreateEntity();
 	EntityManager *entity_manager;
 
