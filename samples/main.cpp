@@ -93,6 +93,9 @@ struct Game1 : BaseGameWorld
 
 		if(entities.size() > 0)
 		{
+			entities[0]->Get<Movement>()->Rotate(0.01f, glm::vec3(0.f, 1.f, 0.f));
+			//entities[0]->Get<Movement>()->MoveX(0.1f);
+
 			if(++counter > count)
 				counter = 0;
 

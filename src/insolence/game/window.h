@@ -89,6 +89,7 @@ public:
 		log(Log::INFO, "Window (%s) - Successful window creation",
 				__FUNCTION__);
 
+		output->should_close = false;
 		// Log window creation success.
 		return output;
 	}

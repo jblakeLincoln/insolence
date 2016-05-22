@@ -9,7 +9,7 @@ Entity::Entity(EntityManager *m)
 
 Entity::~Entity()
 {
-	typename std::unordered_map<size_t, Component*>::iterator it;
+	std::unordered_map<size_t, Component*>::iterator it;
 
 	while(components.size() != 0)
 	{

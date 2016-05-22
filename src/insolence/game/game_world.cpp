@@ -10,7 +10,6 @@ void BaseGameWorld::BaseInitialise()
 	entity_manager = new EntityManager();
 
 	Initialise();
-	BaseUpdate();
 }
 
 void BaseGameWorld::BaseUpdate()
@@ -18,19 +17,10 @@ void BaseGameWorld::BaseUpdate()
 	gametime.Update();
 	Update(gametime);
 	entity_manager->Manage(gametime);
-	BaseDraw();
 }
 
 void BaseGameWorld::BaseDraw()
 {
-	is_running = !window->ShouldClose();
-
-	if(is_running == false)
-	{
-		Unload();
-		return;
-	}
-
 	glClearColor(224.f / 255.f, 1.f, 1.f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -43,8 +33,6 @@ void BaseGameWorld::BaseDraw()
 
 	window->SwapBuffers();
 	Window::PollEvents();
-
-	BaseUpdate();
 }
 
 void BaseGameWorld::BaseUnload()
@@ -57,6 +45,15 @@ void BaseGameWorld::BaseUnload()
 void BaseGameWorld::Run()
 {
 	BaseInitialise();
+	BaseUpdate();
+
+	while(window->ShouldClose() == false)
+	{
+		BaseUpdate();
+		BaseDraw();
+	}
+
+	BaseUnload();
 }
 
 Entity* BaseGameWorld::CreateEntity()
