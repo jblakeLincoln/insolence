@@ -91,7 +91,7 @@ static void log(Log::LOG type, const char *format, ...)
 	if(type >= Log::File)
 		log_to_file(type, now, line);
 
-	delete line;
+	delete[] line;
 
 	if(type == Log::FATAL)
 		exit(1);
