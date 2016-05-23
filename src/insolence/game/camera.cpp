@@ -3,17 +3,65 @@
 GLint Camera::uni_block = -1;
 Camera* Camera::active_camera = 0;
 
-Camera::Camera()
+void Camera::Construct()
 {
-	block.proj = glm::perspective(1.f, 720.f/540.f, 0.1f, 10000.f);
 	glGenBuffers(1, &ubo);
+
+	window = NULL;
+	fov = 1.f;
+	aspect_ratio = 1.f;
+	z_near = 0.1f;
+	z_far = 1000.f;
 
 	if(active_camera == NULL)
 		active_camera = this;
 }
 
+Camera::Camera()
+{
+	Construct();
+	block.proj = glm::perspective(fov, aspect_ratio, z_near, z_far);
+}
+
+Camera::Camera(uint32_t width, uint32_t height)
+{
+	Construct();
+	aspect_ratio = (float)width / height;
+	block.proj = glm::perspective(fov, aspect_ratio, z_near, z_far);
+}
+
+Camera::Camera(Window *w)
+{
+	Construct();
+
+	window = w;
+	window_fb_width = window->GetFramebufferWidth();
+	window_fb_height = window->GetFramebufferHeight();
+	aspect_ratio = (float)window_fb_width / window_fb_height;
+
+	block.proj = glm::perspective(fov, aspect_ratio, z_near, z_far);
+}
+
 void Camera::Post()
 {
+	if(window != NULL)
+	{
+		int prev_w = window_fb_width;
+		int prev_h = window_fb_height;
+
+		window_fb_width = window->GetFramebufferWidth();
+		window_fb_height= window->GetFramebufferHeight();
+
+		if(prev_w != window_fb_width || prev_h != window_fb_height)
+		{
+			aspect_ratio = (float)window_fb_width / window_fb_height;
+			block.proj = glm::perspective(fov, aspect_ratio, z_near, z_far);
+
+			glViewport(0, 0, window_fb_width, window_fb_height);
+
+		}
+	}
+
 	glm::vec3 view_pos = pos.GetPosition();
 
 	if(view_pos == glm::vec3(0.f))

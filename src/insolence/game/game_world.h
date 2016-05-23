@@ -2,7 +2,9 @@
 #define GAME_WORLD_H
 
 #include "../insolence_dll.h"
-#include <chrono>
+
+#include <glm/vec3.hpp>
+
 #include "entity.h"
 #include "window.h"
 #include "gametime.h"
@@ -16,6 +18,7 @@ private:
 	Window *window;
 	GameTime gametime;
 	bool is_running = false;
+	glm::vec3 clear_colour;
 
 	/**
 	 * Create a window and declare the game world as "running".
@@ -40,12 +43,6 @@ private:
 	 * entity manager.
 	 */
 	void BaseUnload();
-
-public:
-	virtual ~BaseGameWorld() {}
-
-	Entity *CreateEntity();
-	EntityManager *entity_manager;
 
 protected:
 	/**
@@ -75,6 +72,14 @@ protected:
 	virtual void Unload()=0;
 
 public:
+	BaseGameWorld() {}
+	virtual ~BaseGameWorld() {}
+
+	Entity *CreateEntity();
+	EntityManager *entity_manager;
+
+	Window* GetWindow() { return window; }
+	void SetClearColour(const glm::vec3& col);
 
 	/**
 	 * Begins the game loop.

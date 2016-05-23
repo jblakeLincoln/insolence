@@ -35,15 +35,14 @@ struct Game1 : BaseGameWorld
 		material->diffuse =
 			Texture::LoadColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
 
-		camera = new Camera();
+		camera = new Camera(GetWindow());
 		camera->pos.MoveZ(100.f);
 		//camera->PanX(500);
 
 		font = Font::Load(
-			//"/usr/share/fonts/truetype/tlwg/Kinnari.ttf", 80);
-			//"/usr/share/fonts/truetype/droid/DroidSansMono.ttf", 40);
-			"arial.ttf", 40);
-
+				"/usr/share/fonts/truetype/tlwg/Kinnari.ttf", 20);
+				//"/usr/share/fonts/truetype/droid/DroidSansMono.ttf", 40);
+				//
 		for(int i = 0; i < 3; ++i)
 		{
 			texts.push_back(CreateEntity());
@@ -52,6 +51,7 @@ struct Game1 : BaseGameWorld
 			texts[i]->Get<TextRenderable>()->colour = glm::vec4(0.f, 0.f, 0.f, 1.f);
 			texts[i]->Get<Movement>()->MoveY(-(i * 64));
 		}
+
 
 		texts[0]->Get<TextRenderable>()->align = FontAlign::LEFT;
 		texts[1]->Get<TextRenderable>()->align = FontAlign::CENTRE;

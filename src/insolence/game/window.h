@@ -10,24 +10,59 @@
 #include "texture.h"
 
 #include <cstdio>
-#include <stdlib.h>
+#include <cstdlib>
+#include <unordered_map>
 #include <GLFW/glfw3.h>
 
 struct INSOLENCE_API Window
 {
 private:
-	GLFWwindow *glfw_window;
+	static std::unordered_map<GLFWwindow*, Window*> windows;
 
-	Window() {}
+	static const GLuint GL_MAJOR = 3;
+	static const GLuint GL_MINOR = 1;
+
+	static void WindowFramebufferSizeCallback(GLFWwindow *w, int width,
+			int height)
+	{
+		if(windows.find(w) == windows.end())
+			return;
+
+		windows[w]->framebuffer_width = width;
+		windows[w]->framebuffer_height = height;
+	}
+
+	static void WindowResizeCallback(GLFWwindow *w, int width, int height)
+	{
+		if(windows.find(w) == windows.end())
+			return;
+
+		windows[w]->width = width;
+		windows[w]->height = height;
+	}
+
+	Window();
 	~Window() {}
 
-	GLuint width;
-	GLuint height;
+	GLFWwindow *glfw_window;
+
+	uint32_t width;
+	uint32_t height;
+	int framebuffer_width;
+	int framebuffer_height;
+
 	bool should_close;
 
 public:
+	uint32_t GetWidth() { return width; }
+	uint32_t GetHeight() { return height; }
+	int GetFramebufferWidth() { return framebuffer_width; }
+	int GetFramebufferHeight() { return framebuffer_height; }
+
 	bool ShouldClose() { return glfwWindowShouldClose(glfw_window); }
 	void SetShouldClose(bool c) { glfwSetWindowShouldClose(glfw_window, c); }
+
+	void SetWindowTitle(const char *title);
 
 	void SwapBuffers();
 
@@ -38,35 +73,40 @@ public:
 	 * \param height	Window height
 	 * \return			Created window
 	 */
-	static Window *CreateInsolenceWindow(GLuint width, GLuint height,
-			const char *title)
+	static Window* Create(GLuint width=640, GLuint height=480,
+			const char* title="Insolence Window", bool resizeable=false)
 	{
-		Window *output = new Window();
-		int gl_major = 3;
-		int gl_minor = 1;
+		Window *out = new Window();
 
 		/* TODO Issue #2: Log success/failure. */
 		if(glfwInit() != GL_TRUE)
 		{
 			log(Log::FATAL, "Window (%s) - Failed to initialise GLFW",
 					__FUNCTION__);
-			return NULL;
 		}
 
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_major);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_minor);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_MAJOR);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_MINOR);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 		/* TODO Issue #3: AA not dependent on GLFW. */
 		glfwWindowHint(GLFW_SAMPLES, 4);
-		glfwSwapInterval(1);
 
-		output->glfw_window = glfwCreateWindow(width, height, title,
+		if(resizeable == false)
+			glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+
+		out->glfw_window = glfwCreateWindow(width, height, title,
 				NULL, NULL);
-		output->width = width;
-		output->height = height;
 
-		glfwMakeContextCurrent(output->glfw_window);
+		out->width = width;
+		out->height = height;
+
+		glfwMakeContextCurrent(out->glfw_window);
+
+		if(resizeable == true)
+			glfwSetWindowSizeCallback(out->glfw_window, WindowResizeCallback);
+
+		glfwSwapInterval(1);
 
 		glewExperimental = GL_TRUE;
 
@@ -74,11 +114,10 @@ public:
 		{
 			log(Log::FATAL, "Window (%s) - Failed to initialise GLEW.",
 					__FUNCTION__);
-			return NULL;
 		}
 
-		Input::AttachWindowToKeyboard(output->glfw_window);
-		Input::SetMouseWindow(output->glfw_window);
+		Input::AttachWindowToKeyboard(out->glfw_window);
+		Input::SetMouseWindow(out->glfw_window);
 
 		/* Initialise texture loading libs and add default blending. */
 		Texture::Init();
@@ -86,12 +125,17 @@ public:
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+		windows[out->glfw_window] = out;
+		glfwGetFramebufferSize(out->glfw_window, &out->framebuffer_width,
+				&out->framebuffer_height);
+
+		glfwSetFramebufferSizeCallback(out->glfw_window,
+				WindowFramebufferSizeCallback);
+
 		log(Log::INFO, "Window (%s) - Successful window creation",
 				__FUNCTION__);
 
-		output->should_close = false;
-		// Log window creation success.
-		return output;
+		return out;
 	}
 
 	/**
@@ -99,12 +143,12 @@ public:
 	 *
 	 * \param Window to be destroyed.
 	 */
-	static void DestroyInsolenceWindow(Window *window)
+	static void Destroy(Window *w)
 	{
-		glfwDestroyWindow(window->glfw_window);
+		glfwDestroyWindow(w->glfw_window);
 
-		delete window;
-		window = 0;
+		delete w;
+		w = NULL;
 	}
 
 	/**

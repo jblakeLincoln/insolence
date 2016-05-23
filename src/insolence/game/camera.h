@@ -6,6 +6,7 @@
 #include <GL/glew.h>
 #include <glm/matrix.hpp>
 
+#include "../game/window.h"
 #include "../component/movement.h"
 #include "../render/shader_program.h"
 #include "../render/render_manager.h"
@@ -19,16 +20,29 @@ private:
 		glm::mat4 view;
 	};
 
+	Window *window = NULL;
+	int window_fb_width;
+	int window_fb_height;
+
 	GLuint ubo;
 	static GLint uni_block;
 	static Camera *active_camera;
 
+	void Construct();
+
 public:
 	Camera();
+	Camera(uint32_t width, uint32_t height);
+	Camera(Window*);
 
 	CameraBlock block;
 	Movement pos;
 	Movement lookat;
+
+	float fov;
+	float aspect_ratio;
+	float z_near;
+	float z_far;
 
 	static Camera* GetActiveCamera() {
 		return active_camera;

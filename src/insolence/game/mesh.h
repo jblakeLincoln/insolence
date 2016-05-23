@@ -33,8 +33,8 @@ public:
 
 		if(scene == NULL)
 		{
-			log(Log::FATAL, "Mesh (%s) - Failed to initialise aiImportFile.",
-					__FUNCTION__);
+			log(Log::FATAL, "Mesh (%s) - File \'%s\' not found",
+					__FUNCTION__, file);
 			return NULL;
 		}
 

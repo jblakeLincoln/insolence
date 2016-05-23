@@ -3,7 +3,9 @@
 
 void BaseGameWorld::BaseInitialise()
 {
-	window = Window::CreateInsolenceWindow(720, 540, "Window Title");
+	window = Window::Create(720, 540, "Window Title", true);
+
+	SetClearColour(glm::vec3(30.f, 130.f, 180.f));
 	is_running = true;
 
 	entity_manager = new EntityManager();
@@ -19,7 +21,7 @@ void BaseGameWorld::BaseUpdate()
 
 void BaseGameWorld::BaseDraw()
 {
-	glClearColor(224.f / 255.f, 1.f, 1.f, 1.f);
+	glClearColor(clear_colour.x, clear_colour.y, clear_colour.z, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	if(Camera::GetActiveCamera() != NULL)
@@ -35,7 +37,7 @@ void BaseGameWorld::BaseUnload()
 {
 	Unload();
 
-	Window::DestroyInsolenceWindow(window);
+	Window::Destroy(window);
 }
 
 void BaseGameWorld::Run()
@@ -70,4 +72,10 @@ Entity* BaseGameWorld::CreateEntity()
 	e->Add<Movement>();
 
 	return e;
+}
+
+void BaseGameWorld::SetClearColour(const glm::vec3& colour)
+{
+	for(int i = 0; i < 3; ++i)
+		clear_colour[i] = colour[i] / 255.f;
 }
