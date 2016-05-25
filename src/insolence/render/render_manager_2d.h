@@ -56,7 +56,7 @@ struct INSOLENCE_API RenderManager2D : public RenderManager
 	 * \param rect		Sprite rectangle.
 	 */
 	void Add(Texture *tex, const glm::mat4 &model, const glm::vec4& colour,
-			const glm::vec4& rect);
+			const glm::vec4 &rect);
 
 	/**
 	 * Queue up text sprites to be drawn.

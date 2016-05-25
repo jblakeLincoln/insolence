@@ -6,6 +6,7 @@ RenderManager2D::RenderManager2D()
 	int vbo_attrib_len;
 
 	/* Data for our quad - centre aligned - 3 verts, 2 UVs. */
+	/*
 	float verts[] = {
 		-0.5f, 0.5f, 0.0f, 0.0f, 0.0f, // Top left
 		0.5f, 0.5f, 0.0f, 1.0f, 0.0f, // Top right
@@ -13,6 +14,15 @@ RenderManager2D::RenderManager2D()
 		0.5f, -0.5f, 0.0f, 1.0f, 1.0f, // Bottom right
 		-0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // Bottom left
 		-0.5f, 0.5f, 0.0f, 0.0f, 0.0f // Top left
+	};
+	*/
+	float verts[] = {
+		0.f, 1.f, 0.0f, 0.0f, 0.0f, // Top left
+		1.f, 1.f, 0.0f, 1.0f, 0.0f, // Top right
+		1.f, 0.f, 0.0f, 1.0f, 1.0f, // Bottom right
+		1.f, 0.f, 0.0f, 1.0f, 1.0f, // Bottom right
+		0.f, 0.f, 0.0f, 0.0f, 1.0f, // Bottom left
+		0.f, 1.f, 0.0f, 0.0f, 0.0f // Top left
 	};
 
 	glGenVertexArrays(1, &vao);

@@ -16,6 +16,10 @@ void SpriteRenderableSystem::Manage(const GameTime& gametime)
 
 		s->animation.Progress(gametime.GetFrameTime());
 
+		glm::mat4 model = m->GetModelMatrix();
+		model[3][0] -= s->origin.x;
+		model[3][1] -= s->origin.y;
+
 		renderer->Add(s->texture, m->GetModelMatrix(), s->colour,
 				s->animation.GetAnimationRectangle(s->texture));
 	}

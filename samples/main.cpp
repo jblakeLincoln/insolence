@@ -43,6 +43,7 @@ struct Game1 : BaseGameWorld
 				"/usr/share/fonts/truetype/tlwg/Kinnari.ttf", 20);
 				//"/usr/share/fonts/truetype/droid/DroidSansMono.ttf", 40);
 				//
+		/*
 		for(int i = 0; i < 3; ++i)
 		{
 			texts.push_back(CreateEntity());
@@ -56,14 +57,12 @@ struct Game1 : BaseGameWorld
 		texts[0]->Get<TextRenderable>()->align = FontAlign::LEFT;
 		texts[1]->Get<TextRenderable>()->align = FontAlign::CENTRE;
 		texts[2]->Get<TextRenderable>()->align = FontAlign::RIGHT;
-
+		*/
 		centre = CreateEntity();
 
 		centre->Get<Movement>()->Scale(glm::vec3(20.f));
-		/*
 		centre->Add<SpriteRenderable>();
 		centre->Get<SpriteRenderable>()->texture = material->diffuse;
-		*/
 
 		//for(int i = 0; i < count; ++i)
 		//	Spawn(i);
@@ -120,7 +119,7 @@ struct Game1 : BaseGameWorld
 
 		const TimeSpan &et = time.GetElapsedTime();
 
-		for(int i = 0; i < 3; ++i)
+		for(int i = 0; i < 0; ++i)
 		{
 				texts[i]->Get<TextRenderable>()->Text(
 				"MrotavatorM%02d:%02d:%02d:%03dWrotavatorW",
