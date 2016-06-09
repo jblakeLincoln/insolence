@@ -9,35 +9,35 @@ Entity::Entity(EntityManager *m)
 
 Entity::~Entity()
 {
-	std::unordered_map<size_t, Component*>::iterator it;
+	std::unordered_map<std::type_index, Component*>::iterator it;
 
 	while(components.size() != 0)
 	{
 		it = components.begin();
-		const size_t hash = typeid(*it->second).hash_code();
-		RemoveFromManager(hash);
-		components.erase(hash);
+		const std::type_index type = typeid(*it->second);
+		RemoveFromManager(type);
+		components.erase(type);
 	}
 
 	manager->Remove(this);
 }
 
-Component* Entity::SendToManager(const Component *c, size_t hash)
+Component* Entity::SendToManager(const Component *c, const std::type_index &type)
 {
-	return manager->Add(this, c, hash);
+	return manager->Add(this, c, type);
 }
 
-bool Entity::CheckSystemExists(size_t hash)
+bool Entity::CheckSystemExists(const std::type_index &type)
 {
-	return manager->HasSystem(hash);
+	return manager->HasSystem(type);
 }
 
-void Entity::RemoveFromManager(size_t hash)
+void Entity::RemoveFromManager(const std::type_index &type)
 {
-	return manager->Remove(this, hash);
+	return manager->Remove(this, type);
 }
 
-void Entity::SendSystemToManager(ISystem *sys, size_t hash)
+void Entity::SendSystemToManager(ISystem *sys, const std::type_index &type)
 {
-	manager->AddSystem(sys, hash);
+	manager->AddSystem(sys, type);
 }

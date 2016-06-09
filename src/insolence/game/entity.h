@@ -98,63 +98,45 @@ public:
 	virtual void EndCreation(Entity* e, TComponent *c) {}
 
 	/**
-	 * \return	hashed value of the component type.
+	 * \return	Component type.
 	 */
-	static size_t GetTypeHash() {
-		return typeid(TComponent).hash_code();
+	static const std::type_index GetType() {
+		return typeid(TComponent);
 	}
 };
 
 struct INSOLENCE_API Entity
 {
 private:
-	std::unordered_map<size_t, Component*> components;
+	std::unordered_map<std::type_index, Component*> components;
 	uint32_t id;
 	EntityManager *manager;
 
 	/**
 	 * Check if a System has already been added/created for a particular
 	 * type of component.
-	 *
-	 * \param hash	Hash of the component type.
-	 * \return		True for an existing system, otherwise false.
 	 */
-	bool CheckSystemExists(size_t hash);
+	bool CheckSystemExists(const std::type_index &type);
 
 	/**
 	 * For the creation of a new system to store a particular component
-	 * type.Adds the new system to the manager, which retains the pointer and
+	 * type. Adds the new system to the manager, which retains the pointer and
 	 * controls its lifetime.
-	 *
-	 * \param sys	System to hand over to manager.
-	 * \param hash	Hash of component type.
 	 */
-	void SendSystemToManager(ISystem*, size_t hash);
+	void SendSystemToManager(ISystem*, const std::type_index &type);
 
 	/**
 	 * Send a component to the manager, which will then be copied to the
 	 * relevant system. We ensure the manager already has the system by
 	 * calling SendSystemToManager because the manager isn't capable of
 	 * creating a system itself.
-	 *
-	 * \param c		Pointer to component to be copied to system.
-	 * \param hash	Hash of component/system type.
 	 */
-	Component* SendToManager(const Component *T, size_t hash);
+	Component* SendToManager(const Component *T, const std::type_index &type);
 
 	/**
 	 * Removes a component from the system it is attached to in the manager.
-	 *
-	 * \param hash	Hash of component type.
 	 */
-	void RemoveFromManager(size_t);
-
-	/**
-	 * Removes an entity and everything related to it from the manager.
-	 *
-	 * \param e		Entity for removal.
-	 */
-	void RemoveEntityFromManager(Entity*);
+	void RemoveFromManager(const std::type_index &type);
 
 	Entity() {}
 
@@ -203,28 +185,28 @@ public:
 template<typename T, typename... Args>
 T* Entity::Add(Args... args)
 {
-	const size_t hash = typeid(T).hash_code();
+	const std::type_index type = typeid(T);
 	T component(args...);
 
-	if(CheckSystemExists(hash) == false)
-		SendSystemToManager((ISystem*)new System<T>(), hash);
+	if(CheckSystemExists(type) == false)
+		SendSystemToManager((ISystem*)new System<T>(), type);
 
-	return (T*)(components[hash] = (T*)SendToManager(&component, hash));
+	return (T*)(components[type] = (T*)SendToManager(&component, type));
 }
 
 template <typename T>
 T* Entity::Get()
 {
-	return (T*)components[typeid(T).hash_code()];
+	return (T*)components[typeid(T)];
 }
 
 template<typename T>
 void Entity::Remove()
 {
-	const size_t hash = typeid(T).hash_code();
+	const std::type_index type = typeid(T);
 
-	RemoveFromManager(hash);
-	components.erase(hash);
+	RemoveFromManager(type);
+	components.erase(type);
 }
 
 #endif

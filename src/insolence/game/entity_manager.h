@@ -28,11 +28,11 @@
 struct Entity;
 struct INSOLENCE_API EntityManager {
 private:
-	typedef std::unordered_map<size_t, ISystem*>::iterator sys_iterator;
+	typedef std::unordered_map<std::type_index, ISystem*>::iterator sys_iterator;
 
 public:
 	std::vector<Entity*> entities;
-	std::unordered_map<size_t, ISystem*> systems;
+	std::unordered_map<std::type_index, ISystem*> systems;
 
 	RenderManager2D *renderer_2d;
 	RenderManager3D *renderer_3d;
@@ -64,11 +64,11 @@ public:
 	 */
 	template<typename T>
 	void AddSystemContainer() {
-		const size_t hash = typeid(T).hash_code();
-		if(systems.find(hash) != systems.end())
+		const std::type_index type = typeid(T);
+		if(systems.find(type) != systems.end())
 			return;
 
-		systems[hash] = new System<T>();
+		systems[type] = new System<T>();
 	}
 
 	/**
@@ -76,10 +76,10 @@ public:
 	 * exists, we bail without doing anything.
 	 */
 	template<typename T, typename... Args> void AddSystem(Args... args) {
-		if(systems.find(T::GetTypeHash()) != systems.end())
+		if(systems.find(T::GetType()) != systems.end())
 			return;
 
-		systems[T::GetTypeHash()] = new T(args...);
+		systems[T::GetType()] = new T(args...);
 	}
 
 	/**
@@ -142,7 +142,7 @@ public:
 	 * \param e		Entity from which the component should be removed.
 	 * \param hash	Hash of component type.
 	 */
-	void Remove(Entity *e, size_t hash) {
+	void Remove(Entity *e, const std::type_index& hash) {
 		systems[hash]->Remove(e);
 	}
 
@@ -162,8 +162,8 @@ public:
 	 * \param sys	System to hand over.
 	 * \param hash	Hash of component type of the system.
 	 */
-	void AddSystem(ISystem* sys, size_t hash) {
-		systems[hash] = sys;
+	void AddSystem(ISystem* sys, const std::type_index &type) {
+		systems[type] = sys;
 	}
 
 	/**
@@ -172,8 +172,8 @@ public:
 	 * \param hash	Type of component to check for.
 	 * \return		True if system for component exists, otherwise false.
 	 */
-	bool HasSystem(size_t hash) {
-		return systems.find(hash) != systems.end();
+	bool HasSystem(const std::type_index &type) {
+		return systems.find(type) != systems.end();
 	}
 
 	/**
@@ -186,13 +186,13 @@ public:
 	 *
 	 * \return		Pointer to component if created successfully, otherwise 0.
 	 */
-	Component* Add(Entity *e, const Component* c, size_t hash) {
-		sys_iterator it = systems.find(hash);
+	Component* Add(Entity *e, const Component* c, const std::type_index &type) {
+		sys_iterator it = systems.find(type);
 
 		if(it == systems.end())
 			return 0;
 
-		return systems[hash]->CreateComponent(e, c);
+		return systems[type]->CreateComponent(e, c);
 	}
 };
 
