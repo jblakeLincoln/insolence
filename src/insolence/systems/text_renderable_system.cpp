@@ -9,12 +9,12 @@ void TextRenderableSystem::Manage(const GameTime& gametime)
 	for(it = components.begin(); it!= components.end(); ++it)
 	{
 		TextRenderable *t = &it->second;
-		Movement *m = it->first->Get<Movement>();
+		Transform *m = it->first->Get<Transform>();
 
 		if(m == NULL || t->font == NULL || t->text == NULL)
 			continue;
 
-		renderer->AddText(t->font, t->text, m->GetPositionXY(),
+		renderer->AddText(t->font, t->text, m->GetPosXY(),
 				t->colour, t->align, t->scale);
 	}
 }

@@ -7,7 +7,7 @@
 #include <glm/matrix.hpp>
 
 #include "../game/window.h"
-#include "../component/movement.h"
+#include "../component/transform.h"
 #include "../render/shader_program.h"
 #include "../render/render_manager.h"
 
@@ -36,8 +36,8 @@ public:
 	Camera(Window*);
 
 	CameraBlock block;
-	Movement pos;
-	Movement lookat;
+	Transform pos;
+	Transform lookat;
 
 	float fov;
 	float aspect_ratio;

@@ -5,7 +5,7 @@
 #include "../insolence_dll.h"
 
 #include "../game/entity.h"
-#include "../component/movement.h"
+#include "../component/transform.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -46,7 +46,7 @@ public:
 	 *
 	 * \return	Pointer to btRigidBody on success, or NULL on fail.
 	 */
-	btRigidBody* CreateRigidBody(Movement *m);
+	btRigidBody* CreateRigidBody(Transform *m);
 
 	/**
 	 * Create a constraint between two entities. The constraint is tracked

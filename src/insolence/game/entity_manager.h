@@ -49,7 +49,7 @@ public:
 //		physics_manager = PhysicsManager::Create(glm::vec3(0.f, -9.8f, 0.f));
 
 		/* Default systems for this EntityManager. */
-		AddSystemContainer<Movement>();
+		AddSystemContainer<Transform>();
 		AddSystem<SpriteRenderableSystem>(renderer_2d);
 		AddSystem<TextRenderableSystem>(renderer_2d);
 		AddSystem<MeshRenderableSystem>(renderer_3d);

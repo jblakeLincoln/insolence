@@ -64,7 +64,7 @@ void RenderManager3D::Flush()
 	 */
 
 	if(Camera::GetActiveCamera() != NULL)
-		SetViewPosition(Camera::GetActiveCamera()->pos.GetPosition());
+		SetViewPosition(Camera::GetActiveCamera()->pos.GetPos());
 	glUseProgram(shader_program->GetID());
 
 	glUniform3fv(uni_view_pos, 1, &view_pos[0]);

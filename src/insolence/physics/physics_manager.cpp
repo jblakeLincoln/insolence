@@ -58,7 +58,7 @@ void PhysicsManager::StepSimulation(float step)
 	dynamics_world->stepSimulation(step);
 }
 
-btRigidBody* PhysicsManager::CreateRigidBody(Movement *m)
+btRigidBody* PhysicsManager::CreateRigidBody(Transform *m)
 {
 	btCollisionShape *box_shape = new btBoxShape(btVector3
 			(m->GetScale().x, m->GetScale().y, m->GetScale().z));

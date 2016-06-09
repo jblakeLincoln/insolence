@@ -5,8 +5,8 @@
 #include "../insolence_dll.h"
 
 #include "../game/entity.h"
-#include "../component/movement.h"
 #include "../component/rigid_body.h"
+#include "../component/transform.h"
 #include "../physics/physics_manager.h"
 #include <btBulletDynamicsCommon.h>
 

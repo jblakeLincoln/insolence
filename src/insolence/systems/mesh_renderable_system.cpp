@@ -8,7 +8,7 @@ void MeshRenderableSystem::Manage(const GameTime& gametime)
 {
 	for(it = components.begin(); it != components.end(); ++it)
 	{
-		Movement *m = it->first->Get<Movement>();
+		Transform *m = it->first->Get<Transform>();
 
 		renderer->Add(it->second.mesh, it->second.material,
 				it->second.colour, m->GetModelMatrix());

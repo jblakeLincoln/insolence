@@ -9,7 +9,7 @@ void SpriteRenderableSystem::Manage(const GameTime& gametime)
 	for(it = components.begin(); it!= components.end(); ++it)
 	{
 		SpriteRenderable *s = &it->second;
-		Movement *m = it->first->Get<Movement>();
+		Transform *m = it->first->Get<Transform>();
 
 		if(m == NULL || s->texture == 0)
 			continue;

@@ -50,7 +50,7 @@ struct Game1 : BaseGameWorld
 			texts[i]->Add<TextRenderable>(font);
 			texts[i]->Get<TextRenderable>()->Text("Hello");
 			texts[i]->Get<TextRenderable>()->colour = glm::vec4(0.f, 0.f, 0.f, 1.f);
-			texts[i]->Get<Movement>()->MoveY(-(i * 64));
+			texts[i]->Get<Transform>()->MoveY(-(i * 64));
 		}
 
 
@@ -60,7 +60,7 @@ struct Game1 : BaseGameWorld
 		*/
 		centre = CreateEntity();
 
-		centre->Get<Movement>()->Scale(glm::vec3(20.f));
+		centre->Get<Transform>()->SetScale(glm::vec3(20.f));
 		centre->Add<SpriteRenderable>();
 		centre->Get<SpriteRenderable>()->texture = material->diffuse;
 
@@ -75,9 +75,9 @@ struct Game1 : BaseGameWorld
 				glm::vec4(0.3f, 0.6f, 0.1f, 1.f));
 
 		m->colour.x = 1.f;
-		entities.back()->Get<Movement>()->Move(
+		entities.back()->Get<Transform>()->Move(
 				glm::vec3(i * 1.2f, 1.f, 0.f));
-		entities.back()->Get<Movement>()->Scale(glm::vec3(20.f));
+		entities.back()->Get<Transform>()->SetScale(glm::vec3(20.f));
 		//entities.back()->Add<RigidBody>();
 		//entities.back()->Get<RigidBody>()->Make2D();
 	}
@@ -94,15 +94,15 @@ struct Game1 : BaseGameWorld
 		}
 
 		if (Input::GetPadButton(JPAD_BTN_Y) && entities.size() > 0)
-			entities[0]->Get<Movement>()->MoveY(0.1f);
+			entities[0]->Get<Transform>()->MoveY(0.1f);
 		if (Input::GetPadButton(JPAD_BTN_A) && entities.size() > 0)
-			entities[0]->Get<Movement>()->MoveY(-0.1f);
+			entities[0]->Get<Transform>()->MoveY(-0.1f);
 
 		if(entities.size() > 0)
 		{
-			entities[0]->Get<Movement>()->Rotate(0.005f,
+			entities[0]->Get<Transform>()->Rotate(0.005f,
 					glm::vec3(0.f, 1.f, 0.f));
-			//entities[0]->Get<Movement>()->MoveX(0.1f * time.GetDeltaTime());
+			//entities[0]->Get<Transform>()->MoveX(0.1f * time.GetDeltaTime());
 
 			if(++counter > count)
 				counter = 0;

@@ -7,7 +7,7 @@ RigidBodySystem::RigidBodySystem(PhysicsManager *p)
 
 void RigidBodySystem::EndCreation(Entity *e, RigidBody *c)
 {
-	Movement *m = e->Get<Movement>();
+	Transform *m = e->Get<Transform>();
 
 	c->manager = physics_manager;
 
@@ -27,7 +27,7 @@ void RigidBodySystem::Manage(const GameTime& gametime)
 	{
 		Entity *e = it->first;
 		RigidBody *r = &it->second;
-		Movement *m = e->Get<Movement>();
+		Transform *m = e->Get<Transform>();
 
 		if(m == NULL || r == NULL || r->rigid_body == NULL)
 			return;

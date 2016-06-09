@@ -69,7 +69,7 @@ void BaseGameWorld::Run()
 Entity* BaseGameWorld::CreateEntity()
 {
 	Entity *e = entity_manager->CreateEntity();
-	e->Add<Movement>();
+	e->Add<Transform>();
 
 	return e;
 }

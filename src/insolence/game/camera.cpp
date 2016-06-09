@@ -62,12 +62,12 @@ void Camera::Post()
 		}
 	}
 
-	glm::vec3 view_pos = pos.GetPosition();
+	glm::vec3 view_pos = pos.GetPos();
 
 	if(view_pos == glm::vec3(0.f))
 		view_pos.y = 0.000001f;
 
-	block.view = glm::lookAt(view_pos, lookat.GetPosition(),
+	block.view = glm::lookAt(view_pos, lookat.GetPos(),
 			glm::vec3(0.f, 1.f, 0.f));
 
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
