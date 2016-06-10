@@ -17,6 +17,7 @@ void BaseGameWorld::BaseUpdate()
 {
 	Window::PollEvents();
 	Update(gametime);
+	entity_manager->Manage(gametime);
 }
 
 void BaseGameWorld::BaseDraw()
@@ -27,8 +28,7 @@ void BaseGameWorld::BaseDraw()
 	if(Camera::GetActiveCamera() != NULL)
 		Camera::GetActiveCamera()->Post();
 
-	entity_manager->Manage(gametime);
-	entity_manager->FlushDraw();
+	entity_manager->FlushDraw(gametime);
 
 	window->SwapBuffers();
 }

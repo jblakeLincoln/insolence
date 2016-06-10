@@ -32,7 +32,8 @@ private:
 
 public:
 	std::vector<Entity*> entities;
-	std::unordered_map<std::type_index, ISystem*> systems;
+	std::unordered_map<std::type_index, ISystem*> logic_systems;
+	std::unordered_map<std::type_index, ISystem*> render_systems;
 
 	RenderManager2D *renderer_2d;
 	RenderManager3D *renderer_3d;
@@ -50,9 +51,9 @@ public:
 
 		/* Default systems for this EntityManager. */
 		AddSystemContainer<Transform>();
-		AddSystem<SpriteRenderableSystem>(renderer_2d);
-		AddSystem<TextRenderableSystem>(renderer_2d);
-		AddSystem<MeshRenderableSystem>(renderer_3d);
+		AddRenderSystem<SpriteRenderableSystem>(renderer_2d);
+		AddRenderSystem<TextRenderableSystem>(renderer_2d);
+		AddRenderSystem<MeshRenderableSystem>(renderer_3d);
 //		AddSystem<RigidBodySystem>(physics_manager);
 	}
 
@@ -65,17 +66,29 @@ public:
 	template<typename T>
 	void AddSystemContainer() {
 		const std::type_index type = typeid(T);
-		if(systems.find(type) != systems.end())
+		if(logic_systems.find(type) != logic_systems.end())
 			return;
 
-		systems[type] = new System<T>();
+		logic_systems[type] = new System<T>();
+	}
+
+	template<typename T, typename... Args>
+	void AddLogicSystem(Args... args) {
+		AddSystem<T>(logic_systems, args...);
+	}
+
+	template<typename T, typename... Args>
+	void AddRenderSystem(Args... args) {
+		AddSystem<T>(render_systems, args...);
 	}
 
 	/**
 	 * Adds an implemented system for a component. If the system already
 	 * exists, we bail without doing anything.
 	 */
-	template<typename T, typename... Args> void AddSystem(Args... args) {
+	template<typename T, typename... Args>
+	void AddSystem(std::unordered_map<std::type_index, ISystem*> &systems,
+			Args... args) {
 		if(systems.find(T::GetType()) != systems.end())
 			return;
 
@@ -97,8 +110,14 @@ public:
 	 */
 	~EntityManager()
 	{
-		for(sys_iterator it = systems.begin();
-				it != systems.end(); ++it)
+		for(sys_iterator it = logic_systems.begin();
+				it != logic_systems.end(); ++it)
+		{
+			delete it->second;
+		}
+
+		for(sys_iterator it = render_systems.begin();
+				it != render_systems.end(); ++it)
 		{
 			delete it->second;
 		}
@@ -119,8 +138,8 @@ public:
 	{
 //		physics_manager->StepSimulation(1.f/60.f);
 
-		for(sys_iterator it = systems.begin();
-				it != systems.end(); ++it)
+		for(sys_iterator it = logic_systems.begin();
+				it != logic_systems.end(); ++it)
 		{
 			/* TODO: Only call Manage for manually created systems. */
 			it->second->Manage(gametime);
@@ -142,14 +161,31 @@ public:
 	 * \param e		Entity from which the component should be removed.
 	 * \param hash	Hash of component type.
 	 */
-	void Remove(Entity *e, const std::type_index& hash) {
-		systems[hash]->Remove(e);
+	void Remove(Entity *e, const std::type_index &type) {
+		if(logic_systems.find(type) != logic_systems.end())
+		{
+			logic_systems[type]->Remove(e);
+			return;
+		}
+
+		if(render_systems.find(type) != render_systems.end())
+		{
+			render_systems[type]->Remove(e);
+			return;
+		}
 	}
 
 	/**
 	 * Tell all renderers to draw everything they've got.
 	 */
-	void FlushDraw() {
+	void FlushDraw(const GameTime& gametime) {
+		for(sys_iterator it = render_systems.begin();
+				it != render_systems.end(); ++it)
+		{
+			/* TODO: Only call Manage for manually created systems. */
+			it->second->Manage(gametime);
+		}
+
 		renderer_2d->Flush();
 		renderer_3d->Flush();
 	}
@@ -163,7 +199,7 @@ public:
 	 * \param hash	Hash of component type of the system.
 	 */
 	void AddSystem(ISystem* sys, const std::type_index &type) {
-		systems[type] = sys;
+		logic_systems[type] = sys;
 	}
 
 	/**
@@ -173,7 +209,8 @@ public:
 	 * \return		True if system for component exists, otherwise false.
 	 */
 	bool HasSystem(const std::type_index &type) {
-		return systems.find(type) != systems.end();
+		return (logic_systems.find(type) != logic_systems.end()) ||
+			(render_systems.find(type) != render_systems.end());
 	}
 
 	/**
@@ -187,12 +224,13 @@ public:
 	 * \return		Pointer to component if created successfully, otherwise 0.
 	 */
 	Component* Add(Entity *e, const Component* c, const std::type_index &type) {
-		sys_iterator it = systems.find(type);
+		sys_iterator it = logic_systems.find(type);
+		if(it != logic_systems.end())
+			return logic_systems[type]->CreateComponent(e, c);
 
-		if(it == systems.end())
-			return 0;
-
-		return systems[type]->CreateComponent(e, c);
+		it = render_systems.find(type);
+		if(it != render_systems.end())
+			return render_systems[type]->CreateComponent(e, c);
 	}
 };
 
