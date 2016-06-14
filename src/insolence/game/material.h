@@ -1,5 +1,5 @@
-#ifndef COMPONENT_MATERIAL_H
-#define COMPONENT_MATERIAL_H
+#ifndef MATERIAL_H
+#define MATERIAL_H
 
 #include "../insolence_dll.h"
 

@@ -7,7 +7,8 @@
 #include FT_FREETYPE_H
 
 #include <algorithm>
-#include "material.h"
+
+#include "../game/material.h"
 
 enum FontAlign {
 	LEFT,
