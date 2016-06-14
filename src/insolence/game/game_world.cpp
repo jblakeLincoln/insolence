@@ -37,6 +37,7 @@ void BaseGameWorld::BaseUnload()
 {
 	Unload();
 
+	delete entity_manager;
 	Window::Destroy(window);
 }
 

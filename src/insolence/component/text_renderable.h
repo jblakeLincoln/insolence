@@ -29,7 +29,7 @@ struct INSOLENCE_API TextRenderable : Component {
 	~TextRenderable()
 	{
 		if(text != NULL)
-			delete[] text;
+			free(text);
 	}
 
 	TextRenderable(const TextRenderable &other)
@@ -48,7 +48,7 @@ struct INSOLENCE_API TextRenderable : Component {
 	void Text(const char *format, ...)
 	{
 		if(text != NULL)
-			delete[] text;
+			free(text);
 
 		va_list args;
 		va_start(args, format);

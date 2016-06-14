@@ -23,7 +23,7 @@ namespace Log {
 	static char *log_name = NULL;
 }
 
-static void log_to_console(Log::LOG type, const struct tm *time,
+static void log_to_console(Log::LOG &type, const struct tm *time,
 		const char *line)
 {
 	int year	= time->tm_year + 1900;
@@ -41,7 +41,7 @@ static void log_to_console(Log::LOG type, const struct tm *time,
 	printf(" %s\n", line);
 }
 
-static void log_to_file(Log::LOG type, const struct tm *time,
+static void log_to_file(Log::LOG &type, const struct tm *time,
 		const char *line)
 {
 	FILE *f;
@@ -91,7 +91,7 @@ static void log(Log::LOG type, const char *format, ...)
 	if(type >= Log::File)
 		log_to_file(type, now, line);
 
-	delete[] line;
+	free(line);
 
 	if(type == Log::FATAL)
 		exit(1);

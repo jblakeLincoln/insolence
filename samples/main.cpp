@@ -124,20 +124,11 @@ struct Game1 : BaseGameWorld
 		}
 
 		const TimeSpan &et = time.GetElapsedTime();
-
-		for(int i = 0; i < 0; ++i)
-		{
-				texts[i]->Get<TextRenderable>()->Text(
-				"MrotavatorM%02d:%02d:%02d:%03dWrotavatorW",
-				et.ElapsedHours(),
-				et.TotalMinutes(),
-				et.TotalSeconds(),
-				et.TotalMilliseconds());
-		}
 	}
 
 	void Unload()
 	{
+		delete font;
 		delete mesh;
 		delete material;
 		delete camera;

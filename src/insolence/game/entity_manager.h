@@ -110,6 +110,9 @@ public:
 	 */
 	~EntityManager()
 	{
+		while(entities.size() != 0)
+			Remove(entities[0]);
+
 		for(sys_iterator it = logic_systems.begin();
 				it != logic_systems.end(); ++it)
 		{

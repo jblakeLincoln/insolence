@@ -40,11 +40,13 @@ private:
 	double h;
 
 public:
-	Material *mat;
+	~Font();
 
 	const double GetAtlasWidth() const { return w; }
 	const double GetAtlasHeight() const { return h; }
 	const FontInfo& GetGlyph(char i) const { return c[i]; }
+
+	Material *mat;
 
 	static Font* Load(const char *path, int size)
 	{
