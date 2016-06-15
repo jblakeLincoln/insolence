@@ -48,7 +48,7 @@ struct INSOLENCE_API ISystem {
 };
 
 template <typename TComponent>
-struct INSOLENCE_API System : ISystem {
+struct INSOLENCE_API SystemBase : ISystem {
 private:
 
 	/**
@@ -104,6 +104,9 @@ public:
 		return typeid(TComponent);
 	}
 };
+
+template<typename T>
+struct System : SystemBase<T> {};
 
 struct INSOLENCE_API Entity
 {

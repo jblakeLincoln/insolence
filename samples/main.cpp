@@ -12,6 +12,11 @@
 
 #include <GLFW/glfw3.h>
 
+struct Health : Component {};
+
+template<>
+struct System<Health> : SystemBase<Health> {};
+
 struct Game1 : BaseGameWorld
 {
 	std::vector<Entity*> entities;
@@ -63,6 +68,7 @@ struct Game1 : BaseGameWorld
 		centre->Get<Transform>()->SetScale(glm::vec3(20.f));
 		centre->Add<SpriteRenderable>();
 		centre->Get<SpriteRenderable>()->texture = material->diffuse;
+		centre->Add<Health>();
 
 		//for(int i = 0; i < count; ++i)
 		//	Spawn(i);
