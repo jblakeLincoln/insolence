@@ -13,12 +13,12 @@
 #include "system.h"
 #include "../component/component.h"
 
-static uint32_t id_count = 0;
-
 struct EntityManager;
 
 struct INSOLENCE_API Entity {
 private:
+	static uint32_t id_count;
+
 	EntityManager *manager;
 	std::unordered_map<std::type_index, Component*> components;
 	uint32_t id;
@@ -56,12 +56,17 @@ private:
 
 public:
 
-	uint32_t GetID() { return id; }
-
 	/**
 	 * Create an Entity with systems managed by a particular EntityManager.
 	 */
 	Entity(EntityManager *m);
+
+	/**
+	 * Returns a unique identifier for the entity within its manager.
+	 */
+	const uint32_t GetID() const {
+		return id;
+	}
 
 	void Destroy() {
 		delete this;

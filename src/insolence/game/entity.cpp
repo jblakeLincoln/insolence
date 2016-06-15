@@ -1,6 +1,8 @@
 #include "entity.h"
 #include "entity_manager.cpp"
 
+uint32_t Entity::id_count = 0;
+
 Entity::Entity(EntityManager *m)
 :
 	id(id_count++),
@@ -22,7 +24,13 @@ Entity::~Entity()
 	manager->Remove(this);
 }
 
-Component* Entity::SendToManager(const Component *c, const std::type_index &type)
+uint32_t Entity::GetComponentID(const std::type_index &type)
+{
+	return manager->GetComponentID(type);
+}
+
+Component* Entity::SendToManager(const Component *c,
+		const std::type_index &type)
 {
 	return manager->Add(this, c, type);
 }
@@ -40,9 +48,4 @@ void Entity::RemoveFromManager(const std::type_index &type)
 void Entity::SendSystemToManager(ISystem *sys, const std::type_index &type)
 {
 	manager->AddSystem(sys, type);
-}
-
-uint32_t Entity::GetComponentID(const std::type_index &type)
-{
-	return manager->GetComponentID(type);
 }
