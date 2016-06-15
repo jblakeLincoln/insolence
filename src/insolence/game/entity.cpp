@@ -41,3 +41,8 @@ void Entity::SendSystemToManager(ISystem *sys, const std::type_index &type)
 {
 	manager->AddSystem(sys, type);
 }
+
+uint32_t Entity::GetComponentID(const std::type_index &type)
+{
+	return manager->GetComponentID(type);
+}

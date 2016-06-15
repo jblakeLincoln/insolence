@@ -111,9 +111,10 @@ struct System : SystemBase<T> {};
 struct INSOLENCE_API Entity
 {
 private:
+	EntityManager *manager;
 	std::unordered_map<std::type_index, Component*> components;
 	uint32_t id;
-	EntityManager *manager;
+	uint32_t component_mask;
 
 	/**
 	 * Check if a System has already been added/created for a particular
@@ -175,7 +176,7 @@ public:
 	/**
 	 * If the desired component exists, return it. Otherwise return 0;
 	 */
-	template <typename T>
+	template<typename T>
 	T* Get();
 
 	/**
@@ -183,6 +184,16 @@ public:
 	 */
 	template<typename T>
 	void Remove();
+
+	template<typename T>
+	bool Has() {
+		return component_mask & GetComponentID(typeid(T));
+	}
+
+	/**
+	 * Get the bit field of the component from the manager.
+	 */
+	uint32_t GetComponentID(const std::type_index &type);
 };
 
 template<typename T, typename... Args>
@@ -193,6 +204,8 @@ T* Entity::Add(Args... args)
 
 	if(CheckSystemExists(type) == false)
 		SendSystemToManager((ISystem*)new System<T>(), type);
+
+	component_mask |= GetComponentID(type);
 
 	return (T*)(components[type] = (T*)SendToManager(&component, type));
 }
@@ -210,6 +223,7 @@ void Entity::Remove()
 
 	RemoveFromManager(type);
 	components.erase(type);
+	component_mask &= ~(GetComponentID(type));
 }
 
 #endif

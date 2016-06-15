@@ -66,9 +66,16 @@ struct Game1 : BaseGameWorld
 		centre = CreateEntity();
 
 		centre->Get<Transform>()->SetScale(glm::vec3(20.f));
+		printf("Centre has SpriteRenderable: %d\n",
+				centre->Has<SpriteRenderable>());
 		centre->Add<SpriteRenderable>();
 		centre->Get<SpriteRenderable>()->texture = material->diffuse;
 		centre->Add<Health>();
+		printf("Centre has SpriteRenderable: %d\n",
+				centre->Has<SpriteRenderable>());
+		centre->Remove<SpriteRenderable>();
+		printf("Centre has SpriteRenderable: %d\n",
+				centre->Has<SpriteRenderable>());
 
 		//for(int i = 0; i < count; ++i)
 		//	Spawn(i);

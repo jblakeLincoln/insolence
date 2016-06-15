@@ -31,9 +31,12 @@ private:
 	typedef std::unordered_map<std::type_index, ISystem*>::iterator sys_iterator;
 
 public:
-	std::vector<Entity*> entities;
 	std::unordered_map<std::type_index, ISystem*> logic_systems;
 	std::unordered_map<std::type_index, ISystem*> render_systems;
+
+	std::vector<Entity*> entities;
+	std::unordered_map<std::type_index, uint32_t> component_bits;
+	uint32_t component_bit_count = 1;
 
 	RenderManager2D *renderer_2d;
 	RenderManager3D *renderer_3d;
@@ -214,6 +217,15 @@ public:
 	bool HasSystem(const std::type_index &type) {
 		return (logic_systems.find(type) != logic_systems.end()) ||
 			(render_systems.find(type) != render_systems.end());
+	}
+
+	uint32_t GetComponentID(const std::type_index &type) {
+		uint32_t id = component_bits[type];
+
+		if(id != 0)
+			return id;
+
+		return (component_bits[type] = component_bit_count *= 2);
 	}
 
 	/**
