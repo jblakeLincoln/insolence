@@ -1,12 +1,6 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-/**
- * Defines Systems and Entities. They have to all be in the same file because
- * of the templated functions and the way we compile - a bit messy, but the
- * functionality is worth it.
- */
-
 #include "../insolence_dll.h"
 
 #include <cstddef>
@@ -16,100 +10,14 @@
 
 #include "gametime.h"
 #include "game_world.h"
+#include "system.h"
 #include "../component/component.h"
 
 static uint32_t id_count = 0;
 
-struct Entity;
 struct EntityManager;
 
-/**
- * Interface for creating vectors/maps of templated type "System".
- */
-struct INSOLENCE_API ISystem {
-	virtual ~ISystem() {}
-
-	/**
-	 * Used by System to return a component to EntityManager.
-	 */
-	virtual Component* CreateComponent(Entity*, const Component*)=0;
-
-	/**
-	 * Can be used by any derived for interacting with components per-frame.
-	 */
-	virtual void Manage(const GameTime& gametime) {}
-
-	/**
-	 * Used by System to remove entity from its storage container.
-	 * For specialised removal (e.g. deleting a component's pointers), see
-	 * System's Remove(void).
-	 */
-	virtual void Remove(Entity*)=0;
-};
-
-template <typename TComponent>
-struct INSOLENCE_API SystemBase : ISystem {
-private:
-
-	/**
-	 * Makes a copy of the received component and adds it to our component
-	 * map.
-	 */
-	TComponent* CreateTComponent(Entity *e, const TComponent* comp)
-	{
-		components.emplace(e, *comp);
-		TComponent *t = &(components.find(e)->second);
-		EndCreation(e, t);
-
-		return t;
-	}
-
-protected:
-	typename std::unordered_map<Entity*, TComponent>::iterator it;
-	std::unordered_map<Entity*, TComponent> components;
-
-public:
-
-	/**
-	 * We can't have a templated function here, so we take in a generic
-	 * component pointer, cast it to T, and send it to be added to the map.
-	 */
-	Component* CreateComponent(Entity *e, const Component* c) {
-		return CreateTComponent(e, (TComponent*)c);
-	}
-
-	/**
-	 * Overload this function for specialised removal.
-	 */
-	virtual void RemoveOverride(Entity *e, TComponent *c) {}
-
-	/**
-	 *	Calls Remove and erases the component attached to the sent entity from
-	 *	the storage container.
-	 */
-	void Remove(Entity *e) final {
-		RemoveOverride(e, &components.find(e)->second);
-		components.erase(e);
-	}
-
-	/**
-	 * Override function for performing final actions just before adding.
-	 */
-	virtual void EndCreation(Entity* e, TComponent *c) {}
-
-	/**
-	 * \return	Component type.
-	 */
-	static const std::type_index GetType() {
-		return typeid(TComponent);
-	}
-};
-
-template<typename T>
-struct System : SystemBase<T> {};
-
-struct INSOLENCE_API Entity
-{
+struct INSOLENCE_API Entity {
 private:
 	EntityManager *manager;
 	std::unordered_map<std::type_index, Component*> components;
