@@ -54,6 +54,30 @@ private:
 
 	~Entity();
 
+	/**
+	 * Private check function for getting a type out of a passed through tuple
+	 * and checking whether we hold a component for it.
+	 */
+	template<std::size_t I = 0, typename... Type>
+	inline typename std::enable_if<I < sizeof...(Type), bool>::type
+	HasComponent(std::tuple<Type...>& t) {
+		bool ret = component_mask & GetComponentID(typeid(std::get<I>(t)));
+
+		if(ret == true)
+			ret = HasComponent<I + 1, Type...>(t);
+
+		return ret;
+	}
+
+	/**
+	 * Go to the next type in the HasComponent tuple.
+	 */
+	template<std::size_t I = 0, typename... Type>
+	inline typename std::enable_if<I == sizeof...(Type), bool>::type
+	HasComponent(std::tuple<Type...>& t) {
+		return true;
+	}
+
 public:
 
 	/**
@@ -98,12 +122,19 @@ public:
 	template<typename T>
 	void Remove();
 
-	template<typename T>
+	template<typename First, typename... Types>
 	bool Has() {
-		return component_mask & GetComponentID(typeid(T));
+		bool ret = component_mask & GetComponentID(typeid(First));
+
+		if(ret == 0 || sizeof...(Types) == 0)
+			return ret;
+
+		return HasComponent(std::tuple<Types...>());
 	}
 
-	/**
+
+
+		/**
 	 * Get the bit field of the component from the manager.
 	 */
 	uint32_t GetComponentID(const std::type_index &type);

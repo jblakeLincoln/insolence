@@ -12,7 +12,14 @@
 
 #include <GLFW/glfw3.h>
 
-struct Health : Component {};
+struct Health : Component {
+private:
+	int health = 0;
+	Health() {}
+
+public:
+	Health(int i) { health = i; }
+};
 
 template<>
 struct System<Health> : SystemBase<Health> {};
@@ -65,20 +72,34 @@ struct Game1 : BaseGameWorld
 		*/
 		centre = CreateEntity();
 
+		printf("** Created entity\n");
+		CheckCentre();
 		centre->Get<Transform>()->SetScale(glm::vec3(20.f));
-		printf("Centre has SpriteRenderable: %d\n",
-				centre->Has<SpriteRenderable>());
 		centre->Add<SpriteRenderable>();
+		printf("** Added SpriteRenderable\n");
+		CheckCentre();
 		centre->Get<SpriteRenderable>()->texture = material->diffuse;
-		centre->Add<Health>();
-		printf("Centre has SpriteRenderable: %d\n",
-				centre->Has<SpriteRenderable>());
+		centre->Add<Health>(20);
+		printf("** Added Health\n");
+		CheckCentre();
 		centre->Remove<SpriteRenderable>();
-		printf("Centre has SpriteRenderable: %d\n",
-				centre->Has<SpriteRenderable>());
+		printf("** Removed SpriteRenderable\n");
+		CheckCentre();
+		centre->Remove<Health>();
+		printf("Removed Health\n");
+		CheckCentre();
 
-		//for(int i = 0; i < count; ++i)
-		//	Spawn(i);
+		printf("Has again: %d\n", centre->Has<Health>());
+		centre->Add<Health>(20);
+		printf("Has again: %d\n", centre->Has<Health, Transform>());
+	}
+
+	void CheckCentre() {
+		printf("Has Health: %d\n", centre->Has<Health>());
+		printf("Has Transform: %d\n", centre->Has<Transform>());
+		printf("Has SpriteRenderable: %d\n", centre->Has<SpriteRenderable>());
+		printf("Has Health & Transform: %d\n", centre->Has<Health, Transform>());
+		printf("Has all: %d\n\n", centre->Has<Health, Transform, SpriteRenderable>());
 	}
 
 	void Spawn(int i)
