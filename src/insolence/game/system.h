@@ -4,6 +4,7 @@
 #include "../insolence_dll.h"
 
 #include "../component/component.h"
+#include "gametime.h"
 
 #include <unordered_map>
 #include <vector>
@@ -35,7 +36,7 @@ struct INSOLENCE_API ISystem {
 };
 
 template<typename TComponent>
-struct INSOLENCE_API SystemBase : ISystem {
+struct SystemBase : ISystem {
 private:
 
 	/**

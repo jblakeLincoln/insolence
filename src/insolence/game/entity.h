@@ -22,7 +22,7 @@ private:
 	EntityManager *manager;
 	std::unordered_map<std::type_index, Component*> components;
 	uint32_t id;
-	uint32_t component_mask;
+	uint32_t component_mask = 0;
 
 	/**
 	 * Check if a System has already been added/created for a particular
