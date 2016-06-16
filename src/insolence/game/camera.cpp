@@ -37,7 +37,11 @@ Camera::Camera(Window *w)
 	window = w;
 	window_fb_width = window->GetFramebufferWidth();
 	window_fb_height = window->GetFramebufferHeight();
-	aspect_ratio = (float)window_fb_width / window_fb_height;
+
+	if(window_fb_width > 0 && window_fb_height > 0)
+		aspect_ratio = (float)window_fb_width / window_fb_height;
+	else
+		aspect_ratio = 1;
 
 	block.proj = glm::perspective(fov, aspect_ratio, z_near, z_far);
 }
@@ -52,13 +56,13 @@ void Camera::Post()
 		window_fb_width = window->GetFramebufferWidth();
 		window_fb_height= window->GetFramebufferHeight();
 
+		if(window_fb_width > 0 && window_fb_height > 0)
+			aspect_ratio = (float)window_fb_width / window_fb_height;
+
 		if(prev_w != window_fb_width || prev_h != window_fb_height)
 		{
-			aspect_ratio = (float)window_fb_width / window_fb_height;
 			block.proj = glm::perspective(fov, aspect_ratio, z_near, z_far);
-
 			glViewport(0, 0, window_fb_width, window_fb_height);
-
 		}
 	}
 

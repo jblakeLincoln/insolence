@@ -11,6 +11,9 @@ void BaseGameWorld::BaseInitialise()
 	entity_manager = new EntityManager();
 
 	Initialise();
+
+	if(Camera::GetActiveCamera() == NULL)
+		log(Log::WARN, "GameWorld - No camera set");
 }
 
 void BaseGameWorld::BaseUpdate()
