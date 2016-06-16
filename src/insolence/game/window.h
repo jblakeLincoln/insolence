@@ -62,7 +62,17 @@ public:
 	bool ShouldClose() { return glfwWindowShouldClose(glfw_window); }
 	void SetShouldClose(bool c) { glfwSetWindowShouldClose(glfw_window, c); }
 
-	void SetWindowTitle(const char *title);
+	void SetWindowTitle(const char *format, ...) {
+		char *title;
+		va_list args;
+
+		va_start(args, format);
+		vasprintf(&title, format, args);
+		va_end(args);
+
+		glfwSetWindowTitle(glfw_window, title);
+		free(title);
+	}
 
 	void SwapBuffers();
 

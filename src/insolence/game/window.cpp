@@ -8,11 +8,6 @@ Window::Window()
 {
 }
 
-void Window::SetWindowTitle(const char *title)
-{
-	glfwSetWindowTitle(glfw_window, title);
-}
-
 void Window::SwapBuffers()
 {
 	glfwSwapBuffers(glfw_window);
