@@ -111,7 +111,7 @@ public:
 	 * Getting rid of our manager means clearing out all related entities and
 	 * their attached components.
 	 */
-	~EntityManager()
+	virtual ~EntityManager()
 	{
 		while(entities.size() != 0)
 			Remove(entities[0]);

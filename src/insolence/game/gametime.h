@@ -28,8 +28,7 @@ public:
 		frame_time = TimeSpan(0);
 	}
 
-	void Update()
-	{
+	void Update() {
 		time_last = time_current;
 		time_current = std::chrono::duration_cast<std::chrono::microseconds>
 			(chrono_hrc::now().time_since_epoch()).count();

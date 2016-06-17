@@ -24,7 +24,7 @@ struct INSOLENCE_API RenderManager
 	virtual void Flush()=0;
 
 	RenderManager() {}
-	~RenderManager();
+	virtual ~RenderManager();
 
 	/**
 	 * Creates a shader program from a vertex/frag pair.

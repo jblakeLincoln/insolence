@@ -57,7 +57,6 @@ protected:
 	std::unordered_map<Entity*, TComponent> components;
 
 public:
-
 	/**
 	 * We can't have a templated function here, so we take in a generic
 	 * component pointer, cast it to T, and send it to be added to the map.

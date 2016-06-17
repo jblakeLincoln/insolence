@@ -52,7 +52,7 @@ private:
 
 	Entity() {}
 
-	~Entity();
+	virtual ~Entity();
 
 	/**
 	 * Private check function for getting a type out of a passed through tuple

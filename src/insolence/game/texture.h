@@ -18,6 +18,7 @@ private:
 	 * Initialises ID to zero;
 	 */
 	Texture();
+
 public:
 	GLuint id;
 	GLuint width;
@@ -33,20 +34,17 @@ public:
 	 */
 	void Bind();
 
-	/**
-	 * return width.
-	 */
-	GLuint GetWidth() { return width; }
+	GLuint GetWidth() {
+		return width;
+	}
 
-	/**
-	 * return height.
-	 */
-	GLuint GetHeight() { return height; }
+	GLuint GetHeight() {
+		return height;
+	}
 
-	/**
-	 * return ID.
-	 */
-	GLint GetID() { return id; }
+	GLint GetID() {
+		return id;
+	}
 
 	/**
 	 * Load a 1x1 texture with an RGBA colour.
