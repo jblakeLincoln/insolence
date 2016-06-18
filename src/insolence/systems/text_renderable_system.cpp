@@ -1,5 +1,8 @@
 #include "text_renderable_system.h"
 
+#include "../component/transform.h"
+#include "../render/render_manager_2d.h"
+
 TextRenderableSystem::TextRenderableSystem(RenderManager2D* r)
 :	renderer(r)
 {}

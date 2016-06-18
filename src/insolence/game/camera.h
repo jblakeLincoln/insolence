@@ -6,11 +6,10 @@
 #include <GL/glew.h>
 #include <glm/matrix.hpp>
 
-#include "../game/window.h"
 #include "../component/transform.h"
 #include "../render/shader_program.h"
-#include "../render/render_manager.h"
 
+struct Window;
 struct INSOLENCE_API Camera
 {
 private:

@@ -1,5 +1,7 @@
 #include "camera.h"
 
+#include "window.h"
+
 GLint Camera::uni_block = -1;
 Camera* Camera::active_camera = 0;
 

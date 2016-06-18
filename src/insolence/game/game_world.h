@@ -3,14 +3,15 @@
 
 #include "../insolence_dll.h"
 
+#include <GL/glew.h>
 #include <glm/vec3.hpp>
 
-#include "entity.h"
-#include "window.h"
+/* Includes for the benefit of the application side. */
 #include "gametime.h"
 
 struct Entity;
 struct EntityManager;
+struct Window;
 struct INSOLENCE_API BaseGameWorld {
 private:
 	const double FRAME_TIME = 1000.f / 60.f;

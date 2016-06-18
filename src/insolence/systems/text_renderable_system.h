@@ -3,10 +3,9 @@
 
 #include "../insolence_dll.h"
 
-#include "../game/entity.h"
 #include "../component/text_renderable.h"
-#include "../render/render_manager_2d.h"
 
+struct RenderManager2D;
 struct INSOLENCE_API TextRenderableSystem : System<TextRenderable> {
 private:
 	RenderManager2D* renderer;

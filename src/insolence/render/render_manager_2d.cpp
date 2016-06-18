@@ -1,5 +1,8 @@
 #include "render_manager_2d.h"
 
+#include "../game/camera.h"
+#include "../game/texture.h"
+
 RenderManager2D::RenderManager2D()
 {
 	glm::vec3 view_pos = glm::vec3(2.f, 0.f, 2.f);

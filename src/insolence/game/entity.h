@@ -8,11 +8,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "gametime.h"
-#include "game_world.h"
 #include "system.h"
-#include "../component/component.h"
 
+struct Component;
 struct EntityManager;
 
 struct INSOLENCE_API Entity {

@@ -9,9 +9,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../game/font.h"
-#include "../game/texture.h"
 #include "render_manager.h"
 
+struct Texture;
 /* TODO Issue #13: Logging. */
 struct INSOLENCE_API RenderManager2D : public RenderManager
 {

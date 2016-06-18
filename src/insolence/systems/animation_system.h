@@ -1,6 +1,8 @@
 #ifndef SYSTEM_ANIMATION_H
 #define SYSTEM_ANIMATION_H
 
+#include "../game/entity.h"
+
 static void ProgressAnimation(Entity* e, const TimeSpan& frame_time)
 {
 	Animation *a = e->Get<Animation>();

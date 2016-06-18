@@ -1,6 +1,8 @@
 #ifdef INSOLENCE_LINKS_BULLET
 #include "physics_manager.h"
 
+#include "../component/transform.h"
+
 PhysicsManager::PhysicsManager(const glm::vec3& gravity)
 {
 	collision_config = new btDefaultCollisionConfiguration();

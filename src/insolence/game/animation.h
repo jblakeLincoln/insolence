@@ -7,8 +7,8 @@
 #include <glm/vec4.hpp>
 
 #include "../game/timespan.h"
-#include "../game/texture.h"
 
+struct Texture;
 struct INSOLENCE_API Animation {
 	int current_frame;
 	int cols;

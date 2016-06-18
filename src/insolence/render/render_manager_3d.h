@@ -9,9 +9,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <GL/glew.h>
 
-#include "../game/mesh.h"
-#include "../game/material.h"
 #include "render_manager.h"
+
+struct Material;
+struct Mesh;
 
 /* TODO Issue #21: Logging. */
 struct INSOLENCE_API RenderManager3D : public RenderManager

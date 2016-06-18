@@ -1,5 +1,8 @@
 #include "mesh_renderable_system.h"
 
+#include "../component/transform.h"
+#include "../render/render_manager_3d.h"
+
 MeshRenderableSystem::MeshRenderableSystem(RenderManager3D* r)
 :	renderer(r)
 {}

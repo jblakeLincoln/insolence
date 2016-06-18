@@ -3,10 +3,9 @@
 
 #include "../insolence_dll.h"
 
-#include "../game/entity.h"
 #include "../component/sprite_renderable.h"
-#include "../render/render_manager_2d.h"
 
+struct RenderManager2D;
 struct INSOLENCE_API SpriteRenderableSystem : System<SpriteRenderable> {
 private:
 	RenderManager2D* renderer;

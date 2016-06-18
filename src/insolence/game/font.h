@@ -2,11 +2,13 @@
 #define COMPONENT_FONT_H
 
 #include "../insolence_dll.h"
-
-#include <freetype2/ft2build.h>
-#include FT_FREETYPE_H
+#include "../game/log.h"
 
 #include <algorithm>
+#include <freetype2/ft2build.h>
+#include <GL/glew.h>
+#include FT_FREETYPE_H
+
 #include "material.h"
 
 enum FontAlign {

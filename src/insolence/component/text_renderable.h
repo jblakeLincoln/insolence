@@ -3,6 +3,10 @@
 
 #include "../insolence_dll.h"
 
+#include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
+
+#include "component.h"
 #include "../game/font.h"
 #include "../util/insolence_string.h"
 

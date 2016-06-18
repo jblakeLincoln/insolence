@@ -1,9 +1,18 @@
 #include "game_world.h"
 #include "entity_manager.cpp"
 
+#include "camera.h"
+#include "input.h"
+#include "entity.h"
+#include "window.h"
+
 void BaseGameWorld::BaseInitialise()
 {
 	window = Window::Create(720, 540, "Window Title", true);
+	Texture::Init();
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	SetClearColour(glm::vec3(30.f, 130.f, 180.f));
 	is_running = true;

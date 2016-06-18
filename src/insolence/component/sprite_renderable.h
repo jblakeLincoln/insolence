@@ -3,6 +3,8 @@
 
 #include "../insolence_dll.h"
 
+#include "component.h"
+#include "transform.h"
 #include "../game/animation.h"
 
 struct INSOLENCE_API SpriteRenderable : Component {

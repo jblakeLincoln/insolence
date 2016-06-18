@@ -3,7 +3,6 @@
 
 #include "../insolence_dll.h"
 
-#include "../game/camera.h"
 #include "../game/log.h"
 #include "shader_program.h"
 

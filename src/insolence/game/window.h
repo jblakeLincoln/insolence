@@ -3,16 +3,16 @@
 
 #include "../insolence_dll.h"
 
-#include <GL/glew.h>
-#include "../game/log.h"
-#include "input.h"
-#include "keys.h"
-#include "texture.h"
 
 #include <cstdio>
 #include <cstdlib>
 #include <unordered_map>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
+#include "../game/log.h"
+#include "input.h"
+#include "keys.h"
 
 struct INSOLENCE_API Window
 {
@@ -128,12 +128,6 @@ public:
 
 		Input::AttachWindowToKeyboard(out->glfw_window);
 		Input::SetMouseWindow(out->glfw_window);
-
-		/* Initialise texture loading libs and add default blending. */
-		Texture::Init();
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		windows[out->glfw_window] = out;
 		glfwGetFramebufferSize(out->glfw_window, &out->framebuffer_width,

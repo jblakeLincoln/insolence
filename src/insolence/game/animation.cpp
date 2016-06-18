@@ -1,5 +1,7 @@
 #include "animation.h"
 
+#include "../game/texture.h"
+
 Animation::Animation()
 :
 	frames(0),

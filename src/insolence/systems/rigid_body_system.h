@@ -4,12 +4,10 @@
 
 #include "../insolence_dll.h"
 
-#include "../game/entity.h"
 #include "../component/rigid_body.h"
-#include "../component/transform.h"
-#include "../physics/physics_manager.h"
 #include <btBulletDynamicsCommon.h>
 
+struct PhysicsManager;
 struct INSOLENCE_API RigidBodySystem : System<RigidBody> {
 private:
 	PhysicsManager *physics_manager;

@@ -1,5 +1,9 @@
 #include "render_manager_3d.h"
 
+#include "../game/camera.h"
+#include "../game/material.h"
+#include "../game/mesh.h"
+
 RenderManager3D::RenderManager3D()
 {
 	shader_program = CreateShaderProgramFromPair("shaders/3d.vs",

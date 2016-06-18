@@ -1,6 +1,9 @@
 #ifdef INSOLENCE_LINKS_BULLET
 #include "rigid_body_system.h"
 
+#include "../physics/physics_manager.h"
+#include "../component/transform.h"
+
 RigidBodySystem::RigidBodySystem(PhysicsManager *p)
 :	physics_manager(p)
 {}

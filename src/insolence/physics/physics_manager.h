@@ -4,15 +4,12 @@
 
 #include "../insolence_dll.h"
 
-#include "../game/entity.h"
-#include "../component/transform.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include <btBulletDynamicsCommon.h>
 
-struct Entity;
 struct RigidBody;
 struct INSOLENCE_API PhysicsManager {
 	friend RigidBody;

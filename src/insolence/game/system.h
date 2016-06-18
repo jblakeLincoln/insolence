@@ -3,13 +3,14 @@
 
 #include "../insolence_dll.h"
 
-#include "../component/component.h"
-#include "gametime.h"
-
+#include <typeindex>
 #include <unordered_map>
 #include <vector>
 
+#include "gametime.h"
+
 struct Entity;
+struct Component;
 
 /**
  * Interface for creating vectors/maps of templated type "System".

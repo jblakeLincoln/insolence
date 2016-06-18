@@ -1,6 +1,7 @@
-#include <insolence/game/game_world.h>
 #include <insolence/game/camera.h>
-#include <insolence/game/entity_manager.h>
+#include <insolence/game/entity.h>
+#include <insolence/game/game_world.h>
+#include <insolence/game/input.h>
 
 #include <insolence/component/mesh_renderable.h>
 #include <insolence/component/sprite_renderable.h>

@@ -3,10 +3,9 @@
 
 #include "../insolence_dll.h"
 
-#include "../game/entity.h"
 #include "../component/mesh_renderable.h"
-#include "../render/render_manager_3d.h"
 
+struct RenderManager3D;
 struct INSOLENCE_API MeshRenderableSystem : System<MeshRenderable> {
 private:
 	RenderManager3D* renderer;

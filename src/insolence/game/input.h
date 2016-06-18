@@ -3,11 +3,12 @@
 
 #include "../insolence_dll.h"
 
+#include <bitset>
 #include <cstdio>
 #include <map>
-#include <bitset>
-#include <glm/vec2.hpp>
+
 #include <GLFW/glfw3.h>
+#include <glm/vec2.hpp>
 
 #include "keys.h"
 

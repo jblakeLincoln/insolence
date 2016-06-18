@@ -1,5 +1,7 @@
 #include "sprite_renderable_system.h"
 
+#include "../render/render_manager_2d.h"
+
 SpriteRenderableSystem::SpriteRenderableSystem(RenderManager2D* r)
 :	renderer(r)
 {}

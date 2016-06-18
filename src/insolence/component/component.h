@@ -9,6 +9,8 @@
 #include <typeinfo>
 #include <typeindex>
 
+#include "../game/entity.h"
+
 struct INSOLENCE_API Component {
 	virtual ~Component() {}
 };
