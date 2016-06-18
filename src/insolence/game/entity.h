@@ -4,6 +4,7 @@
 #include "../insolence_dll.h"
 
 #include <cstddef>
+#include <tuple>
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
@@ -58,7 +59,7 @@ private:
 	 */
 	template<std::size_t I = 0, typename... Type>
 	inline typename std::enable_if<I < sizeof...(Type), bool>::type
-	HasComponent(std::tuple<Type...>& t) {
+	HasComponent(const std::tuple<Type...> &t) {
 		bool ret = component_mask & GetComponentID(typeid(std::get<I>(t)));
 
 		if(ret == true)
@@ -72,7 +73,7 @@ private:
 	 */
 	template<std::size_t I = 0, typename... Type>
 	inline typename std::enable_if<I == sizeof...(Type), bool>::type
-	HasComponent(std::tuple<Type...>& t) {
+	HasComponent(const std::tuple<Type...> &t) {
 		return true;
 	}
 
