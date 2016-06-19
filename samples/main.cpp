@@ -10,17 +10,24 @@
 
 #include <GLFW/glfw3.h>
 
-struct Health : Component {
-private:
-	int health = 0;
-	Health() {}
+struct A : Component {};
+struct B : Component {};
+struct C : Component {};
+struct D : Component {};
 
-public:
+template<> struct System<A> : SystemBase<A, 60> {};
+template<> struct System<B> : SystemBase<B, 50> {};
+template<> struct System<C> : SystemBase<C, 30> {};
+template<> struct System<D> : SystemBase<D, 40> {};
+
+struct Health : Component {
+	int health = 0;
 	Health(int i) { health = i; }
 };
 
 template<>
-struct System<Health> : SystemBase<Health> {};
+struct System<Health> : SystemBase<Health> {
+};
 
 struct Game1 : BaseGameWorld
 {
@@ -90,6 +97,10 @@ struct Game1 : BaseGameWorld
 		printf("Has again: %d\n", centre->Has<Health>());
 		centre->Add<Health>(20);
 		printf("Has again: %d\n", centre->Has<Health, Transform>());
+		centre->Add<A>();
+		centre->Add<B>();
+		centre->Add<C>();
+		centre->Add<D>();
 	}
 
 	void CheckCentre() {

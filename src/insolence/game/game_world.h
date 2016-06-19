@@ -6,7 +6,6 @@
 #include <GL/glew.h>
 #include <glm/vec3.hpp>
 
-/* Includes for the benefit of the application side. */
 #include "gametime.h"
 
 struct Entity;

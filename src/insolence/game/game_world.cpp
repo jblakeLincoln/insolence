@@ -1,9 +1,9 @@
 #include "game_world.h"
-#include "entity_manager.cpp"
 
 #include "camera.h"
 #include "input.h"
 #include "entity.h"
+#include "entity_manager.h"
 #include "window.h"
 
 void BaseGameWorld::BaseInitialise()

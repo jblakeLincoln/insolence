@@ -21,18 +21,33 @@
 #include "../systems/text_renderable_system.h"
 //#include "../systems/rigid_body_system.h"
 
+#include <algorithm>
 #include <cstddef>
 #include <typeindex>
 #include <unordered_map>
+#include <vector>
 
 struct Entity;
 struct INSOLENCE_API EntityManager {
 private:
-	typedef std::unordered_map<std::type_index, ISystem*>::iterator sys_iterator;
+	struct SystemsContainer {
+		std::unordered_map<std::type_index, ISystem*> lookup;
+		std::vector<ISystem*> prioritised;
+
+		void Add(const std::type_index &type, ISystem *sys) {
+			lookup[type] = sys;
+			prioritised.push_back(sys);
+
+			std::sort(prioritised.begin(), prioritised.end(),
+					[](ISystem *a, ISystem *b) {
+						return a->priority > b->priority;
+					});
+		}
+	};
 
 public:
-	std::unordered_map<std::type_index, ISystem*> logic_systems;
-	std::unordered_map<std::type_index, ISystem*> render_systems;
+	SystemsContainer logic_systems;
+	SystemsContainer render_systems;
 
 	std::vector<Entity*> entities;
 	std::unordered_map<std::type_index, uint32_t> component_bits;
@@ -69,10 +84,10 @@ public:
 	template<typename T>
 	void AddSystemContainer() {
 		const std::type_index type = typeid(T);
-		if(logic_systems.find(type) != logic_systems.end())
+		if(logic_systems.lookup.find(type) != logic_systems.lookup.end())
 			return;
 
-		logic_systems[type] = new System<T>();
+		logic_systems.Add(type, new System<T>());
 	}
 
 	template<typename T, typename... Args>
@@ -90,12 +105,13 @@ public:
 	 * exists, we bail without doing anything.
 	 */
 	template<typename T, typename... Args>
-	void AddSystem(std::unordered_map<std::type_index, ISystem*> &systems,
+	void AddSystem(SystemsContainer &systems,
 			Args... args) {
-		if(systems.find(T::GetType()) != systems.end())
+		const std::type_index type = T::GetType();
+		if(systems.lookup.find(type) != systems.lookup.end())
 			return;
 
-		systems[T::GetType()] = new T(args...);
+		systems.Add(type, new T(args...));
 	}
 
 	/**
@@ -113,17 +129,19 @@ public:
 	 */
 	virtual ~EntityManager()
 	{
+		std::unordered_map<std::type_index, ISystem*>::iterator it;
+
 		while(entities.size() != 0)
 			Remove(entities[0]);
 
-		for(sys_iterator it = logic_systems.begin();
-				it != logic_systems.end(); ++it)
+		for(it = logic_systems.lookup.begin();
+				it != logic_systems.lookup.end(); ++it)
 		{
 			delete it->second;
 		}
 
-		for(sys_iterator it = render_systems.begin();
-				it != render_systems.end(); ++it)
+		for(it = render_systems.lookup.begin();
+				it != render_systems.lookup.end(); ++it)
 		{
 			delete it->second;
 		}
@@ -144,11 +162,13 @@ public:
 	{
 //		physics_manager->StepSimulation(1.f/60.f);
 
-		for(sys_iterator it = logic_systems.begin();
-				it != logic_systems.end(); ++it)
+		std::vector<ISystem*>::iterator it;
+
+		for(it = logic_systems.prioritised.begin();
+				it != logic_systems.prioritised.end(); ++it)
 		{
 			/* TODO: Only call Manage for manually created systems. */
-			it->second->Manage(gametime);
+			(*it)->Manage(gametime);
 		}
 	}
 
@@ -168,15 +188,15 @@ public:
 	 * \param hash	Hash of component type.
 	 */
 	void Remove(Entity *e, const std::type_index &type) {
-		if(logic_systems.find(type) != logic_systems.end())
+		if(logic_systems.lookup.find(type) != logic_systems.lookup.end())
 		{
-			logic_systems[type]->Remove(e);
+			logic_systems.lookup[type]->Remove(e);
 			return;
 		}
 
-		if(render_systems.find(type) != render_systems.end())
+		if(render_systems.lookup.find(type) != render_systems.lookup.end())
 		{
-			render_systems[type]->Remove(e);
+			render_systems.lookup[type]->Remove(e);
 			return;
 		}
 	}
@@ -185,11 +205,12 @@ public:
 	 * Tell all renderers to draw everything they've got.
 	 */
 	void FlushDraw(const GameTime& gametime) {
-		for(sys_iterator it = render_systems.begin();
-				it != render_systems.end(); ++it)
+		std::vector<ISystem*>::iterator it;
+		for(it = render_systems.prioritised.begin();
+				it != render_systems.prioritised.end(); ++it)
 		{
 			/* TODO: Only call Manage for manually created systems. */
-			it->second->Manage(gametime);
+			(*it)->Manage(gametime);
 		}
 
 		renderer_2d->Flush();
@@ -205,7 +226,7 @@ public:
 	 * \param hash	Hash of component type of the system.
 	 */
 	void AddSystem(ISystem* sys, const std::type_index &type) {
-		logic_systems[type] = sys;
+		logic_systems.Add(type, sys);
 	}
 
 	/**
@@ -215,8 +236,8 @@ public:
 	 * \return		True if system for component exists, otherwise false.
 	 */
 	bool HasSystem(const std::type_index &type) {
-		return (logic_systems.find(type) != logic_systems.end()) ||
-			(render_systems.find(type) != render_systems.end());
+		return (logic_systems.lookup.find(type) != logic_systems.lookup.end()) ||
+			(render_systems.lookup.find(type) != render_systems.lookup.end());
 	}
 
 	uint32_t GetComponentID(const std::type_index &type) {
@@ -239,13 +260,15 @@ public:
 	 * \return		Pointer to component if created successfully, otherwise 0.
 	 */
 	Component* Add(Entity *e, const Component* c, const std::type_index &type) {
-		sys_iterator it = logic_systems.find(type);
-		if(it != logic_systems.end())
-			return logic_systems[type]->CreateComponent(e, c);
+		std::unordered_map<std::type_index, ISystem*>::iterator it;
 
-		it = render_systems.find(type);
-		if(it != render_systems.end())
-			return render_systems[type]->CreateComponent(e, c);
+		it = logic_systems.lookup.find(type);
+		if(it != logic_systems.lookup.end())
+			return logic_systems.lookup[type]->CreateComponent(e, c);
+
+		it = render_systems.lookup.find(type);
+		if(it != render_systems.lookup.end())
+			return render_systems.lookup[type]->CreateComponent(e, c);
 	}
 };
 

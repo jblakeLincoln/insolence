@@ -3,7 +3,9 @@
 
 #include "../insolence_dll.h"
 
+#include <algorithm>
 #include <typeindex>
+#include <map>
 #include <unordered_map>
 #include <vector>
 
@@ -12,10 +14,20 @@
 struct Entity;
 struct Component;
 
+static const uint32_t DEFAULT_SYSTEM_PRIORITY = 100;
+
 /**
  * Interface for creating vectors/maps of templated type "System".
  */
 struct INSOLENCE_API ISystem {
+protected:
+public:
+	const uint32_t priority;
+
+	ISystem(uint32_t p)	:
+		priority(p)
+	{}
+
 	virtual ~ISystem() {}
 
 	/**
@@ -36,7 +48,7 @@ struct INSOLENCE_API ISystem {
 	virtual void Remove(Entity*)=0;
 };
 
-template<typename TComponent>
+template<typename TComponent, uint32_t Priority = DEFAULT_SYSTEM_PRIORITY>
 struct SystemBase : ISystem {
 private:
 
@@ -58,6 +70,10 @@ protected:
 	std::unordered_map<Entity*, TComponent> components;
 
 public:
+	SystemBase() :
+		ISystem(Priority) {
+	}
+
 	/**
 	 * We can't have a templated function here, so we take in a generic
 	 * component pointer, cast it to T, and send it to be added to the map.
