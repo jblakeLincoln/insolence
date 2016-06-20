@@ -56,7 +56,8 @@ struct INSOLENCE_API TextRenderable : Component {
 
 		va_list args;
 		va_start(args, format);
-		vasprintf(&text, format, args);
+		if(vasprintf(&text, format, args) < 0)
+			printf("**** TextRenderable vasprintf error\n");
 		va_end(args);
 	}
 };

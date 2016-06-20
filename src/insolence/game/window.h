@@ -67,7 +67,8 @@ public:
 		va_list args;
 
 		va_start(args, format);
-		vasprintf(&title, format, args);
+		if(vasprintf(&title, format, args) < 0)
+			log(Log::ERR, "%s: vasprintf error", __FUNCTION__);
 		va_end(args);
 
 		glfwSetWindowTitle(glfw_window, title);

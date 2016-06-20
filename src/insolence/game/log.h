@@ -55,8 +55,9 @@ static void log_to_file(Log::LOG &type, const struct tm *time,
 	if(Log::log_name == NULL)
 	{
 		const char *name = "-insolence.txt";
-		asprintf(&Log::log_name, "%04d%02d%02d-%02d%02d%02d%s",
-				year, month, day, hour, min, sec, name);
+		if(asprintf(&Log::log_name, "%04d%02d%02d-%02d%02d%02d%s",
+					year, month, day, hour, min, sec, name) < 0)
+			printf("**** Error creating logging statement ****\n");
 	}
 
 	f = fopen(Log::log_name, "a");
@@ -82,7 +83,8 @@ static void log(Log::LOG type, const char *format, ...)
 	va_list args;
 
 	va_start(args, format);
-	vasprintf(&line, format, args);
+	if(vasprintf(&line, format, args) < 0)
+		printf("**** Error creating logging statement ****\n");
 	va_end(args);
 
 	if(type >= Log::Console)
