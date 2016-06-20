@@ -50,8 +50,6 @@ private:
 
 	Entity() {}
 
-	virtual ~Entity();
-
 	/**
 	 * Private check function for getting a type out of a passed through tuple
 	 * and checking whether we hold a component for it.
@@ -75,6 +73,9 @@ private:
 	HasComponent(const std::tuple<Type...> &t) {
 		return true;
 	}
+
+protected:
+	virtual ~Entity();
 
 public:
 
