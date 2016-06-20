@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "gametime.h"
+#include "../game/gametime.h"
 
 struct Entity;
 struct Component;

@@ -9,11 +9,10 @@
 #include <unordered_map>
 #include <vector>
 
-#include "system.h"
+#include "../system/system.h"
 
 struct Component;
 struct EntityManager;
-
 struct INSOLENCE_API Entity {
 private:
 	static uint32_t id_count;

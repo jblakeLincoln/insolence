@@ -16,9 +16,9 @@
 //#include "../physics/physics_manager.h"
 #include "../render/render_manager_2d.h"
 #include "../render/render_manager_3d.h"
-#include "../systems/mesh_renderable_system.h"
-#include "../systems/sprite_renderable_system.h"
-#include "../systems/text_renderable_system.h"
+#include "../system/mesh_renderable_system.h"
+#include "../system/sprite_renderable_system.h"
+#include "../system/text_renderable_system.h"
 //#include "../systems/rigid_body_system.h"
 
 #include <algorithm>
