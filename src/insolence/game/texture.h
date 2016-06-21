@@ -19,10 +19,14 @@ private:
 	 */
 	Texture();
 
+	static Texture *tex_default;
+
 public:
 	GLuint id;
 	GLuint width;
 	GLuint height;
+
+	static Texture* GetDefault();
 
 	/**
 	 * Call glDeleteTextures and frees memory.

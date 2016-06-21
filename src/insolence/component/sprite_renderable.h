@@ -6,6 +6,7 @@
 #include "component.h"
 #include "transform.h"
 #include "../game/animation.h"
+#include "../game/texture.h"
 
 struct INSOLENCE_API SpriteRenderable : Component {
 	Texture *texture;
@@ -13,7 +14,7 @@ struct INSOLENCE_API SpriteRenderable : Component {
 	glm::vec4 colour;
 	glm::vec2 origin;
 
-	SpriteRenderable(Texture* texture=0,
+	SpriteRenderable(Texture* texture=Texture::GetDefault(),
 			const glm::vec4& colour=glm::vec4(1.f),
 			const glm::vec2 &origin=glm::vec2(0.f),
 			const Animation& animation=Animation())

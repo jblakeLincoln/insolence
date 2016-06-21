@@ -1,5 +1,15 @@
 #include "texture.h"
 
+Texture* Texture::tex_default = 0;
+
+Texture* Texture::GetDefault()
+{
+	if(tex_default == 0)
+		tex_default = Texture::LoadColour(glm::vec4(1.f));
+
+	return tex_default;
+}
+
 Texture::Texture()
 {
 	id = 0;
