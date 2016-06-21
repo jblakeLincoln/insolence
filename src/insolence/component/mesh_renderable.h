@@ -12,7 +12,7 @@ struct INSOLENCE_API MeshRenderable : Component {
 	Material *material;
 	glm::vec4 colour;
 
-	MeshRenderable(Mesh *mesh=0, Material *material=0,
+	MeshRenderable(Mesh *mesh=0, Material *material=Material::GetDefault(),
 			const glm::vec4& colour=glm::vec4(1.f))
 	:	mesh(mesh),
 		material(material),
