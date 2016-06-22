@@ -1,4 +1,5 @@
 #include <insolence/insolence.h>
+#include <insolence/game/entity_manager.h>
 
 #include <insolence/component/mesh_renderable.h>
 #include <insolence/component/sprite_renderable.h>
@@ -101,6 +102,13 @@ struct Game1 : BaseGameWorld
 		centre->Add<B>();
 		centre->Add<C>();
 		centre->Add<D>();
+
+		printf("Masky: %u\n", entity_manager->GetBitmask<A, B, C, D>());
+		uint32_t bitmask_no = entity_manager->GetBitmask<D, MeshRenderable>();
+		uint32_t bitmask_yes = entity_manager->GetBitmask<A, B, C, D>();
+
+		printf("Should not have %u: %d\n", bitmask_no, centre->Has(bitmask_no));
+		printf("Should have %u: %d\n", bitmask_yes, centre->Has(bitmask_yes));
 	}
 
 	void CheckCentre() {

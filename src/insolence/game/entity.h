@@ -131,10 +131,12 @@ public:
 		return HasComponent(std::tuple<Types...>());
 	}
 
+	bool Has(uint32_t mask) {
+		return (component_mask & mask) == mask;
+	}
 
-
-		/**
-	 * Get the bit field of the component from the manager.
+	/**
+	 * Get the bitmask of the component from the manager.
 	 */
 	uint32_t GetComponentID(const std::type_index &type);
 };

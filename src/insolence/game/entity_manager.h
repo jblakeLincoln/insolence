@@ -45,6 +45,25 @@ private:
 		}
 	};
 
+	/**
+	 * Private function for getting a type passed through a tuple and adding
+	 * its IP to the passed through mask.
+	 */
+	template<std::size_t I = 0, typename... Type>
+	inline typename std::enable_if<I < sizeof...(Type), void>::type
+	GetBitmaskMultiple(uint32_t *mask, const std::tuple<Type...> &t) {
+		*mask |= GetComponentID(typeid(std::get<I>(t)));
+	}
+
+	/**
+	 * Go to the next type in the GetBitmaskMultiple tuple.
+	 */
+	template<std::size_t I = 0, typename... Type>
+	inline typename std::enable_if<I == sizeof...(Type), bool>::type
+	GetBitmaskMultiple(uint32_t *mask, const std::tuple<Type...> &t) {
+		return true;
+	}
+
 public:
 	SystemsContainer logic_systems;
 	SystemsContainer render_systems;
@@ -121,6 +140,20 @@ public:
 	{
 		entities.push_back(new Entity(this));
 		return entities.back();
+	}
+
+	/**
+	 * Get the bitmask identifier of a component or multiple components.
+	 */
+	template<typename First, typename... Types>
+	uint32_t GetBitmask() {
+		uint32_t mask = GetComponentID(typeid(First));
+
+		if(sizeof...(Types) == 0)
+			return mask;
+
+		GetBitmaskMultiple(&mask, std::tuple<Types...>());
+		return mask;
 	}
 
 	/**
