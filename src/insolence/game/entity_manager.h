@@ -72,7 +72,9 @@ public:
 	std::unordered_map<std::type_index, uint32_t> component_bits;
 	uint32_t component_bit_count = 1;
 
+
 	RenderManager2D *renderer_2d;
+	RenderManager2D *renderer_text;
 	RenderManager3D *renderer_3d;
 //	PhysicsManager *physics_manager;
 
@@ -83,13 +85,14 @@ public:
 	EntityManager()
 	{
 		renderer_2d = new RenderManager2D();
+		renderer_text = new RenderManager2D("shaders/2d.vs", "shaders/text.fs");
 		renderer_3d = new RenderManager3D();
 //		physics_manager = PhysicsManager::Create(glm::vec3(0.f, -9.8f, 0.f));
 
 		/* Default systems for this EntityManager. */
 		AddSystemContainer<Transform>();
 		AddRenderSystem<SpriteRenderableSystem>(renderer_2d);
-		AddRenderSystem<TextRenderableSystem>(renderer_2d);
+		AddRenderSystem<TextRenderableSystem>(renderer_text);
 		AddRenderSystem<MeshRenderableSystem>(renderer_3d);
 //		AddSystem<RigidBodySystem>(physics_manager);
 	}
@@ -180,6 +183,7 @@ public:
 		}
 
 		delete renderer_2d;
+		delete renderer_text;
 		delete renderer_3d;
 //		delete physics_manager;
 	}
@@ -247,6 +251,7 @@ public:
 		}
 
 		renderer_2d->Flush();
+		renderer_text->Flush();
 		renderer_3d->Flush();
 	}
 

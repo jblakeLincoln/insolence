@@ -54,12 +54,14 @@ struct Game1 : BaseGameWorld
 			Texture::LoadColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
 
 		camera = new Camera(GetWindow());
-		camera->pos.MoveZ(100.f);
+		camera->pos.MoveZ(500.f);
 		//camera->PanX(500);
 
 		font = Font::Load(
-				"/usr/share/fonts/truetype/tlwg/Kinnari.ttf", 20);
-				//"/usr/share/fonts/truetype/droid/DroidSansMono.ttf", 40);
+				//"assets/joystix.ttf", 60);
+				"assets/upheavtt.ttf", 20);
+				//"/usr/share/fonts/truetype/tlwg/Kinnari.ttf", 20);
+				//"/usr/share/fonts/truetype/droid/DroidSansMono.ttf", 80);
 				//
 		/*
 		for(int i = 0; i < 3; ++i)
@@ -109,6 +111,11 @@ struct Game1 : BaseGameWorld
 
 		printf("Should not have %u: %d\n", bitmask_no, centre->Has(bitmask_no));
 		printf("Should have %u: %d\n", bitmask_yes, centre->Has(bitmask_yes));
+
+		centre->Add<TextRenderable>(font)->Text("Hello World, here we are!");
+		centre->Get<TextRenderable>()->colour = glm::vec4(0.9f, 0.6f, 0.1f, 1.f);
+		centre->Get<TextRenderable>()->align = FontAlign::RIGHT;
+		centre->Add<SpriteRenderable>()->colour = glm::vec4(0.f, 1.f, 0.f, 1.f);
 	}
 
 	void CheckCentre() {

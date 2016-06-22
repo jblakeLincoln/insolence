@@ -30,7 +30,7 @@ struct INSOLENCE_API RenderManager2D : public RenderManager
 	std::map<Texture*, std::vector<float> > data;
 	std::map<Texture*, float> count;
 
-	RenderManager2D();
+	RenderManager2D(const char *vs=NULL, const char *fs=NULL);
 	~RenderManager2D();
 
 	/**

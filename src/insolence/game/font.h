@@ -109,8 +109,8 @@ public:
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glBindTexture(GL_TEXTURE_2D, out->mat->diffuse->GetID());
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, out->w,
-				out->h, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 0);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, out->w,
+				out->h, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
 
 		/*
 		 * Place each glyph into the correct place in the newly generated
@@ -133,24 +133,9 @@ public:
 			out->c[i].l = g->bitmap_left;
 			out->c[i].t = g->bitmap_top;
 
-			/* Go over our font data and change it to render white. */
-			GLubyte *buf = new GLubyte[2 * g->bitmap.width * g->bitmap.rows];
-			for(int j = 0; j < g->bitmap.rows; ++j)
-			{
-				for(int i = 0; i < g->bitmap.width; ++i)
-				{
-					buf[2 * (i + j * g->bitmap.width)] = 255;
-					buf[2 * (i + j * g->bitmap.width) + 1] =
-						(i >= g->bitmap.width || j >= g->bitmap.rows) ? 0 :
-						g->bitmap.buffer[i + g->bitmap.width * j];
-				}
-			}
-
 			glTexSubImage2D(GL_TEXTURE_2D, 0, x, 0, out->c[i].w,
-					out->c[i].h, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE,
-					buf);
-
-			delete[] buf;
+					out->c[i].h, GL_RED, GL_UNSIGNED_BYTE,
+					g->bitmap.buffer);
 
 			x += out->c[i].w;
 		}

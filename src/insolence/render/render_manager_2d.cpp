@@ -3,7 +3,7 @@
 #include "../game/camera.h"
 #include "../game/texture.h"
 
-RenderManager2D::RenderManager2D()
+RenderManager2D::RenderManager2D(const char *vs, const char *fs)
 {
 	glm::vec3 view_pos = glm::vec3(2.f, 0.f, 2.f);
 	int vbo_attrib_len;
@@ -33,8 +33,11 @@ RenderManager2D::RenderManager2D()
 	glGenBuffers(1, &vbo_verts);
 	glGenBuffers(1, &vbo_data);
 
-	shader_program = CreateShaderProgramFromPair("shaders/2d.vs",
-			"shaders/2d.fs");
+	if(vs == NULL && fs == NULL)
+		shader_program = CreateShaderProgramFromPair("shaders/2d.vs",
+				"shaders/2d.fs");
+	else
+		shader_program = CreateShaderProgramFromPair(vs, fs);
 
 	if(shader_program == NULL)
 	{
@@ -227,13 +230,15 @@ void RenderManager2D::AddText(Font *f, const char *str, const glm::vec2& pos,
 		else
 		{
 			offset += glyph.l * scale.x;
-			offset += glyph.w * scale.x / 2;
 		}
 
-		m = glm::translate(m, glm::vec3(offset + pos.x,
-					((f->GetAtlasHeight() - glyph.h) / f->GetAtlasHeight() +
-					 glyph.t - (glyph.h / 2)) * scale.y + pos.y,
-					0.f));
+		glm::vec3 p;
+
+		p.x = offset + pos.x;
+		p.y = glyph.t - (glyph.h )
+			* scale.y + pos.y;
+
+		m = glm::translate(m, p);
 
 		m = glm::scale(m, glm::vec3(glyph.w * scale.x,
 					glyph.h * scale.y, 1.f));
@@ -252,8 +257,6 @@ void RenderManager2D::AddText(Font *f, const char *str, const glm::vec2& pos,
 		else
 		{
 			offset += glyph.ax * scale.x;
-			offset -= glyph.w * scale.x / 2;
 		}
-
 	}
 }
