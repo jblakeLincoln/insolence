@@ -15,7 +15,7 @@ void BaseGameWorld::BaseInitialise()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-	SetClearColour(glm::vec3(30.f, 130.f, 180.f));
+	SetClearColour(glm::vec3(0.f));
 	is_running = true;
 
 	entity_manager = new EntityManager();
