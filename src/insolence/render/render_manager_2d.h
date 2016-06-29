@@ -4,6 +4,7 @@
 #include "../insolence_dll.h"
 
 #include <map>
+#include <unordered_map>
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -15,7 +16,8 @@ struct Texture;
 /* TODO Issue #13: Logging. */
 struct INSOLENCE_API RenderManager2D : public RenderManager
 {
-	typedef std::map<Texture*, std::vector<float> > data_def;
+	typedef std::unordered_map<Texture*, std::vector<float> > def_tex_data;
+	typedef std::map<uint32_t, def_tex_data> def_layer_data;
 
 	GLuint vao;
 	GLuint vbo_verts;
@@ -27,8 +29,8 @@ struct INSOLENCE_API RenderManager2D : public RenderManager
 	GLint attrib_colour;
 	GLint attrib_model_uv;
 
-	std::map<Texture*, std::vector<float> > data;
-	std::map<Texture*, float> count;
+	std::map<uint32_t, std::unordered_map<Texture*, std::vector<float>>> data;
+	std::map<uint32_t, std::unordered_map<Texture*, float> >count;
 
 	RenderManager2D(const char *vs=NULL, const char *fs=NULL);
 	~RenderManager2D();
@@ -44,8 +46,10 @@ struct INSOLENCE_API RenderManager2D : public RenderManager
 	 * \param tex		Pointer to texture.
 	 * \param model		Model matrix of sprite.
 	 * \param colour	colour of sprite.
+	 * \param layer		Placement in draw queue, 0 drawn last.
 	 */
-	void Add(Texture *tex, const glm::mat4 &model, const glm::vec4& colour);
+	void Add(Texture *tex, const glm::mat4 &model, const glm::vec4& colour,
+			uint32_t layer);
 
 	/**
 	 * Queue up a sprite to be drawn.
@@ -54,9 +58,11 @@ struct INSOLENCE_API RenderManager2D : public RenderManager
 	 * \param model		Model matrix of sprite.
 	 * \param colour	Colour of sprite.
 	 * \param rect		Sprite rectangle.
+	 * \param layer		Placement in draw queue, 0 drawn last.
+	 *
 	 */
 	void Add(Texture *tex, const glm::mat4 &model, const glm::vec4& colour,
-			const glm::vec4 &rect);
+			const glm::vec4 &rect, uint32_t layer);
 
 	/**
 	 * Queue up text sprites to be drawn.

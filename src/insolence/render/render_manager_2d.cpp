@@ -122,19 +122,30 @@ void RenderManager2D::Flush()
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_verts);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_data);
 
-	for(data_def::iterator i = data.begin(); i != data.end(); ++i)
+	for(def_layer_data::reverse_iterator i = data.rbegin();
+			i != data.rend(); ++i)
 	{
-		if(count[i->first] == 0)
-			continue;
+		uint32_t layer = i->first;
+		Texture *tex = NULL;
 
-		if(i->first != NULL)
-			i->first->Bind();
+		for(def_tex_data::iterator j = data[layer].begin();
+				j != data[layer].end(); ++j)
+		{
+			tex = j->first;
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*(count[i->first]*24),
-				&data[i->first][0],
-			GL_DYNAMIC_DRAW);
+			if(count[layer][tex] == 0)
+				continue;
 
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, count[i->first]);
+			if(tex != NULL)
+				tex->Bind();
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) *
+					(count[layer][tex] * 24),
+					&data[layer][tex][0],
+					GL_DYNAMIC_DRAW);
+
+			glDrawArraysInstanced(GL_TRIANGLES, 0, 6, count[layer][tex]);
+		}
 	}
 
 	data.clear();
@@ -142,21 +153,21 @@ void RenderManager2D::Flush()
 }
 
 void RenderManager2D::Add(Texture *t, const glm::mat4& model,
-		const glm::vec4& colour)
+		const glm::vec4& colour, uint32_t layer=0)
 {
-	if(count.count(t) == 0)
-		count[t] = 0;
+	if(count.count(layer) == 0)
+		count[layer][t] = 0;
 
 	/*
 	 * TODO Issue #15: Fix all this copying - should everything always be
 	 * stored in the renderer?
 	 */
 
-	data[t].resize((count[t]+2048)*24);
+	data[layer][t].resize((count[layer][t]+2048)*24);
 
 	for(int i = 0; i < 4; ++i)
 		for(int j = 0; j < 4; ++j)
-			data[t][count[t] * 24 + (i * 4 + j)] = model[i][j];
+			data[layer][t][count[layer][t] * 24 + (i * 4 + j)] = model[i][j];
 
 	/* Way bad. */
 	/*
@@ -166,22 +177,22 @@ void RenderManager2D::Add(Texture *t, const glm::mat4& model,
 
 
 	for(int i = 0; i < 4; ++i)
-		data[t][count[t] * 24 + 16 + i] = (colour[i]);
+		data[layer][t][count[layer][t] * 24 + 16 + i] = (colour[i]);
 
-	count[t]++;
+	count[layer][t]++;
 }
 
 void RenderManager2D::Add(Texture *t, const glm::mat4&model,
-		const glm::vec4& colour, const glm::vec4& rect)
+		const glm::vec4& colour, const glm::vec4& rect, uint32_t layer=0)
 {
-	Add(t, model, colour);
+	Add(t, model, colour, layer);
 
-	--count[t];
+	--count[layer][t];
 
 	for(int i = 0; i < 4; ++i)
-		data[t][count[t]* 24 + 20 + i] = rect[i];
+		data[layer][t][count[layer][t]* 24 + 20 + i] = rect[i];
 
-	++count[t];
+	++count[layer][t];
 }
 
 void RenderManager2D::AddText(Font *f, const char *str, const glm::vec2& pos,

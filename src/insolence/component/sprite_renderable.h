@@ -13,16 +13,19 @@ struct INSOLENCE_API SpriteRenderable : Component {
 	Animation animation;
 	glm::vec4 colour;
 	glm::vec2 origin;
+	uint32_t layer;
 
 	SpriteRenderable(Texture* texture=Texture::GetDefault(),
 			const glm::vec4& colour=glm::vec4(1.f),
 			const glm::vec2 &origin=glm::vec2(0.f),
-			const Animation& animation=Animation())
+			const Animation& animation=Animation(),
+			uint32_t layer=0)
 	:
 		texture(texture),
 		colour(colour),
 		animation(animation),
-		origin(origin)
+		origin(origin),
+		layer(layer)
 	{}
 };
 
