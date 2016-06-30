@@ -15,6 +15,3 @@ IF NOT "%ERRORLEVEL%" == "0" (
 
 cmd.exe /c MKLINK /J "bin\assets" "src\insolence\assets"
 cmd.exe /c MKLINK /J "bin\shaders" "src\insolence\shaders"
-
-cd bin
-insolence_samples.exe
