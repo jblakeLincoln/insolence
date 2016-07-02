@@ -1,4 +1,5 @@
 solution "insolence"
+	language "C++"
 	objdir "obj"
 	targetdir "bin"
 
@@ -7,6 +8,7 @@ solution "insolence"
 	dofile("./src/insolence.lua")
 
 solution "insolence_samples"
+	language "C++"
 	objdir "obj"
 	targetdir "bin"
 

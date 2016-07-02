@@ -1,10 +1,6 @@
 local include_bullet = false
 local include_openal = false
 
-language "C++"
-objdir "obj"
-targetdir "bin"
-
 if os.get() == "windows" then
 	debugdir "bin"
 end
