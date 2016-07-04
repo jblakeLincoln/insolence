@@ -1,6 +1,7 @@
 #include "window.h"
 
-std::unordered_map<GLFWwindow*, Window*> Window::windows;
+Window *Window::active_window = NULL;
+bool Window::should_quit = false;
 
 Window::Window()
 	:
@@ -8,7 +9,21 @@ Window::Window()
 {
 }
 
+void Window::SetTitle(const char *format, ...)
+{
+	char *title;
+	va_list args;
+
+	va_start(args, format);
+	if(vasprintf(&title, format, args) < 0)
+		log(Log::ERR, "%s: vasprintf error", __FUNCTION__);
+	va_end(args);
+
+	SDL_SetWindowTitle(sdl_window, title);
+	free(title);
+}
+
 void Window::SwapBuffers()
 {
-	glfwSwapBuffers(glfw_window);
+	SDL_GL_SwapWindow(sdl_window);
 }

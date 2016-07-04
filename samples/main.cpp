@@ -9,8 +9,6 @@
 #include <insolence/render/render_manager_2d.h>
 #include <glm/glm.hpp>
 
-#include <GLFW/glfw3.h>
-
 struct A : Component {};
 struct B : Component {};
 struct C : Component {};
@@ -151,10 +149,12 @@ struct Game1 : BaseGameWorld
 			entities.erase(entities.begin());
 		}
 
+		/*
 		if (Input::GetPadButton(JPAD_BTN_Y) && entities.size() > 0)
 			entities[0]->Get<Transform>()->MoveY(0.1f);
 		if (Input::GetPadButton(JPAD_BTN_A) && entities.size() > 0)
 			entities[0]->Get<Transform>()->MoveY(-0.1f);
+			*/
 
 		if(entities.size() > 0)
 		{
@@ -174,6 +174,16 @@ struct Game1 : BaseGameWorld
 			}
 			*/
 		}
+
+		if(Input::GetKey(JKEY_KEY_ESC))
+			GetWindow()->SetShouldClose(true);
+
+		if(Input::GetKey(JKEY_KEY_SPACE) == JKEY_PRESS)
+		{
+			printf("Oh!\n");
+		}
+		else if(Input::GetKey(JKEY_KEY_SPACE) == JKEY_RELEASE)
+			printf("OOooooooooohhhhhh\n");
 
 		const TimeSpan &et = time.GetElapsedTime();
 	}

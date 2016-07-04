@@ -34,7 +34,7 @@ configuration "LINUX"
 
 	links {
 		"GLEW", "GL", "GLU",
-		"glfw3",
+		"SDL2",
 		"X11", "Xxf86vm", "Xinerama", "Xcursor", "Xrandr", "pthread", "Xi",
 		"assimp",
 		"IL", "ILU", "ILUT",
@@ -44,7 +44,6 @@ configuration "LINUX"
 configuration { "WINDOWS" }
 	defines {"WINDOWS"}
 	defines {"NOMINMAX"}
-	defines {"GLFW_DLL"}
 
 	includedirs {
 		"include",
@@ -58,7 +57,7 @@ configuration { "WINDOWS" }
 
 	links {
 		"opengl32","GLU32", "glew32",
-		"glfw3dll",
+		"SDL2",
 		"DevIL", "ILU", "ILUT",
 		"assimp",
 		"freetype"

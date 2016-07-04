@@ -5,17 +5,13 @@
 
 #include <bitset>
 #include <cstdio>
-#include <map>
+#include <unordered_map>
 
-#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 #include <glm/vec2.hpp>
 
 #include "keys.h"
-
-#define PAD_BTN_COUNT	11
-#define PAD_AXES_COUNT	6
-#define JOYPAD_COUNT	4
-#define PAD_TOTAL_BTNS	JOYPAD_COUNT * PAD_BTN_COUNT
 
 struct INSOLENCE_API Input
 {
@@ -23,70 +19,85 @@ private:
 	Input() {}
 	~Input() {}
 
-	/**
-	 * Callback for receiving keys and looking up their ASCII values
-	 * in our GLFW key dictionary, and finding their state.
-	 *
-	 * \return	JKEY state.
-	 */
-	static void key_callback(GLFWwindow *window, int key, int scancode,
-			int action, int mods)
-	{
-		int ascii_key = key_dictionary[key];
+	static std::unordered_map<short, short> key_dictionary;
+	static std::unordered_map<short, short> mouse_dictionary;
+	static std::unordered_map<short, short> pad_dictionary;
+	static std::unordered_map<short, short> axis_dictionary;
 
-		if(ascii_key > 0 && ascii_key < 255)
-		{
-			if(action == GLFW_PRESS || action == GLFW_REPEAT)
-				keys[ascii_key] = true;
-			else
-				keys[ascii_key] = false;
-		}
-	}
+	static std::bitset<JKEY_MAX_KEYS> keys;
+	static std::bitset<JKEY_MAX_KEYS> keys_prev;
+	static std::bitset<JKEY_MAX_KEYS> keys_up;
+	static std::bitset<JKEY_MAX_KEYS> keys_down;
 
-	static void mouse_callback(GLFWwindow *window, int button, int action,
-			int mods)
-	{
-		if(action == GLFW_PRESS || action == GLFW_REPEAT)
-			mouse[button] = true;
-		else
-			mouse[button] = false;
-	}
+	static std::bitset<JMOUSE_MAX_BTNS> mouse;
+	static std::bitset<JMOUSE_MAX_BTNS> mouse_prev;
+	static std::bitset<JMOUSE_MAX_BTNS> mouse_up;
+	static std::bitset<JMOUSE_MAX_BTNS> mouse_down;
 
-private:
-	static std::bitset<256> keys;
-	static std::bitset<256> keys_prev;
-	static std::bitset<256> keys_up;
-	static std::bitset<256> keys_down;
-	static std::map<short, short> key_dictionary;
+	struct GamePad {
+		std::bitset<JPAD_MAX_BTNS> pad_btns;
+		std::bitset<JPAD_MAX_BTNS> pad_btns_prev;
+		std::bitset<JPAD_MAX_BTNS> pad_btns_up;
+		std::bitset<JPAD_MAX_BTNS> pad_btns_down;
+		float axes[JPAD_MAX_AXES];
+	}; static GamePad pads[JPAD_MAX_PADS];
 
-	static std::bitset<3> mouse;
-	static std::bitset<3> mouse_prev;
-	static std::bitset<3> mouse_up;
-	static std::bitset<3> mouse_down;
-
-	/* We assume 11 button inputs and 6 axes inputs for four controllers. */
-	static std::bitset<PAD_TOTAL_BTNS> pad_btns;
-	static std::bitset<PAD_TOTAL_BTNS> pad_btns_prev;
-	static std::bitset<PAD_TOTAL_BTNS> pad_btns_up;
-	static std::bitset<PAD_TOTAL_BTNS> pad_btns_down;
-
-	static float pad_axes[JOYPAD_COUNT * PAD_AXES_COUNT];
-
-	static GLFWwindow *active_window;
+	static std::unordered_map<int, SDL_GameController*> game_controllers;
 
 public:
-	static void AttachWindowToKeyboard(GLFWwindow* window)
+	static void OpenJoystick(int id)
 	{
-		if(key_dictionary.size() == 0)
-			FillDictionary();
-
-		glfwSetKeyCallback(window, key_callback);
-		glfwSetMouseButtonCallback(window, mouse_callback);
+		game_controllers[id] = SDL_GameControllerOpen(id);
 	}
 
-	static void SetMouseWindow(GLFWwindow *window)
+	static void CloseJoystick(int id)
 	{
-		active_window = window;
+		SDL_GameController *sdl_pad = game_controllers[id];
+
+		if(sdl_pad == NULL)
+			return;
+
+		SDL_GameControllerClose(sdl_pad);
+		game_controllers[id] = NULL;
+	}
+
+	static void SetGamepadAxis(uint32_t pad, uint32_t btn, int val)
+	{
+		if(pad > JPAD_MAX_PADS - 1 || btn > JPAD_MAX_AXES - 1)
+			return;
+
+		if(val < 0)
+			val++;
+
+		btn = axis_dictionary[btn];
+		pads[pad].axes[btn] = val / 32767.f;
+	}
+
+	static void SetGamepadButton(uint32_t pad, uint32_t btn, bool state)
+	{
+		if(pad > JPAD_MAX_PADS - 1 || btn > JPAD_MAX_AXES - 1)
+			return;
+
+		btn = pad_dictionary[btn];
+		pads[pad].pad_btns[btn] = state;
+	}
+
+	static void SetKey(uint32_t key, bool state)
+	{
+		if(key > JKEY_MAX_KEYS - 1)
+			return;
+
+		key = key_dictionary[key];
+		keys[key] = state;
+	}
+
+	static void SetMouseButton(uint32_t btn, bool state)
+	{
+		if(btn > JMOUSE_MAX_BTNS - 1)
+			return;
+
+		btn = mouse_dictionary[btn];
+		mouse[btn] = state;
 	}
 
 	/**
@@ -94,9 +105,8 @@ public:
 	 */
 	static void Update()
 	{
-		std::bitset<256> key_changes = keys ^ keys_prev;
-		std::bitset<3> mouse_changes = mouse ^ mouse_prev;
-		std::bitset<PAD_TOTAL_BTNS> pad_changes = pad_btns ^ pad_btns_prev;
+		std::bitset<JKEY_MAX_KEYS> key_changes = keys ^ keys_prev;
+		std::bitset<JMOUSE_MAX_BTNS> mouse_changes = mouse ^ mouse_prev;
 
 		keys_down = key_changes & keys;
 		keys_up = key_changes & (~keys);
@@ -106,42 +116,24 @@ public:
 		mouse_up = mouse_changes & (~mouse);
 		mouse_prev = mouse;
 
-		for(int i = 0; i < 4; ++i)
+		for(int i = 0; i < JPAD_MAX_PADS; ++i)
 		{
 			if(IsPadPresent(i) == false)
-			{
-				for(int j = 0; j < PAD_BTN_COUNT; ++j)
-					pad_btns[i * PAD_BTN_COUNT + j] = 0;
-
-				for(int j = 0; j < PAD_AXES_COUNT; ++j)
-					pad_axes[i * PAD_AXES_COUNT + j] = 0;
-
 				continue;
-			}
 
-			int btn_count = PAD_BTN_COUNT;
-			int axes_count = PAD_AXES_COUNT;
-			const unsigned char *btn_values =
-				glfwGetJoystickButtons(i, &btn_count);
-			const float *axes_values =
-				glfwGetJoystickAxes(0, &axes_count);
+			GamePad *p = &pads[i];
+			std::bitset<JPAD_MAX_BTNS> pad_changes =
+				p->pad_btns ^ p->pad_btns_prev;
 
-			for(int j = 0; j < PAD_BTN_COUNT; ++j)
-				pad_btns[i * PAD_BTN_COUNT + j] = btn_values[j];
-
-			for(int j = 0; j < PAD_AXES_COUNT; ++j)
-				pad_axes[i * PAD_AXES_COUNT + j] =
-					axes_values[j];
+			p->pad_btns_down = pad_changes & p->pad_btns;
+			p->pad_btns_up = pad_changes & (~p->pad_btns);
+			p->pad_btns_prev = p->pad_btns;
 		}
-
-		pad_btns_down = pad_changes & pad_btns;
-		pad_btns_up = pad_changes & (~pad_btns);
-		pad_btns_prev = pad_btns;
 	}
 
-	static int GetKey(int key)
+	static int GetKey(uint32_t key)
 	{
-		if(key < 0 || key > 255)
+		if(key > JKEY_MAX_KEYS - 1)
 			return 0;
 
 		if(keys_down[key])
@@ -154,9 +146,9 @@ public:
 		return 0;
 	}
 
-	static int GetMouseButton(int btn)
+	static int GetMouseButton(uint32_t btn)
 	{
-		if(btn < 0 || btn > 2)
+		if(btn > JPAD_MAX_BTNS - 1)
 			return 0;
 
 		if(mouse_down[btn])
@@ -171,151 +163,49 @@ public:
 
 	static glm::vec2 GetCursorPos()
 	{
-		double x, y;
+		int x, y;
 
-		if(active_window == NULL)
-			return glm::vec2(-1);
-
-		glfwGetCursorPos(active_window, &x, &y);
-
+		SDL_GetMouseState(&x, &y);
 		return glm::vec2(x, y);
 	}
 
-	static bool IsPadPresent(int i)
+	static bool IsPadPresent(uint32_t id)
 	{
-		return glfwJoystickPresent(i);
+		if(id > JPAD_MAX_PADS - 1)
+			return false;
+
+		return game_controllers[id] != NULL;
 	}
 
-	static const char* GetPadName(int i)
+	static const char* GetPadName(uint32_t id)
 	{
-		return glfwGetJoystickName(i);
+		if(id > JPAD_MAX_PADS - 1 || game_controllers[id] == NULL)
+			return NULL;
+
+		return SDL_GameControllerName(game_controllers[id]);
 	}
 
-	static int GetPadButton(int i)
+	static int GetPadButton(uint32_t id, uint32_t i)
 	{
-		if(i < 0 || i >= PAD_BTN_COUNT)
+		if(i > JPAD_MAX_BTNS - 1)
 			return 0;
 
-		if(pad_btns_down[i])
+		if(pads[id].pad_btns_down[id])
 			return JBTN_PRESS;
-		if(pad_btns_up[i])
+		if(pads[id].pad_btns_up[id])
 			return JBTN_RELEASE;
-		if(pad_btns[i])
+		if(pads[id].pad_btns[id])
 			return JBTN_HOLD;
 
 		return 0;
 	}
 
-	static float GetPadAxes(int i)
+	static float GetPadAxis(uint32_t pad, uint32_t axis)
 	{
-		if(i < 0 || i >= PAD_AXES_COUNT)
+		if(pad > JPAD_MAX_PADS - 1 || axis > JPAD_MAX_AXES - 1)
 			return 0;
 
-		return pad_axes[i];
-	}
-
-private:
-	static void FillDictionary()
-	{
-		key_dictionary[	259	] =		8	;
-		key_dictionary[	258	] =		9	;
-		key_dictionary[	257	] =		13	;
-		key_dictionary[	340	] =		16	;
-		key_dictionary[	341	] =		17	;
-		key_dictionary[	284	] =		19	;
-		key_dictionary[	280	] =		20	;
-		key_dictionary[	256	] =		27	;
-		key_dictionary[	32	] =		32	;
-		key_dictionary[	266	] =		33	;
-		key_dictionary[	267	] =		34	;
-		key_dictionary[	269	] =		35	;
-		key_dictionary[	268	] =		36	;
-		key_dictionary[	263	] =		37	;
-		key_dictionary[	265	] =		38	;
-		key_dictionary[	262	] =		39	;
-		key_dictionary[	267	] =		40	;
-		key_dictionary[	283	] =		42	;
-		key_dictionary[	334	] =		43	;
-		key_dictionary[	44	] =		44	;
-		key_dictionary[	260	] =		45	;
-		key_dictionary[	261	] =		46	;
-		key_dictionary[	47	] =		47	;
-		key_dictionary[	48	] =		48	;
-		key_dictionary[	49	] =		49	;
-		key_dictionary[	50	] =		50	;
-		key_dictionary[	51	] =		51	;
-		key_dictionary[	52	] =		52	;
-		key_dictionary[	53	] =		53	;
-		key_dictionary[	54	] =		54	;
-		key_dictionary[	55	] =		55	;
-		key_dictionary[	56	] =		56	;
-		key_dictionary[	57	] =		57	;
-		key_dictionary[	58	] =		58	;
-		key_dictionary[	59	] =		59	;
-		key_dictionary[	60	] =		60	;
-		key_dictionary[	61	] =		61	;
-		key_dictionary[	62	] =		62	;
-		key_dictionary[	63	] =		63	;
-		key_dictionary[	64	] =		64	;
-		key_dictionary[	65	] =		65	;
-		key_dictionary[	66	] =		66	;
-		key_dictionary[	67	] =		67	;
-		key_dictionary[	68	] =		68	;
-		key_dictionary[	69	] =		69	;
-		key_dictionary[	70	] =		70	;
-		key_dictionary[	71	] =		71	;
-		key_dictionary[	72	] =		72	;
-		key_dictionary[	73	] =		73	;
-		key_dictionary[	74	] =		74	;
-		key_dictionary[	75	] =		75	;
-		key_dictionary[	76	] =		76	;
-		key_dictionary[	77	] =		77	;
-		key_dictionary[	78	] =		78	;
-		key_dictionary[	79	] =		79	;
-		key_dictionary[	80	] =		80	;
-		key_dictionary[	81	] =		81	;
-		key_dictionary[	82	] =		82	;
-		key_dictionary[	83	] =		83	;
-		key_dictionary[	84	] =		84	;
-		key_dictionary[	85	] =		85	;
-		key_dictionary[	86	] =		86	;
-		key_dictionary[	87	] =		87	;
-		key_dictionary[	88	] =		88	;
-		key_dictionary[	89	] =		89	;
-		key_dictionary[	90	] =		90	;
-		key_dictionary[	320	] =		96	;
-		key_dictionary[	321	] =		97	;
-		key_dictionary[	322	] =		98	;
-		key_dictionary[	323	] =		99	;
-		key_dictionary[	324	] =		100	;
-		key_dictionary[	325	] =		101	;
-		key_dictionary[	326	] =		102	;
-		key_dictionary[	327	] =		103	;
-		key_dictionary[	328	] =		104	;
-		key_dictionary[	329	] =		105	;
-		key_dictionary[	332	] =		106	;
-		key_dictionary[	334	] =		107	;
-		key_dictionary[	335	] =		108	;
-		key_dictionary[	333	] =		109	;
-		key_dictionary[	330	] =		110	;
-		key_dictionary[	331	] =		111	;
-		key_dictionary[	290	] =		112	;
-		key_dictionary[	291	] =		113	;
-		key_dictionary[	292	] =		114	;
-		key_dictionary[	293	] =		115	;
-		key_dictionary[	294	] =		116	;
-		key_dictionary[	295	] =		117	;
-		key_dictionary[	296	] =		118	;
-		key_dictionary[	297	] =		119	;
-		key_dictionary[	298	] =		120	;
-		key_dictionary[	299	] =		121	;
-		key_dictionary[	300	] =		122	;
-		key_dictionary[	301	] =		123	;
-		key_dictionary[	302	] =		124	;
-		key_dictionary[	303	] =		125	;
-		key_dictionary[	304	] =		126	;
-		key_dictionary[	305	] =		127	;
-		key_dictionary[	282	] =		144	;
+		return pads[pad].axes[axis];
 	}
 };
 

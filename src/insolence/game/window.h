@@ -3,12 +3,12 @@
 
 #include "../insolence_dll.h"
 
-
 #include <cstdio>
 #include <cstdlib>
 #include <unordered_map>
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
 #include "../game/log.h"
 #include "input.h"
@@ -17,34 +17,15 @@
 struct INSOLENCE_API Window
 {
 private:
-	static std::unordered_map<GLFWwindow*, Window*> windows;
-
 	static const GLuint GL_MAJOR = 3;
 	static const GLuint GL_MINOR = 1;
-
-	static void WindowFramebufferSizeCallback(GLFWwindow *w, int width,
-			int height)
-	{
-		if(windows.find(w) == windows.end())
-			return;
-
-		windows[w]->framebuffer_width = width;
-		windows[w]->framebuffer_height = height;
-	}
-
-	static void WindowResizeCallback(GLFWwindow *w, int width, int height)
-	{
-		if(windows.find(w) == windows.end())
-			return;
-
-		windows[w]->width = width;
-		windows[w]->height = height;
-	}
+	static Window *active_window;
 
 	Window();
 	~Window() {}
 
-	GLFWwindow *glfw_window;
+	SDL_Window *sdl_window;
+	SDL_GLContext sdl_context;
 
 	uint32_t width;
 	uint32_t height;
@@ -52,6 +33,7 @@ private:
 	int framebuffer_height;
 
 	bool should_close;
+	static bool should_quit;
 
 public:
 	uint32_t GetWidth() { return width; }
@@ -59,21 +41,11 @@ public:
 	int GetFramebufferWidth() { return framebuffer_width; }
 	int GetFramebufferHeight() { return framebuffer_height; }
 
-	bool ShouldClose() { return glfwWindowShouldClose(glfw_window); }
-	void SetShouldClose(bool c) { glfwSetWindowShouldClose(glfw_window, c); }
+	bool ShouldClose() { return should_close || should_quit; }
+	void SetShouldClose(bool c) { should_close = c; }
+	static void SetShouldQuit(bool c) { should_quit = c; }
 
-	void SetTitle(const char *format, ...) {
-		char *title;
-		va_list args;
-
-		va_start(args, format);
-		if(vasprintf(&title, format, args) < 0)
-			log(Log::ERR, "%s: vasprintf error", __FUNCTION__);
-		va_end(args);
-
-		glfwSetWindowTitle(glfw_window, title);
-		free(title);
-	}
+	void SetTitle(const char *format, ...);
 
 	void SwapBuffers();
 
@@ -85,57 +57,67 @@ public:
 	 * \return			Created window
 	 */
 	static Window* Create(GLuint width=640, GLuint height=480,
-			const char* title="Insolence Window", bool resizeable=false)
+			const char* title="Insolence Window", bool resizable=false)
 	{
-		Window *out = new Window();
-
-		/* TODO Issue #2: Log success/failure. */
-		if(glfwInit() != GL_TRUE)
+		if(Window::active_window != NULL)
 		{
-			log(Log::FATAL, "Window (%s) - Failed to initialise GLFW",
+			log(Log::WARN, "Window (%s) - Window already present.",
+					__FUNCTION__);
+			return NULL;
+		}
+
+		Window *out = new Window();
+		uint32_t window_flags = SDL_WINDOW_OPENGL;
+
+		if(resizable == true)
+			window_flags |= SDL_WINDOW_RESIZABLE;
+
+		if(SDL_Init(SDL_INIT_VIDEO) < 0)
+		{
+			log(Log::FATAL, "Window (%s) - Failed to initialise video",
 					__FUNCTION__);
 		}
 
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_MAJOR);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_MINOR);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+		if(SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0)
+			log(Log::FATAL, "Window (%s) - Failed to initialise GameController",
+					__FUNCTION__);
 
-		/* TODO Issue #3: AA not dependent on GLFW. */
-		glfwWindowHint(GLFW_SAMPLES, 4);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
+				SDL_GL_CONTEXT_PROFILE_CORE);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, GL_MAJOR);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, GL_MINOR);
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-		if(resizeable == false)
-			glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+		out->sdl_window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
+				SDL_WINDOWPOS_UNDEFINED, width, height, window_flags);
 
-		out->glfw_window = glfwCreateWindow(width, height, title,
-				NULL, NULL);
+		out->should_close = false;
+		out->should_quit = false;
 
-		out->width = width;
-		out->height = height;
+		if(out->sdl_window == NULL)
+			log(Log::FATAL, "Window (%s) - Failed to create window",
+					__FUNCTION__);
 
-		glfwMakeContextCurrent(out->glfw_window);
+		out->sdl_context = SDL_GL_CreateContext(out->sdl_window);
 
-		if(resizeable == true)
-			glfwSetWindowSizeCallback(out->glfw_window, WindowResizeCallback);
-
-		glfwSwapInterval(1);
+		if(out->sdl_context == NULL)
+			log(Log::FATAL, "Window (%s) - Failed to create GL context");
 
 		glewExperimental = GL_TRUE;
 
 		if(glewInit() != GLEW_OK)
 		{
-			log(Log::FATAL, "Window (%s) - Failed to initialise GLEW.",
+			log(Log::FATAL, "Window (%s) - Failed to initialise GLEW",
 					__FUNCTION__);
 		}
 
-		Input::AttachWindowToKeyboard(out->glfw_window);
-		Input::SetMouseWindow(out->glfw_window);
+		out->HandleWindowResize();
+		Window::active_window = out;
 
-		windows[out->glfw_window] = out;
-		glfwGetFramebufferSize(out->glfw_window, &out->framebuffer_width,
-				&out->framebuffer_height);
-
-		glfwSetFramebufferSizeCallback(out->glfw_window,
-				WindowFramebufferSizeCallback);
+		PollEvents();
 
 		log(Log::INFO, "Window (%s) - Successful window creation",
 				__FUNCTION__);
@@ -150,20 +132,102 @@ public:
 	 */
 	static void Destroy(Window *w)
 	{
-		glfwDestroyWindow(w->glfw_window);
+		if(w == NULL)
+			return;
+
+		SDL_GL_DeleteContext(w->sdl_context);
+		SDL_DestroyWindow(w->sdl_window);
+		SDL_Quit();
 
 		delete w;
 		w = NULL;
 	}
 
+private:
+	void HandleWindowResize()
+	{
+		int w;
+		int h;
+
+		SDL_GetWindowSize(sdl_window, &w, &h);
+		width = w;
+		height = h;
+		SDL_GL_GetDrawableSize(sdl_window, &w, &h);
+		framebuffer_width = w;
+		framebuffer_height = h;
+	}
+
+	static void HandleWindowEvents(SDL_Event *event)
+	{
+		if(active_window == NULL)
+			return;
+
+		switch(event->window.event)
+		{
+			case SDL_WINDOWEVENT_MAXIMIZED:
+			case SDL_WINDOWEVENT_SIZE_CHANGED:
+				active_window->HandleWindowResize();
+				break;
+		}
+	}
+
+public:
 	/**
 	 * Process all window callbacks and update input.
 	 */
 	static void PollEvents()
 	{
-		glfwPollEvents();
+		SDL_Event event;
+
+		while(SDL_PollEvent(&event))
+		{
+			switch(event.type)
+			{
+				case SDL_QUIT:
+					Window::SetShouldQuit(true);
+					break;
+
+				case SDL_CONTROLLERDEVICEADDED:
+					Input::OpenJoystick(event.cdevice.which);
+					break;
+
+				case SDL_CONTROLLERDEVICEREMOVED:
+					Input::CloseJoystick(event.cdevice.which);
+					break;
+
+				case SDL_WINDOWEVENT_RESIZED:
+				case SDL_WINDOWEVENT:
+					HandleWindowEvents(&event);
+					break;
+
+				case SDL_CONTROLLERBUTTONUP:
+				case SDL_CONTROLLERBUTTONDOWN:
+					Input::SetGamepadButton(event.cbutton.which,
+							event.cbutton.button,
+							event.cbutton.state == SDL_PRESSED);
+					break;
+
+				case SDL_JOYAXISMOTION:
+					Input::SetGamepadAxis(event.caxis.which,
+							event.caxis.axis,
+							event.caxis.value);
+					break;
+
+				case SDL_KEYDOWN:
+				case SDL_KEYUP:
+					Input::SetKey(event.key.keysym.sym,
+							event.type == SDL_KEYDOWN);
+					break;
+
+				case SDL_MOUSEBUTTONUP:
+				case SDL_MOUSEBUTTONDOWN:
+					Input::SetMouseButton(event.button.button,
+							event.button.state == SDL_PRESSED);
+					break;
+			}
+		}
+
 		Input::Update();
-		//Mouse::Update();
 	}
 };
 
