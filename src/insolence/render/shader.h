@@ -8,6 +8,11 @@
 #include <stdio.h>
 #include <GL/glew.h>
 
+enum ShaderFlags {
+	NONE =               1 << 0,
+	ADD_HEADER =         1 << 1,
+};
+
 /* TODO Issue #10: Logging. */
 struct INSOLENCE_API Shader
 {
@@ -20,8 +25,38 @@ private:
 	Shader(GLenum type);
 
 	GLuint id;
+	static char glsl_version[];
+	static const char *vert_header;
+	static const char *frag_header;
+
+	static void Initialise() {
+		return;
+
+		/* Placeholder - dynamically get GLSL version. */
+		if(strcmp(glsl_version, "") != 0)
+			return;
+
+		char *glsl_getstr;
+		const char* p_index;
+
+		if(asprintf(&glsl_getstr, "%s",
+					glGetString(GL_SHADING_LANGUAGE_VERSION)) < 0)
+			return;
+		if((p_index = strchr(glsl_getstr, '.')) == NULL)
+			return;
+
+		int index = p_index - glsl_getstr;
+
+		glsl_version[0] = glsl_getstr[index - 1];
+		glsl_version[1] = glsl_getstr[index + 1];
+		glsl_version[2] = glsl_getstr[index + 2];
+		glsl_version[3] = '\0';
+
+		free(glsl_getstr);
+	}
 
 public:
+
 	/**
 	 * Calls glDeleteShader and deletes id.
 	 */
@@ -43,17 +78,32 @@ public:
 	/**
 	 * Create shader from string.
 	 *
-	 * \param source	String to use as shader source.
-	 * \param type		Shader type to create.
-	 * \return			Pointer to shader object.
+	 * \param source    String to use as shader source.
+	 * \param type      Shader type to create.
+	 * \param flags     Optional flags to modify compiled shader.
+	 * \return          Pointer to shader object.
 	 */
-	static Shader *CreateFromString(const char *source, GLenum type)
+	static Shader *CreateFromString(const char *source, GLenum type,
+			ShaderFlags flags = ShaderFlags::NONE)
 	{
 		Shader *output = new Shader(type);
 
-		glShaderSource(output->id, 1, &source, NULL);
-		glCompileShader(output->id);
+		const char* arr[3] = { "", "", source };
+		GLint lengths[] = { 0, 0, (GLint)strlen(source) };
 
+		/*
+		 * Add a header with version number and OpenGL desktop/ES conversions..
+		 */
+		if((flags & ShaderFlags::ADD_HEADER) == ShaderFlags::ADD_HEADER)
+		{
+			arr[0] = Shader::glsl_version;
+			arr[1] = type == GL_VERTEX_SHADER ? vert_header : frag_header;
+			lengths[0] = (GLint)strlen(arr[0]);
+			lengths[1] = (GLint)strlen(arr[1]);
+		}
+
+		glShaderSource(output->id, 3, arr, lengths);
+		glCompileShader(output->id);
 		return output;
 	}
 
@@ -65,7 +115,8 @@ public:
 	 * \param type	Shader type to create.
 	 * \return		Pointer to shader object.
 	 */
-	static Shader *CreateFromFile(const char *path, GLenum type)
+	static Shader *CreateFromFile(const char *path, GLenum type,
+			ShaderFlags flags = ShaderFlags::NONE)
 	{
 		Shader *output = NULL;
 		char *buffer;
@@ -90,7 +141,7 @@ public:
 		int temp = fread(buffer, 1, length, file); /* Stupid unused warn. */
 		fclose(file);
 
-		output = Shader::CreateFromString(buffer, type);
+		output = Shader::CreateFromString(buffer, type, flags);
 
 		delete[] buffer;
 

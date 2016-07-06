@@ -1,15 +1,17 @@
-#version 150
-
-in vec3 frag_vert;
-in vec3 frag_pos;
-in vec3 frag_norm;
-in vec2 frag_uv;
-in vec4 frag_colour;
+IN vec3 frag_vert;
+IN vec3 frag_pos;
+IN vec3 frag_norm;
+IN vec2 frag_uv;
+IN vec4 frag_colour;
 
 uniform sampler2D tex_diffuse;
 uniform sampler2D tex_normal;
 uniform bool normal_map;
-out vec4 out_colour;
+
+#ifdef INSOLENCE_GLSL_DESKTOP
+	out vec4 out_colour;
+	#define gl_FragColor out_colour
+#endif
 
 struct DirLight {
 	vec3 direction;
@@ -50,5 +52,5 @@ void main() {
 	vec3 ambient = dir_light.ambient * frag_tex;
 	vec3 specular = dir_light.specular * spec;
 
-	out_colour = vec4(ambient + diffuse + specular, 1.0) * frag_colour;
+	gl_FragColor = vec4(ambient + diffuse + specular, 1.0) * frag_colour;
 }

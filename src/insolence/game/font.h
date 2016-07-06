@@ -60,6 +60,11 @@ public:
 		FT_Face face;
 		FT_GlyphSlot g;
 		int glyph_padding;
+#ifdef INSOLENCE_OPENGL_DESKTOP
+		GLint gl_format = GL_RED;
+#elif INSOLENCE_OPENGL_ES
+		GLint gl_format = GL_LUMINANCE;
+#endif
 
 		/* Init Freetype. */
 		if(FT_Init_FreeType(&ft)){
@@ -109,8 +114,8 @@ public:
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glBindTexture(GL_TEXTURE_2D, out->mat->diffuse->GetID());
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, out->w,
-				out->h, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
+		glTexImage2D(GL_TEXTURE_2D, 0, gl_format, out->w,
+				out->h, 0, gl_format, GL_UNSIGNED_BYTE, 0);
 
 		/*
 		 * Place each glyph into the correct place in the newly generated
@@ -123,6 +128,7 @@ public:
 			if(FT_Load_Char(face, i, FT_LOAD_RENDER))
 				continue;
 
+
 			x += glyph_padding;
 
 			out->c[i].ax = g->advance.x >> 6;
@@ -134,17 +140,20 @@ public:
 			out->c[i].t = g->bitmap_top;
 
 			glTexSubImage2D(GL_TEXTURE_2D, 0, x, 0, out->c[i].w,
-					out->c[i].h, GL_RED, GL_UNSIGNED_BYTE,
+					out->c[i].h, gl_format, GL_UNSIGNED_BYTE,
 					g->bitmap.buffer);
 
 			x += out->c[i].w;
 		}
 
-		glGenerateMipmap(GL_TEXTURE_2D);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-				GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 				GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+				GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+				GL_CLAMP_TO_EDGE);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
+				GL_CLAMP_TO_EDGE);
 
 		FT_Done_Face(face);
 		FT_Done_FreeType(ft);

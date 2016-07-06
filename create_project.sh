@@ -81,6 +81,8 @@ echo \
 	includedirs {
 		"include",
 	}
+
+	defines { "INSOLENCE_OPENGL_DESKTOP" }
 	libdirs { "bin" }
 	links { "insolence"}
 

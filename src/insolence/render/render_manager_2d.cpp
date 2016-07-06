@@ -117,6 +117,10 @@ void RenderManager2D::Flush()
 {
 	glUseProgram(shader_program->GetID());
 
+#ifdef INSOLENCE_OPENGL_ES
+	Camera::PostToShader_ES(shader_program);
+#endif
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_verts);

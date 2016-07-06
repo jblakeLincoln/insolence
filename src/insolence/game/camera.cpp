@@ -5,6 +5,10 @@
 GLint Camera::uni_block = -1;
 Camera* Camera::active_camera = 0;
 
+#ifdef INSOLENCE_OPENGL_ES
+std::unordered_map<ShaderProgram*, Camera::CameraUniforms> Camera::uniform_dict;
+#endif
+
 void Camera::Construct()
 {
 	glGenBuffers(1, &ubo);
@@ -76,10 +80,30 @@ void Camera::Post()
 	block.view = glm::lookAt(view_pos, lookat.GetPos(),
 			glm::vec3(0.f, 1.f, 0.f));
 
+#ifdef INSOLENCE_OPENGL_DESKTOP
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(CameraBlock), &block,
 			GL_DYNAMIC_DRAW);
 	glBindBufferBase(GL_UNIFORM_BUFFER, uni_block, ubo);
+
+#elif INSOLENCE_OPENGL_ES
+	std::unordered_map<ShaderProgram*, CameraUniforms>::iterator it;
+	for(it = uniform_dict.begin(); it != uniform_dict.end(); ++it)
+	{
+		CameraUniforms *unis = &it->second;
+		if(unis->manually_posted == true)
+		{
+			unis->manually_posted = false;
+			continue;
+		}
+
+		glUseProgram(it->first->GetID());
+		glUniformMatrix4fv(unis->proj, 1, GL_FALSE,
+				&block.proj[0][0]);
+		glUniformMatrix4fv(unis->view, 1, GL_FALSE,
+				&block.view[0][0]);
+	}
+#endif
 }
 
 void Camera::PanX(float f)

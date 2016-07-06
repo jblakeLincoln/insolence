@@ -1,10 +1,12 @@
-#version 140
+IN vec4 fs_colour;
+IN vec2 fs_uvs;
 
-in vec4 fs_colour;
-in vec2 fs_uvs;
-
-out vec4 out_colour;
 uniform sampler2D tex;
+
+#ifdef INSOLENCE_GLSL_DESKTOP
+	out vec4 out_colour;
+	#define gl_FragCoord out_colour;
+#endif
 
 void main()
 {
@@ -13,5 +15,5 @@ void main()
 	if(t.a < 0.2)
 		discard;
 
-	out_colour = t * fs_colour;
+	gl_FragColor = t * fs_colour;
 }

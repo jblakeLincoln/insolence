@@ -67,6 +67,10 @@ void RenderManager3D::Flush()
 	 * (admittedly on the low end of reasonable), so it stays for now.
 	 */
 
+#ifdef INSOLENCE_OPENGL_ES
+	Camera::PostToShader_ES(shader_program);
+#endif
+
 	if(Camera::GetActiveCamera() != NULL)
 		SetViewPosition(Camera::GetActiveCamera()->pos.GetPos());
 	glUseProgram(shader_program->GetID());

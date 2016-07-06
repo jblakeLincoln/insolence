@@ -38,8 +38,10 @@ struct INSOLENCE_API RenderManager
 		ShaderProgram *program = new ShaderProgram();
 		bool success = true;
 
-		shaders[0] = Shader::CreateFromFile(vert_path, GL_VERTEX_SHADER);
-		shaders[1] = Shader::CreateFromFile(frag_path, GL_FRAGMENT_SHADER);
+		shaders[0] = Shader::CreateFromFile(vert_path, GL_VERTEX_SHADER,
+				ShaderFlags::ADD_HEADER);
+		shaders[1] = Shader::CreateFromFile(frag_path, GL_FRAGMENT_SHADER,
+				ShaderFlags::ADD_HEADER);
 
 		for(int i = 0; i < 2; ++i)
 		{
@@ -48,8 +50,9 @@ struct INSOLENCE_API RenderManager
 
 			if(status != GL_TRUE)
 			{
-				log(Log::ERR, "RenderManager (%s) - shader %d compile failed",
-						__FUNCTION__, i);
+				log(Log::ERR, "RenderManager (%s) - shader %d (%s) "
+						"compile failed",
+						__FUNCTION__, i, i == 0 ? vert_path : frag_path);
 			}
 
 			success = status & success;
@@ -73,7 +76,9 @@ struct INSOLENCE_API RenderManager
 			}
 		}
 
+#ifdef INSOLENCE_OPENGL_DESKTOP
 		glBindFragDataLocation(program->GetID(), 0, "out_colour");
+#endif
 		glLinkProgram(program->GetID());
 		glUseProgram(program->GetID());
 

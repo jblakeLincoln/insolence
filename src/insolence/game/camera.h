@@ -51,10 +51,49 @@ public:
 		active_camera = c;
 	}
 
-	static void Setup(ShaderProgram *p)
+#ifdef INSOLENCE_OPENGL_ES
+	struct CameraUniforms {
+		int proj;
+		int view;
+		bool manually_posted;
+	};
+	static std::unordered_map<ShaderProgram*, CameraUniforms> uniform_dict;
+
+	static void PostToShader_ES(ShaderProgram *shader_program) {
+		if(shader_program == NULL || active_camera == NULL)
+			return;
+
+		glUseProgram(shader_program->GetID());
+
+		int uni_proj = glGetUniformLocation(shader_program->GetID(),
+				"mat_proj");
+		int uni_view = glGetUniformLocation(shader_program->GetID(),
+				"mat_view");
+
+		glUniformMatrix4fv(uni_proj, 1, GL_FALSE,
+				&active_camera->block.proj[0][0]);
+		glUniformMatrix4fv(uni_view, 1, GL_FALSE,
+				&active_camera->block.view[0][0]);
+
+		uniform_dict[shader_program].manually_posted = true;
+	}
+#endif
+
+	static void Setup(ShaderProgram *program)
 	{
-		uni_block = glGetUniformBlockIndex(p->GetID(),
-				"Camera");
+		if(program == NULL)
+			return;
+
+#ifdef INSOLENCE_OPENGL_DESKTOP
+		uni_block = glGetUniformBlockIndex(program->GetID(), "Camera");
+
+#elif INSOLENCE_OPENGL_ES
+		uniform_dict[program].proj =
+			glGetUniformLocation(program->GetID(), "mat_proj");
+		uniform_dict[program].view =
+			glGetUniformLocation(program->GetID(), "mat_view");
+		uniform_dict[program].manually_posted = false;
+#endif
 	}
 
 	virtual void Update() {}
