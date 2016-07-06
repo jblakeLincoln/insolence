@@ -63,7 +63,7 @@ public:
 
 	static void SetGamepadAxis(uint32_t pad, uint32_t btn, int val)
 	{
-		if(pad > JPAD_MAX_PADS - 1 || btn > JPAD_MAX_AXES - 1)
+		if(IsPadPresent(pad) == false)
 			return;
 
 		if(val < 0)
@@ -75,7 +75,7 @@ public:
 
 	static void SetGamepadButton(uint32_t pad, uint32_t btn, bool state)
 	{
-		if(pad > JPAD_MAX_PADS - 1 || btn > JPAD_MAX_AXES - 1)
+		if(IsPadPresent(pad) == false)
 			return;
 
 		btn = pad_dictionary[btn];
@@ -84,18 +84,12 @@ public:
 
 	static void SetKey(uint32_t key, bool state)
 	{
-		if(key > JKEY_MAX_KEYS - 1)
-			return;
-
 		key = key_dictionary[key];
 		keys[key] = state;
 	}
 
 	static void SetMouseButton(uint32_t btn, bool state)
 	{
-		if(btn > JMOUSE_MAX_BTNS - 1)
-			return;
-
 		btn = mouse_dictionary[btn];
 		mouse[btn] = state;
 	}
@@ -177,24 +171,24 @@ public:
 		return game_controllers[id] != NULL;
 	}
 
-	static const char* GetPadName(uint32_t id)
+	static const char* GetPadName(uint32_t pad)
 	{
-		if(id > JPAD_MAX_PADS - 1 || game_controllers[id] == NULL)
+		if(IsPadPresent(pad) == false)
 			return NULL;
 
-		return SDL_GameControllerName(game_controllers[id]);
+		return SDL_GameControllerName(game_controllers[pad]);
 	}
 
-	static int GetPadButton(uint32_t id, uint32_t i)
+	static int GetPadButton(uint32_t pad, uint32_t btn)
 	{
-		if(i > JPAD_MAX_BTNS - 1)
+		if(IsPadPresent(pad) == false || btn > JPAD_MAX_BTNS - 1)
 			return 0;
 
-		if(pads[id].pad_btns_down[id])
+		if(pads[pad].pad_btns_down[btn])
 			return JBTN_PRESS;
-		if(pads[id].pad_btns_up[id])
+		if(pads[pad].pad_btns_up[btn])
 			return JBTN_RELEASE;
-		if(pads[id].pad_btns[id])
+		if(pads[pad].pad_btns[btn])
 			return JBTN_HOLD;
 
 		return 0;
@@ -202,7 +196,7 @@ public:
 
 	static float GetPadAxis(uint32_t pad, uint32_t axis)
 	{
-		if(pad > JPAD_MAX_PADS - 1 || axis > JPAD_MAX_AXES - 1)
+		if(IsPadPresent(pad) == false || axis > JPAD_MAX_AXES - 1)
 			return 0;
 
 		return pads[pad].axes[axis];
