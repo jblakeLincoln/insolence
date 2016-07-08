@@ -54,8 +54,25 @@ void BaseGameWorld::BaseUnload()
 	Window::Destroy(window);
 }
 
+#ifdef INSOLENCE_WEBGL
+void BaseGameWorld::RunWebGL(void *gw)
+{
+	BaseGameWorld *world = (BaseGameWorld*)gw;
+	world->BaseUpdate();
+	world->BaseDraw();
+	world->gametime.Update();
+}
+#endif
+
 void BaseGameWorld::Run()
 {
+#ifdef INSOLENCE_WEBGL
+	BaseInitialise();
+	emscripten_set_main_loop_arg(BaseGameWorld::RunWebGL, this, 0, 1);
+	BaseUnload();
+	return;
+#endif
+
 	double accumulator = 0;
 
 	BaseInitialise();

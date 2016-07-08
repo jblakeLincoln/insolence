@@ -33,7 +33,6 @@ function create_game_directory
 {
 	mkdir -p "$DESTINATION_DIR"
 	mkdir -p "$DESTINATION_DIR/bin"
-	mkdir -p "$DESTINATION_DIR/include"
 	mkdir -p "$DESTINATION_DIR/scripts"
 	mkdir -p "$DESTINATION_DIR/src"
 
@@ -44,7 +43,7 @@ function create_game_directory
 	# Set up build file for using the name of the new project.
 	sed -i '/ln -sf/d' "$DESTINATION_DIR/build.sh"
 	sed -i '/src\/insolence/d' "$DESTINATION_DIR/build.sh"
-	sed -i '/do_linux_make samples/d' "$DESTINATION_DIR/build.sh"
+	sed -i '/do_make samples/d' "$DESTINATION_DIR/build.sh"
 	sed -i 's/insolence_samples/'$PROJECT_NAME'/g' "$DESTINATION_DIR/build.sh"
 	sed -i 's/samples\/insolence_samples/src\/'$PROJECT_NAME'/g' "$DESTINATION_DIR/build.sh"
 
@@ -57,9 +56,12 @@ function create_game_directory
 	# If we're linking with the insolence directory, include the shared object.
 	if [[ "$LINKED" == "true" ]]; then
 		ln -sf "$INSOLENCE_DIR/bin/libinsolence.so" "$DESTINATION_DIR/bin"
+		ln -sf "$INSOLENCE_DIR/bin/libinsolence.bc" "$DESTINATION_DIR/bin"
+		ln -sf "$INSOLENCE_DIR/include" "$DESTINATION_DIR"
 		ln -sf "$INSOLENCE_DIR/src/insolence" "$DESTINATION_DIR/include"
 		ln -sf -t "$DESTINATION_DIR/bin" "../../insolence/src/insolence/shaders"
 	else
+		mkdir -p "$DESTINATION_DIR/include"
 		cp "$INSOLENCE_DIR/src/insolence/shaders" "$DESTINATION_DIR/bin" -r
 		rsync -r --include "*/" --include "*.h" --exclude="*" \
 --prune-empty-dirs src/ "$DESTINATION_DIR/include/"

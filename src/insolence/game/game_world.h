@@ -6,6 +6,10 @@
 #include <GL/glew.h>
 #include <glm/vec3.hpp>
 
+#ifdef INSOLENCE_WEBGL
+#include <emscripten.h>
+#endif
+
 #include "gametime.h"
 
 struct Entity;
@@ -43,6 +47,10 @@ private:
 	 * entity manager.
 	 */
 	void BaseUnload();
+
+#ifdef INSOLENCE_WEBGL
+	static void RunWebGL(void *gw);
+#endif
 
 protected:
 	/**

@@ -5,9 +5,9 @@
 #include "../game/log.h"
 
 #include <algorithm>
-#include <freetype2/ft2build.h>
-#include <GL/glew.h>
+#include <ft2build.h>
 #include FT_FREETYPE_H
+#include <GL/glew.h>
 
 #include "material.h"
 

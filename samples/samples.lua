@@ -4,10 +4,11 @@ project "insolence_samples"
 	files { "**.h", "**.cpp" }
 	dofile("../settings.lua")
 
-	configuration "LINUX"
+	configuration { "LINUX" }
 		includedirs {
 			"../src"
 		}
 
+	configuration { "LINUX", "not WebGL*" }
 		links { "insolence" }
 

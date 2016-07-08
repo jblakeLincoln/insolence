@@ -1,36 +1,45 @@
 local include_bullet = false
-local include_openal = false
+local include_openal = true
 
 if os.get() == "windows" then
 	debugdir "bin"
 end
 
-configurations { "Debug", "Release" }
+configurations { "Debug", "Release", "WebGL-Debug", "WebGL-Release" }
 
 defines {"GLM_FORCE_RADIANS"}
 
 if include_bullet == true then
 	defines{"INSOLENCE_LINKS_BULLET"}
+
+	configuration "not WebGL*"
 	links {"BulletDynamics", "BulletCollision", "LinearMath"}
 end
 
 if include_openal == true then
 	defines{"INSOLENCE_LINKS_OPENAL"}
-	links {"openal"}
+
+	configuration "not WebGL*"
+		links {"openal"}
 end
 
-configuration "LINUX"
+configuration { "LINUX" }
 	defines {"LINUX"}
 	buildoptions "-std=c++11"
 
 	includedirs {
 		"include",
-		"/usr/include/bullet",
-		"/usr/include/freetype2"
 	}
 
 	libdirs {
 		"/usr/local/include",
+	}
+
+configuration { "LINUX", "not WebGL*" }
+	includedirs {
+		"/usr/include",
+		"/usr/include/bullet",
+		"/usr/include/freetype2"
 	}
 
 	links {
@@ -41,7 +50,7 @@ configuration "LINUX"
 		"freetype"
 	}
 
-configuration { "WINDOWS" }
+configuration { "WINDOWS", "not WebGL*" }
 	defines {"WINDOWS"}
 	defines {"NOMINMAX"}
 
@@ -63,10 +72,16 @@ configuration { "WINDOWS" }
 		"freetype"
 	}
 
-configuration "Debug"
+configuration "WebGL*"
+	targetextension ".bc"
+
+configuration "Debug or WebGL-Debug"
 	defines {"DEBUG"}
 	flags {"Symbols"}
 
-configuration "Release"
+configuration "Release or WebGL-Debug"
 	defines {"NDEBUG"}
 	flags {"Optimize"}
+
+configuration { "Release", "WebGL-Release" }
+	buildoptions "-O3"

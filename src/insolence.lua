@@ -3,3 +3,6 @@ project "insolence"
 	files { "**.h", "**.cpp" }
 
 	dofile("../settings.lua")
+
+	configuration "WebGL*"
+		targetextension ".bc"
