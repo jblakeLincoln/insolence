@@ -24,6 +24,7 @@ configuration "LINUX"
 	buildoptions "-std=c++11"
 
 	includedirs {
+		"include",
 		"/usr/include/bullet",
 		"/usr/include/freetype2"
 	}
@@ -37,7 +38,6 @@ configuration "LINUX"
 		"SDL2",
 		"X11", "Xxf86vm", "Xinerama", "Xcursor", "Xrandr", "pthread", "Xi",
 		"assimp",
-		"IL", "ILU", "ILUT",
 		"freetype"
 	}
 

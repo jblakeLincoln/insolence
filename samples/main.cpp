@@ -48,8 +48,10 @@ struct Game1 : BaseGameWorld
 	{
 		mesh = Mesh::LoadFile("assets/crate.obj");
 		material = new Material();
+		//material->diffuse =
+		//	Texture::LoadColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
 		material->diffuse =
-			Texture::LoadColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
+			Texture::LoadFile("assets/crate.png");
 
 		camera = new Camera(GetWindow());
 		camera->pos.MoveZ(500.f);
@@ -127,8 +129,9 @@ struct Game1 : BaseGameWorld
 	void Spawn(int i)
 	{
 		entities.push_back(CreateEntity());
-		MeshRenderable * m = entities.back()->Add<MeshRenderable>(mesh, material,
-				glm::vec4(0.3f, 0.6f, 0.1f, 1.f));
+		MeshRenderable * m =
+			entities.back()->Add<MeshRenderable>(mesh, material);
+				//glm::vec4(0.3f, 0.6f, 0.1f, 1.f));
 
 		m->colour.x = 1.f;
 		entities.back()->Get<Transform>()->Move(

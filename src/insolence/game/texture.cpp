@@ -1,5 +1,9 @@
 #include "texture.h"
 
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 Texture* Texture::tex_default = 0;
 
 Texture* Texture::GetDefault()
@@ -25,3 +29,44 @@ void Texture::Bind()
 	//glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, id);
 }
+
+Texture* Texture::LoadFile(const char *path)
+	{
+		Texture *output = new Texture();
+
+		if(FILE *f = fopen(path, "r"))
+			fclose(f);
+		else
+		{
+			log(Log::FATAL, "Texture (%s) - File %s cannot be found",
+					__FUNCTION__, path);
+			output->id = INT_MAX;
+			return output;
+		}
+
+		unsigned char *image = stbi_load(path, &output->width, &output->height,
+				NULL, 4);
+
+		glGenTextures(1, &output->id);
+		output->Bind();
+
+		/* TODO Issue #25: Try ilCopyPixels to fix alpha issues. */
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+				output->width, output->height, 0,
+				GL_RGBA, GL_UNSIGNED_BYTE, image);
+
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+				GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+				GL_LINEAR_MIPMAP_LINEAR);
+
+		stbi_image_free(image);
+
+		log(Log::INFO, "Texture (%s) - loaded %s successfully",
+				__FUNCTION__, path);
+
+		return output;
+	}
