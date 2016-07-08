@@ -6,26 +6,51 @@
 
 #include <AL/al.h>
 #include <AL/alc.h>
-#include <AL/alut.h>
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdint>
 #include <vector>
 
 #include "audio_track.h"
 
 /* TODO Issue #17: How much should AudioManager hold? */
-/* TODO Issue #18: AudioManager logging. */
 struct INSOLENCE_API AudioManager
 {
 private:
+	AudioManager() {}
+
+	struct WaveHeader
+	{
+		char chunk_id[4];
+		uint32_t chunk_size;
+		char format[4];
+		char subchunk_id[4];
+		uint32_t subchunk_size;
+		uint16_t audio_format;
+		uint16_t num_channels;
+		uint32_t sample_rate;
+		uint32_t bytes_per_second;
+		uint16_t block_align;
+		uint16_t bits_per_sample;
+		char data_chunk_id[4];
+		uint32_t data_size;
+	};
+
 	ALCdevice *device;
 	ALCcontext *context;
 	std::vector<AudioTrack*> tracks;
 
-	AudioManager() {}
+	/**
+	 * Open a RIFF WAVE file and load it to an alBuffer;
+	 *
+	 * \param filename  WAVE file to load.
+	 * \param buffer    Buffer to be allocated with alGenBuffers.
+	 * \return          True on success with allocated buffer,
+	 *                  otherwise false with a NULL buffer.
+	 */
+	static bool LoadWaveFile(const char *filename, ALuint *buffer);
 
 public:
+
 	/**
 	 * Delete the manager and all tracks that are handled by it.
 	 */
@@ -40,31 +65,12 @@ public:
 	AudioTrack* LoadTrack(const char *filename);
 
 	/**
-	 * Initialise an AudioManager, which is used to spawn and handle audio tracks.
+	 * Initialise an AudioManager, which is used to spawn and handle audio
+	 * tracks.
 	 *
 	 * \return	Pointer to new AudioManager.
 	 */
-	static AudioManager* Create()
-	{
-		AudioManager *output = new AudioManager();
-		ALfloat listener_ori[] = { 0.f, 0.f, 1.f, 0.f, 1.f, 0.f };
-
-		alutInit(0, NULL);
-		output->device = alcOpenDevice("");
-		output->context = alcCreateContext(output->device, NULL);
-
-		if(alcMakeContextCurrent(output->context) == false)
-		{
-			// Log error
-			exit(-1);
-		}
-
-		alListener3f(AL_POSITION, 300, 0, 1.f);
-		alListener3f(AL_VELOCITY, 0, 0, 0);
-		alListenerfv(AL_ORIENTATION, listener_ori);
-
-		return output;
-	}
+	static AudioManager* Create();
 };
 
 #endif

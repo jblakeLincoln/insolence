@@ -16,7 +16,7 @@ end
 
 if include_openal == true then
 	defines{"INSOLENCE_LINKS_OPENAL"}
-	links {"openal", "alut", "vorbisfile"}
+	links {"openal"}
 end
 
 configuration "LINUX"

@@ -6,11 +6,7 @@
 
 #include <AL/al.h>
 #include <AL/alc.h>
-#include <AL/alut.h>
 
-#include "audio_track.h"
-
-/* TODO Issue #19: Logging. */
 struct INSOLENCE_API AudioTrack
 {
 friend class AudioManager;

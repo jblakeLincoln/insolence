@@ -1,5 +1,6 @@
 #ifdef INSOLENCE_LINKS_OPENAL
 
+#include "../game/log.h"
 #include "audio_track.h"
 
 AudioTrack::~AudioTrack()
