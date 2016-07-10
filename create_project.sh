@@ -37,7 +37,6 @@ function create_game_directory
 	mkdir -p "$DESTINATION_DIR/scripts"
 	mkdir -p "$DESTINATION_DIR/src"
 
-	echo "Insolence is $INSOLENCE_DIR"
 	cp "$INSOLENCE_DIR/scripts/winbuild.bat" "$DESTINATION_DIR/scripts"
 	cp "$INSOLENCE_DIR/scripts/template_main.cpp" "$DESTINATION_DIR/src/main.cpp"
 	cp "$INSOLENCE_DIR/build.sh" "$DESTINATION_DIR"
@@ -59,7 +58,9 @@ function create_game_directory
 	if [[ "$LINKED" == "true" ]]; then
 		ln -sf "$INSOLENCE_DIR/bin/libinsolence.so" "$DESTINATION_DIR/bin"
 		ln -sf "$INSOLENCE_DIR/src/insolence" "$DESTINATION_DIR/include"
+		ln -sf -t "$DESTINATION_DIR/bin" "../../insolence/src/insolence/shaders"
 	else
+		cp "$INSOLENCE_DIR/src/insolence/shaders" "$DESTINATION_DIR/bin" -r
 		rsync -r --include "*/" --include "*.h" --exclude="*" \
 --prune-empty-dirs src/ "$DESTINATION_DIR/include/"
 	fi
