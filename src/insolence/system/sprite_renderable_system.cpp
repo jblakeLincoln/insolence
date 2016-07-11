@@ -22,7 +22,7 @@ void SpriteRenderableSystem::Manage(const GameTime& gametime)
 		model[3][0] -= s->origin.x;
 		model[3][1] -= s->origin.y;
 
-		renderer->Add(s->texture, m->GetModelMatrix(), s->colour,
+		renderer->Add(s->texture, model, s->colour,
 				s->animation.GetAnimationRectangle(s->texture), s->layer);
 	}
 }
