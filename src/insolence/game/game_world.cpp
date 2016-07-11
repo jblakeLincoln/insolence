@@ -8,7 +8,11 @@
 
 void BaseGameWorld::BaseInitialise()
 {
-	window = Window::Create(720, 540, "Window Title", true);
+	window = Window::Create(
+			initialise_properties.window_width,
+			initialise_properties.window_height,
+			initialise_properties.window_title,
+			initialise_properties.resizable);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -64,8 +68,14 @@ void BaseGameWorld::RunWebGL(void *gw)
 }
 #endif
 
-void BaseGameWorld::Run()
+void BaseGameWorld::Run(int width, int height, const char *title,
+		bool resizable)
 {
+	initialise_properties.window_width = width;
+	initialise_properties.window_height = height;
+	initialise_properties.window_title = title;
+	initialise_properties.resizable = resizable;
+
 #ifdef INSOLENCE_WEBGL
 	BaseInitialise();
 	emscripten_set_main_loop_arg(BaseGameWorld::RunWebGL, this, 0, 1);

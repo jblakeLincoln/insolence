@@ -19,6 +19,13 @@ struct INSOLENCE_API BaseGameWorld {
 private:
 	const double FRAME_TIME = 1000.f / 60.f;
 
+	struct InitialiseProperties {
+		int window_width;
+		int window_height;
+		const char *window_title;
+		bool resizable;
+	} initialise_properties;
+
 	Window *window;
 	GameTime gametime;
 	bool is_running = false;
@@ -80,19 +87,20 @@ protected:
 	virtual void Unload()=0;
 
 public:
-	BaseGameWorld() {}
-	virtual ~BaseGameWorld() {}
-
-	Entity *CreateEntity();
 	EntityManager *entity_manager;
 
-	Window* GetWindow() { return window; }
-	void SetClearColour(const glm::vec3& col);
+	BaseGameWorld() {}
+	virtual ~BaseGameWorld() {}
 
 	/**
 	 * Begins the game loop.
 	 */
-	void Run();
+	void Run(int width=640, int height=480,
+			const char *title="Game", bool resizable=true);
+
+	Entity *CreateEntity();
+	Window* GetWindow() { return window; }
+	void SetClearColour(const glm::vec3& col);
 };
 
 #endif
