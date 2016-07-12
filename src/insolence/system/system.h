@@ -70,6 +70,13 @@ protected:
 	std::unordered_map<Entity*, TComponent> components;
 
 public:
+	virtual void Manage(const GameTime &gametime) {
+		for(it = components.begin(); it != components.end(); ++it)
+			Manage(gametime, (Entity*)it->first, &it->second);
+	}
+
+	virtual void Manage(const GameTime &gametime, Entity *e, TComponent *c) {}
+
 	SystemBase() :
 		ISystem(Priority) {
 	}
