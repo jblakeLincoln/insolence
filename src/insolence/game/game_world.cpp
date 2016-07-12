@@ -6,6 +6,13 @@
 #include "entity_manager.h"
 #include "window.h"
 
+#include "../render/render_manager_2d.h"
+#include "../render/render_manager_3d.h"
+#include "../system/sprite_renderable_system.h"
+#include "../system/mesh_renderable_system.h"
+#include "../system/text_renderable_system.h"
+#include "default_renderers.h"
+
 void BaseGameWorld::BaseInitialise()
 {
 	window = Window::Create(
@@ -23,6 +30,12 @@ void BaseGameWorld::BaseInitialise()
 	is_running = true;
 
 	entity_manager = new EntityManager();
+	entity_manager->AddRenderSystem<SpriteRenderableSystem>(
+			DefaultRenderer::Get()->Renderer2D);
+	entity_manager->AddRenderSystem<MeshRenderableSystem>(
+			DefaultRenderer::Get()->Renderer3D);
+	entity_manager->AddRenderSystem<TextRenderableSystem>(
+			DefaultRenderer::Get()->RendererText);
 
 	Initialise();
 
@@ -46,6 +59,8 @@ void BaseGameWorld::BaseDraw()
 		Camera::GetActiveCamera()->Post();
 
 	entity_manager->FlushDraw(gametime);
+
+	DefaultRenderer::Get()->Flush();
 
 	window->SwapBuffers();
 }
