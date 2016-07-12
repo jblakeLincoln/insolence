@@ -38,7 +38,7 @@ public:
 	 * Returns a normalised rectangle based on the animation and the texture
 	 * height.
 	 */
-	glm::vec4 GetAnimationRectangle(Texture *t);
+	glm::vec4 GetAnimationRectangle(const Texture *t) const;
 };
 
 #endif

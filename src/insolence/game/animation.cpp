@@ -50,7 +50,7 @@ void Animation::Progress(const TimeSpan& frametime)
 	rect.w = size.y;
 }
 
-glm::vec4 Animation::GetAnimationRectangle(Texture *t)
+glm::vec4 Animation::GetAnimationRectangle(const Texture *t) const
 {
 	return glm::vec4(rect.x / t->width, rect.y / t->height,
 			rect.z / t->width, rect.w / t->height);
