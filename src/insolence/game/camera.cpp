@@ -14,10 +14,9 @@ void Camera::Construct()
 	glGenBuffers(1, &ubo);
 
 	window = NULL;
-	fov = 1.f;
-	aspect_ratio = 1.f;
-	z_near = 0.1f;
-	z_far = 1000.f;
+	type = Type::PERSPECTIVE;
+	UpdatePerspective();
+	SetCoordinateSystem(Y_UP);
 
 	if(active_camera == NULL)
 		active_camera = this;
@@ -26,30 +25,25 @@ void Camera::Construct()
 Camera::Camera()
 {
 	Construct();
-	block.proj = glm::perspective(fov, aspect_ratio, z_near, z_far);
 }
 
 Camera::Camera(uint32_t width, uint32_t height)
 {
 	Construct();
-	aspect_ratio = (float)width / height;
-	block.proj = glm::perspective(fov, aspect_ratio, z_near, z_far);
+	perspective.aspect_ratio = (float)width / height;
 }
 
-Camera::Camera(Window *w)
+Camera::Camera(Window *w, Type t, Coords c)
 {
 	Construct();
-
 	window = w;
-	window_fb_width = window->GetFramebufferWidth();
-	window_fb_height = window->GetFramebufferHeight();
+	SetCoordinateSystem(c);
+	type = t;
 
-	if(window_fb_width > 0 && window_fb_height > 0)
-		aspect_ratio = (float)window_fb_width / window_fb_height;
-	else
-		aspect_ratio = 1;
-
-	block.proj = glm::perspective(fov, aspect_ratio, z_near, z_far);
+	if(t == Type::PERSPECTIVE)
+		UpdatePerspective();
+	else if(t == Type::ORTHO)
+		UpdateOrtho();
 }
 
 void Camera::Post()
@@ -63,11 +57,31 @@ void Camera::Post()
 		window_fb_height= window->GetFramebufferHeight();
 
 		if(window_fb_width > 0 && window_fb_height > 0)
-			aspect_ratio = (float)window_fb_width / window_fb_height;
+			perspective.aspect_ratio =
+				(float)window_fb_width / window_fb_height;
 
 		if(prev_w != window_fb_width || prev_h != window_fb_height)
 		{
-			block.proj = glm::perspective(fov, aspect_ratio, z_near, z_far);
+			if(type == Type::PERSPECTIVE)
+				UpdatePerspective();
+			else if(type == Type::ORTHO)
+			{
+				ortho.right = window_fb_width;
+
+				if(coord_system == Coords::Y_DOWN)
+				{
+					ortho.bottom = window_fb_height;
+					ortho.top = 0;
+				}
+				else if(coord_system == Coords::Y_UP)
+				{
+					ortho.top = window_fb_height;
+					ortho.bottom = 0;
+				}
+
+				UpdateOrtho();
+			}
+
 			glViewport(0, 0, window_fb_width, window_fb_height);
 		}
 	}
@@ -76,9 +90,10 @@ void Camera::Post()
 
 	if(view_pos == glm::vec3(0.f))
 		view_pos.y = 0.000001f;
+	if(type == Type::ORTHO)
+		upwards_vector = glm::vec3(0, 1, 0);
 
-	block.view = glm::lookAt(view_pos, lookat.GetPos(),
-			glm::vec3(0.f, 1.f, 0.f));
+	block.view = glm::lookAt(view_pos, lookat.GetPos(), upwards_vector);
 
 #ifdef INSOLENCE_OPENGL_DESKTOP
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
@@ -128,4 +143,62 @@ void Camera::Pan(const glm::vec3& m)
 {
 	pos.Move(m);
 	lookat.Move(m);
+}
+
+void Camera::SetCoordinateSystem(Coords c) {
+	switch(c) {
+		case Y_UP:
+			upwards_vector = glm::vec3(0, 1, 0);
+			coord_system = Y_UP;
+			break;
+		case Y_DOWN:
+			upwards_vector = glm::vec3(0, -1, 0);
+			coord_system = Y_DOWN;
+			break;
+	}
+}
+
+void Camera::MakeOrtho(float left, float right, float bottom, float top,
+		float znear, float zfar)
+{
+	ortho.left      = left;
+	ortho.right     = right;
+	ortho.bottom    = bottom;
+	ortho.top       = top;
+	ortho.z_near    = znear;
+	ortho.z_far     = zfar;
+
+	type = Type::ORTHO;
+	UpdateOrtho();
+}
+
+void Camera::UpdateOrtho()
+{
+	block.proj = glm::ortho(
+			ortho.left,
+			ortho.right,
+			ortho.bottom,
+			ortho.top,
+			ortho.z_near,
+			ortho.z_far);
+}
+
+void Camera::MakePerspective(float fov, float aspect, float znear, float zfar)
+{
+	perspective.fov           = fov;
+	perspective.aspect_ratio  = aspect;
+	perspective.z_near        = znear;
+	perspective.z_far         = zfar;
+
+	type = Type::PERSPECTIVE;
+	UpdatePerspective();
+}
+
+void Camera::UpdatePerspective()
+{
+	block.proj = glm::perspective(
+			perspective.fov,
+			perspective.aspect_ratio,
+			perspective.z_near,
+			perspective.z_far);
 }

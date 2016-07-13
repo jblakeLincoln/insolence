@@ -8,22 +8,54 @@
 
 #include "../component/transform.h"
 #include "../render/shader_program.h"
-
 struct Window;
 struct INSOLENCE_API Camera
 {
+	enum Type {
+		PERSPECTIVE,
+		ORTHO
+	};
+
+	enum Coords {
+		Y_UP,
+		Y_DOWN
+	};
+
 private:
 
+	/*
+	 * Ordered to send through to shader
+	 */
 	struct CameraBlock {
 		glm::mat4 proj;
 		glm::mat4 view;
 	};
 
+	struct PerspectiveSettings {
+		float fov = 1.f;
+		float aspect_ratio = 1.f;
+		float z_near = 0.1f;
+		float z_far = 1000.f;
+	} perspective;
+
+	struct OrthoSettings {
+		float left = 0;
+		float right = 0;
+		float bottom = 0;
+		float top = 0;
+		float z_near = -1;
+		float z_far = 1;
+	} ortho;
+
+	GLuint ubo;
+	glm::vec3 upwards_vector;
+	Coords coord_system;
+	Type type;
+
 	Window *window = NULL;
 	int window_fb_width;
 	int window_fb_height;
 
-	GLuint ubo;
 	static GLint uni_block;
 	static Camera *active_camera;
 
@@ -32,16 +64,12 @@ private:
 public:
 	Camera();
 	Camera(uint32_t width, uint32_t height);
-	Camera(Window*);
+	Camera(Window *w, Type t = Type::PERSPECTIVE,
+			Coords c = Coords::Y_UP);
 
 	CameraBlock block;
 	Transform pos;
 	Transform lookat;
-
-	float fov;
-	float aspect_ratio;
-	float z_near;
-	float z_far;
 
 	static Camera* GetActiveCamera() {
 		return active_camera;
@@ -57,6 +85,7 @@ public:
 		int view;
 		bool manually_posted;
 	};
+
 	static std::unordered_map<ShaderProgram*, CameraUniforms> uniform_dict;
 
 	static void PostToShader_ES(ShaderProgram *shader_program) {
@@ -96,15 +125,22 @@ public:
 #endif
 	}
 
-	virtual void Update() {}
-	void Draw() {}
-
 	void Post();
 
 	void PanX(float);
 	void PanY(float);
 	void PanZ(float);
 	void Pan(const glm::vec3&);
+
+	void MakeOrtho(float l, float r, float btm, float top, float zn, float zf);
+	void MakePerspective(float fov, float aspect, float znear, float zfar);
+
+	void UpdatePerspective();
+	void UpdateOrtho();
+
+	void SetType(Type t);
+	void SetCoordinateSystem(Coords c);
+
 };
 
 #endif
