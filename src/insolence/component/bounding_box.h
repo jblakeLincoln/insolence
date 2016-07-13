@@ -9,6 +9,8 @@ struct INSOLENCE_API BoundingBox : Component {
 	float w;
 	float h;
 
+	BoundingBox() {}
+
 	BoundingBox(float x, float y, float w, float h)
 	:	x(x),
 		y(y),
