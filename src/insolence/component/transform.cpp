@@ -96,7 +96,6 @@ void Transform::SetPosXY(const glm::vec2& pos)
 {
 	position[3][0] = pos[0];
 	position[3][1] = pos[1];
-
 	model_changed = true;
 }
 
@@ -231,8 +230,10 @@ void Transform::MoveXY(float x, float y)
 
 void Transform::MoveXY(const glm::vec2 &pos)
 {
-	position[3][0] = pos[0];
-	position[3][1] = pos[1];
+	position[3][0] += pos[0];
+	position[3][1] += pos[1];
+
+	model_changed = true;
 }
 
 const glm::mat4& Transform::GetModelMatrix()
