@@ -13,7 +13,7 @@ void SpriteRenderableSystem::Manage(const GameTime& gametime)
 		SpriteRenderable *s = &it->second;
 		Transform *m = it->first->Get<Transform>();
 
-		if(m == NULL || s->texture == 0)
+		if(s->hidden == true || m == NULL || s->texture == 0)
 			continue;
 
 		s->animation.Progress(gametime.GetFrameTime());
