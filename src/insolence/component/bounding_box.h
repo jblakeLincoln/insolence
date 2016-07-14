@@ -23,15 +23,15 @@ struct INSOLENCE_API BoundingBox : Component {
 	{
 		glm::vec2 mina, minb, maxa, maxb;
 
-		mina.x = a->x - a->w / 2.f;
-		maxa.x = a->x + a->w / 2.f;
-		minb.x = b->x - b->w / 2.f;
-		maxb.x = b->x + b->w / 2.f;
+		mina.x = a->x;
+		maxa.x = a->x + a->w;
+		minb.x = b->x;
+		maxb.x = b->x + b->w;
 
-		mina.y = a->y - a->h / 2.f;
-		maxa.y = a->y + a->h / 2.f;
-		minb.y = b->y - b->h / 2.f;
-		maxb.y = b->y + b->h / 2.f;
+		mina.y = a->y;
+		maxa.y = a->y + a->h;
+		minb.y = b->y;
+		maxb.y = b->y + b->h;
 
 
 		for(int i = 0; i < 2; ++i)
