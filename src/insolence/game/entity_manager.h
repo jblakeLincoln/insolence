@@ -278,6 +278,8 @@ public:
 		it = render_systems.lookup.find(type);
 		if(it != render_systems.lookup.end())
 			return render_systems.lookup[type]->CreateComponent(e, c);
+
+		return NULL;
 	}
 };
 
