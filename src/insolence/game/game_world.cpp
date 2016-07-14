@@ -122,14 +122,6 @@ void BaseGameWorld::Run(int width, int height, const char *title,
 	BaseUnload();
 }
 
-Entity* BaseGameWorld::CreateEntity()
-{
-	Entity *e = entity_manager->CreateEntity();
-	e->Add<Transform>();
-
-	return e;
-}
-
 void BaseGameWorld::SetClearColour(const glm::vec3& colour)
 {
 	for(int i = 0; i < 3; ++i)

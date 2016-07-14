@@ -15,6 +15,7 @@
 #include "gametime.h"
 
 #include "../component/component.h"
+#include "../component/transform.h"
 #include <algorithm>
 #include <cstddef>
 #include <typeindex>
@@ -120,8 +121,10 @@ public:
 	 */
 	Entity* CreateEntity()
 	{
-		entities.push_back(new Entity(this));
-		return entities.back();
+		Entity *e = new Entity(this);
+		e->Add<Transform>();
+		entities.push_back(e);
+		return e;
 	}
 
 	/**

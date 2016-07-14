@@ -78,7 +78,7 @@ struct Game1 : BaseGameWorld
 		texts[1]->Get<TextRenderable>()->align = FontAlign::CENTRE;
 		texts[2]->Get<TextRenderable>()->align = FontAlign::RIGHT;
 		*/
-		centre = CreateEntity();
+		centre = entity_manager->CreateEntity();
 
 		printf("** Created entity\n");
 		CheckCentre();
@@ -128,7 +128,7 @@ struct Game1 : BaseGameWorld
 
 	void Spawn(int i)
 	{
-		entities.push_back(CreateEntity());
+		entities.push_back(entity_manager->CreateEntity());
 		MeshRenderable * m =
 			entities.back()->Add<MeshRenderable>(mesh, material);
 				//glm::vec4(0.3f, 0.6f, 0.1f, 1.f));

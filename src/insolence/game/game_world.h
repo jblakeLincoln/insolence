@@ -98,7 +98,6 @@ public:
 	void Run(int width=640, int height=480,
 			const char *title="Game", bool resizable=true);
 
-	Entity *CreateEntity();
 	Window* GetWindow() { return window; }
 	void SetClearColour(const glm::vec3& col);
 };
