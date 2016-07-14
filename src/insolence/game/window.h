@@ -118,6 +118,7 @@ public:
 		if(out->sdl_context == NULL)
 			log(Log::FATAL, "Window (%s) - Failed to create GL context");
 
+		SDL_GL_SetSwapInterval(1);
 		glewExperimental = GL_TRUE;
 
 		if(glewInit() != GLEW_OK)
