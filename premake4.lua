@@ -5,6 +5,8 @@ solution "insolence"
 
 	dofile("./src/insolence.lua")
 
+	configuration { "WINDOWS" }
+		defines { "INSOLENCE_EXPORT" }
 	configuration { "WINDOWS or LINUX", "not WebGL*" }
 		defines { "INSOLENCE_OPENGL_DESKTOP" }
 	configuration "WebGL*"
