@@ -226,11 +226,15 @@ void RenderManager2D::AddText(Font *f, const char *str, const glm::vec2& pos,
 
 	if(f->IsMonospace() == true)
 		length = strlen(str) * f->GetMaxGlyphWidth();
+	length *= scale.x;
 
 	if(origin == FontAlign::CENTRE)
 		offset -= length / 2.0;
 	else if (origin == FontAlign::RIGHT)
 		offset -= length;
+
+	if(Camera::GetCoordinateSystem() == Camera::Coords::Y_DOWN)
+		scale.y = -scale.y;
 
 	for(int i = 0; i < strlen(str); ++i)
 	{
@@ -249,8 +253,12 @@ void RenderManager2D::AddText(Font *f, const char *str, const glm::vec2& pos,
 
 		glm::vec3 p;
 
+		double glyph_t = glyph.t;
+		if(Camera::GetCoordinateSystem() == Camera::Coords::Y_DOWN)
+			glyph_t -= glyph.t;
+
 		p.x = offset + pos.x;
-		p.y = glyph.t - (glyph.h )
+		p.y = glyph_t - (glyph.h )
 			* scale.y + pos.y;
 
 		m = glm::translate(m, p);

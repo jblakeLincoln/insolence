@@ -8,6 +8,7 @@
 
 #include "../component/transform.h"
 #include "../render/shader_program.h"
+
 struct Window;
 struct INSOLENCE_API Camera
 {
@@ -21,7 +22,20 @@ struct INSOLENCE_API Camera
 		Y_DOWN
 	};
 
+	static void SetCoordinates(Coords c) {
+		global_coords = c;
+	}
+
+
+	static Coords GetCoordinateSystem() {
+		return global_coords;
+	}
+
 private:
+
+	void SetCoordinateSystem(Coords c);
+	static Coords global_coords;
+	Coords local_coords;
 
 	/*
 	 * Ordered to send through to shader
@@ -64,8 +78,7 @@ private:
 public:
 	Camera();
 	Camera(uint32_t width, uint32_t height);
-	Camera(Window *w, Type t = Type::PERSPECTIVE,
-			Coords c = Coords::Y_UP);
+	Camera(Window *w, Type t = Type::PERSPECTIVE);
 
 	CameraBlock block;
 	Transform pos;
@@ -139,8 +152,6 @@ public:
 	void UpdateOrtho();
 
 	void SetType(Type t);
-	void SetCoordinateSystem(Coords c);
-
 };
 
 #endif

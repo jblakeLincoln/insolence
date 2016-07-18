@@ -4,6 +4,7 @@
 
 GLint Camera::uni_block = -1;
 Camera* Camera::active_camera = 0;
+Camera::Coords Camera::global_coords = Y_UP;
 
 #ifdef INSOLENCE_OPENGL_ES
 std::unordered_map<ShaderProgram*, Camera::CameraUniforms> Camera::uniform_dict;
@@ -15,6 +16,7 @@ void Camera::Construct()
 
 	window = NULL;
 	type = Type::PERSPECTIVE;
+	local_coords = global_coords;
 	UpdatePerspective();
 	SetCoordinateSystem(Y_UP);
 
@@ -33,11 +35,10 @@ Camera::Camera(uint32_t width, uint32_t height)
 	perspective.aspect_ratio = (float)width / height;
 }
 
-Camera::Camera(Window *w, Type t, Coords c)
+Camera::Camera(Window *w, Type t)
 {
 	Construct();
 	window = w;
-	SetCoordinateSystem(c);
 	type = t;
 
 	if(t == Type::PERSPECTIVE)
@@ -60,20 +61,23 @@ void Camera::Post()
 			perspective.aspect_ratio =
 				(float)window_fb_width / window_fb_height;
 
-		if(prev_w != window_fb_width || prev_h != window_fb_height)
+		if(prev_w != window_fb_width || prev_h != window_fb_height ||
+				local_coords != global_coords)
 		{
+			SetCoordinateSystem(global_coords);
+
 			if(type == Type::PERSPECTIVE)
 				UpdatePerspective();
 			else if(type == Type::ORTHO)
 			{
 				ortho.right = window_fb_width;
 
-				if(coord_system == Coords::Y_DOWN)
+				if(local_coords == Coords::Y_DOWN)
 				{
 					ortho.bottom = window_fb_height;
 					ortho.top = 0;
 				}
-				else if(coord_system == Coords::Y_UP)
+				else if(local_coords == Coords::Y_UP)
 				{
 					ortho.top = window_fb_height;
 					ortho.bottom = 0;
@@ -146,14 +150,13 @@ void Camera::Pan(const glm::vec3& m)
 }
 
 void Camera::SetCoordinateSystem(Coords c) {
-	switch(c) {
+	local_coords = global_coords;
+	switch(local_coords) {
 		case Y_UP:
 			upwards_vector = glm::vec3(0, 1, 0);
-			coord_system = Y_UP;
 			break;
 		case Y_DOWN:
 			upwards_vector = glm::vec3(0, -1, 0);
-			coord_system = Y_DOWN;
 			break;
 	}
 }
