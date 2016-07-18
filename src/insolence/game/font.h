@@ -17,6 +17,11 @@ enum FontAlign {
 	CENTRE,
 };
 
+enum FontType {
+	NORMAL,
+	PIXEL
+};
+
 struct INSOLENCE_API Font {
 	/* Struct of individual glyph information. */
 	struct FontInfo {
@@ -53,7 +58,8 @@ public:
 	const double GetAtlasHeight() const { return h; }
 	const FontInfo& GetGlyph(char i) const { return c[i]; }
 
-	static Font* Load(const char *path, int size)
+	static Font* Load(const char *path, int size,
+			FontType type=FontType::NORMAL)
 	{
 		Font *out;
 		FT_Library ft;
@@ -146,10 +152,21 @@ public:
 			x += out->c[i].w;
 		}
 
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-				GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-				GL_LINEAR);
+		if(type == FontType::NORMAL)
+		{
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+					GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+					GL_LINEAR);
+		}
+		else if(type == FontType::PIXEL)
+		{
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+					GL_NEAREST);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+					GL_NEAREST);
+		}
+
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
 				GL_CLAMP_TO_EDGE);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
