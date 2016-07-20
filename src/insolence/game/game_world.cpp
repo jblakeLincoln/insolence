@@ -58,9 +58,10 @@ void BaseGameWorld::BaseDraw()
 	if(Camera::GetActiveCamera() != NULL)
 		Camera::GetActiveCamera()->Post();
 
+	PreDraw();
 	entity_manager->FlushDraw(gametime);
-
 	DefaultRenderer::Get()->Flush();
+	Draw();
 
 	window->SwapBuffers();
 }
