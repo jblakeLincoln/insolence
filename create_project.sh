@@ -3,7 +3,12 @@
 IFS=''
 PROJECT_NAME=""
 LINKED=false
-INSOLENCE_DIR="$(pwd)"
+
+if [ "$SYSTEMROOT" == "C:\\Windows" ]; then
+	PLATFORM="WINDOWS"
+else
+	PLATFORM="LINUX"
+fi
 
 function echo_usage {
 echo "
@@ -25,6 +30,25 @@ Options:
 BUILD_USAGE=$(echo "Builds a game project linking insolence.\n\
 Requires the insolence shared library files to be manually copied.\n")
 
+alias mklink="cmd.exe /c mklink"
+shopt -s expand_aliases
+
+#
+# A stripped-down version of scripts/winbuild.
+#
+function create_winbuild
+{
+echo \
+'@echo off
+set BUILD_TOOL="C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe"
+%BUILD_TOOL% '${PROJECT_NAME}'.sln /v:n /tv:14.0 /p:Configuration=Debug
+
+IF NOT "%ERRORLEVEL%" == "0" (
+	goto :EOF
+)' > "$DESTINATION_DIR/scripts/winbuild.bat"
+chmod +x "$DESTINATION_DIR/scripts/winbuild.bat"
+}
+
 #
 # Creates the new game directory, creates directories, and moves in
 # bash scripts and the template main.cpp.
@@ -36,16 +60,17 @@ function create_game_directory
 	mkdir -p "$DESTINATION_DIR/scripts"
 	mkdir -p "$DESTINATION_DIR/src"
 
-	cp "$INSOLENCE_DIR/scripts/winbuild.bat" "$DESTINATION_DIR/scripts"
-	cp "$INSOLENCE_DIR/scripts/template_main.cpp" "$DESTINATION_DIR/src/main.cpp"
-	cp "$INSOLENCE_DIR/build.sh" "$DESTINATION_DIR"
+	create_winbuild
+	cp "scripts/template_main.cpp" "$DESTINATION_DIR/src/main.cpp"
+	cp "build.sh" "$DESTINATION_DIR"
 
 	# Set up build file for using the name of the new project.
 	sed -i '/ln -sf/d' "$DESTINATION_DIR/build.sh"
 	sed -i '/src\/insolence/d' "$DESTINATION_DIR/build.sh"
 	sed -i '/do_make samples/d' "$DESTINATION_DIR/build.sh"
-	sed -i 's/insolence_samples/'$PROJECT_NAME'/g' "$DESTINATION_DIR/build.sh"
 	sed -i 's/samples\/insolence_samples/src\/'$PROJECT_NAME'/g' "$DESTINATION_DIR/build.sh"
+	sed -i 's/insolence_samples/'$PROJECT_NAME'/g' "$DESTINATION_DIR/build.sh"
+	sed -i '/5,7/d' "$DESTINATION_DIR/build.sh"
 
 	# Put a new usage message in the new build file.
 	BUILD_LINE_BEGIN=$(awk '/build.sh/{print NR+1}' build.sh)
@@ -55,14 +80,25 @@ function create_game_directory
 
 	# If we're linking with the insolence directory, include the shared object.
 	if [[ "$LINKED" == "true" ]]; then
-		ln -sf "$INSOLENCE_DIR/bin/libinsolence.so" "$DESTINATION_DIR/bin"
-		ln -sf "$INSOLENCE_DIR/bin/libinsolence.bc" "$DESTINATION_DIR/bin"
-		ln -sf "$INSOLENCE_DIR/include" "$DESTINATION_DIR"
-		ln -sf "$INSOLENCE_DIR/src/insolence" "$DESTINATION_DIR/include"
-		ln -sf -t "$DESTINATION_DIR/bin" "../../insolence/src/insolence/shaders"
+		if [ "$PLATFORM" == "WINDOWS" ]; then
+			mklink /H '..\'$PROJECT_NAME'\bin\insolence.lib' 'bin\insolence.lib' >/dev/null 2>&1
+			mklink /H '..\'$PROJECT_NAME'\bin\insolence.dll' 'bin\insolence.dll' >/dev/null 2>&1
+			mklink /J '..\'$PROJECT_NAME'\include\' 'include' >/dev/null 2>&1
+			mklink /J '..\'$PROJECT_NAME'\lib\' 'lib' >/dev/null 2>&1
+			mklink /J '..\'$PROJECT_NAME'\include\insolence\' 'src\insolence' >/dev/null 2>&1
+			mklink /J '..\'$PROJECT_NAME'\bin\shaders\' 'src\insolence\shaders' >/dev/null 2>&1
+			cp bin/*.dll "$DESTINATION_DIR/bin/" >/dev/null 2>&1
+
+		elif [ "$PLATFORM" == "LINUX" ]; then
+			ln -sf "../../bin/libinsolence.so" "$DESTINATION_DIR/bin"
+			ln -sf "../../bin/libinsolence.bc" "$DESTINATION_DIR/bin"
+			ln -sf "../include" "$DESTINATION_DIR"
+			ln -sf "../../src/insolence" "$DESTINATION_DIR/include"
+			ln -sf "../../src/insolence/shaders" "$DESTINATION_DIR/bin/shaders"
+		fi
 	else
 		mkdir -p "$DESTINATION_DIR/include"
-		cp "$INSOLENCE_DIR/src/insolence/shaders" "$DESTINATION_DIR/bin" -r
+		cp "src/insolence/shaders" "$DESTINATION_DIR/bin" -r
 		rsync -r --include "*/" --include "*.h" --exclude="*" \
 --prune-empty-dirs src/ "$DESTINATION_DIR/include/"
 	fi
@@ -84,8 +120,12 @@ echo \
 		"include",
 	}
 
+	libdirs {
+		"bin",
+		"lib"
+	}
+
 	defines { "INSOLENCE_OPENGL_DESKTOP" }
-	libdirs { "bin" }
 	links { "insolence"}
 
 	dofile("./src/game.lua")
@@ -97,23 +137,19 @@ echo \
 #
 function create_premake_game_cfg
 {
-	cd "$DESTINATION_DIR"
-
 echo \
 'project "'${PROJECT_NAME}'"
 	kind "ConsoleApp"
 	files { "**.h", "**.cpp" }
-' > "src/game.lua"
+' > "$DESTINATION_DIR/src/game.lua"
 
 	while read line; do
 		if [[ ! -z $line ]]; then
 			line="\t$line"
 		fi
 
-		echo -e "$line" >> "src/game.lua"
-	done < "$INSOLENCE_DIR/settings.lua"
-
-	cd $INSOLENCE_DIR
+		echo -e "$line" >> "$DESTINATION_DIR/src/game.lua"
+	done < "settings.lua"
 }
 
 ###############

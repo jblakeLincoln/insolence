@@ -127,6 +127,10 @@ while getopts "hcwrRe" opt; do
 			RUN_AFTER_BUILD="true"
 			;;
 		w) #--webgl
+			if [ "$PLATFORM" == "WINDOWS" ]; then
+				echo "WebGL build is currently unsupported on Windows."
+				exit
+			fi
 			PLATFORM="WEBGL"
 			;;
 		R)

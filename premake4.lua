@@ -18,6 +18,10 @@ solution "insolence_samples"
 	targetdir "bin"
 	objdir "obj"
 
+	includedirs {
+		"src"
+	}
+
 	dofile("./samples/samples.lua")
 
 	configuration { "WINDOWS or LINUX",  "not WebGL*" }

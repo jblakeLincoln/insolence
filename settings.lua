@@ -19,13 +19,17 @@ end
 if include_openal == true then
 	defines{"INSOLENCE_LINKS_OPENAL"}
 
-	configuration "not WebGL*"
+	configuration { "WINDOWS", "not WebGL*" }
+		links { "OpenAL32" }
+	configuration { "LINUX", "not WebGL*" }
 		links {"openal"}
 end
 
+configuration { "LINUX or WebGL*" }
+	buildoptions "-std=c++11"
+
 configuration { "LINUX" }
 	defines {"LINUX"}
-	buildoptions "-std=c++11"
 
 	includedirs {
 		"include",
@@ -50,9 +54,10 @@ configuration { "LINUX", "not WebGL*" }
 		"freetype"
 	}
 
-configuration { "WINDOWS", "not WebGL*" }
+configuration { "WINDOWS" }
 	defines {"WINDOWS"}
 	defines {"NOMINMAX"}
+	defines { "SDL_MAIN_HANDLED" }
 
 	includedirs {
 		"include",
@@ -64,6 +69,7 @@ configuration { "WINDOWS", "not WebGL*" }
 		"bin"
 	}
 
+configuration { "WINDOWS", "not WebGL*" }
 	links {
 		"opengl32","GLU32", "glew32",
 		"SDL2",
