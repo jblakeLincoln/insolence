@@ -14,6 +14,7 @@
 struct Component;
 struct EntityManager;
 struct INSOLENCE_API Entity {
+	friend EntityManager;
 private:
 	static uint32_t id_count;
 
@@ -75,6 +76,7 @@ private:
 	}
 
 protected:
+	/* Always called by the manager. */
 	virtual ~Entity();
 
 public:
@@ -91,9 +93,11 @@ public:
 		return id;
 	}
 
-	void Destroy() {
-		delete this;
-	}
+	/**
+	 * Public interface for deleting an entity.
+	 * Removes all of its components and removes it from the manager.
+	 */
+	void Destroy();
 
 	/**
 	 * Adds a type of component to the relevant system. If no system exists to

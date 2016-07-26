@@ -12,6 +12,7 @@
 #include "../game/gametime.h"
 
 struct Entity;
+struct EntityManager;
 struct Component;
 
 static const uint32_t DEFAULT_SYSTEM_PRIORITY = 100;
@@ -20,7 +21,9 @@ static const uint32_t DEFAULT_SYSTEM_PRIORITY = 100;
  * Interface for creating vectors/maps of templated type "System".
  */
 struct INSOLENCE_API ISystem {
+	friend EntityManager;
 protected:
+	EntityManager *manager;
 public:
 	const uint32_t priority;
 
@@ -70,6 +73,7 @@ protected:
 	std::unordered_map<Entity*, TComponent> components;
 
 public:
+
 	virtual void Manage(const GameTime &gametime) {
 		for(it = components.begin(); it != components.end(); ++it)
 			Manage(gametime, (Entity*)it->first, &it->second);

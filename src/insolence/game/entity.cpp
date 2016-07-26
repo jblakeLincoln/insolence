@@ -5,11 +5,15 @@ uint32_t Entity::id_count = 0;
 
 Entity::Entity(EntityManager *m)
 :
-	id(id_count++),
+	id(++id_count),
 	manager(m)
 {}
 
 Entity::~Entity()
+{
+}
+
+void Entity::Destroy()
 {
 	std::unordered_map<std::type_index, Component*>::iterator it;
 

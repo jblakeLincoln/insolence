@@ -13,9 +13,9 @@
 #include "../insolence_dll.h"
 
 #include "gametime.h"
-
 #include "../component/component.h"
 #include "../component/transform.h"
+
 #include <algorithm>
 #include <cstddef>
 #include <typeindex>
@@ -63,19 +63,11 @@ public:
 	SystemsContainer logic_systems;
 	SystemsContainer render_systems;
 
-	std::vector<Entity*> entities;
+	std::unordered_map<uint32_t, Entity*> entities_lookup;
 	std::unordered_map<std::type_index, uint32_t> component_bits;
 	uint32_t component_bit_count = 1;
 
-	/**
-	 * Set up our manager. By default we want 2D and 3D renderers available,
-	 * as well as a physics system.
-	 */
-	EntityManager()
-	{
-		/* Default systems for this EntityManager. */
-		//AddSystemContainer<Transform>();
-	}
+	EntityManager() {}
 
 	/**
 	 * Creates a container system that will simply store all types of
@@ -89,7 +81,8 @@ public:
 		if(logic_systems.lookup.find(type) != logic_systems.lookup.end())
 			return;
 
-		logic_systems.Add(type, new System<T>());
+		System<T> *sys = new System<T>();
+		logic_systems.Add(type, sys);
 	}
 
 	template<typename T, typename... Args>
@@ -113,7 +106,9 @@ public:
 		if(systems.lookup.find(type) != systems.lookup.end())
 			return;
 
-		systems.Add(type, new T(args...));
+		T *sys = new T(args...);
+		sys->manager = this;
+		systems.Add(type, sys);
 	}
 
 	/**
@@ -123,7 +118,8 @@ public:
 	{
 		Entity *e = new Entity(this);
 		e->Add<Transform>();
-		entities.push_back(e);
+		entities_lookup.insert(std::pair<uint32_t, Entity*>(e->GetID(), e));
+
 		return e;
 	}
 
@@ -141,27 +137,35 @@ public:
 		return mask;
 	}
 
+	Entity* GetByID(uint32_t id) {
+		return entities_lookup[id];
+	}
+
 	/**
 	 * Getting rid of our manager means clearing out all related entities and
 	 * their attached components.
 	 */
 	virtual ~EntityManager()
 	{
-		std::unordered_map<std::type_index, ISystem*>::iterator it;
+		std::unordered_map<uint32_t, Entity*>::iterator entity_it;
+		std::unordered_map<std::type_index, ISystem*>::iterator sys_it;
 
-		while(entities.size() != 0)
-			Remove(entities[0]);
-
-		for(it = logic_systems.lookup.begin();
-				it != logic_systems.lookup.end(); ++it)
+		for(sys_it = logic_systems.lookup.begin();
+				sys_it != logic_systems.lookup.end(); ++sys_it)
 		{
-			delete it->second;
+			delete sys_it->second;
 		}
 
-		for(it = render_systems.lookup.begin();
-				it != render_systems.lookup.end(); ++it)
+		for(sys_it = render_systems.lookup.begin();
+				sys_it != render_systems.lookup.end(); ++sys_it)
 		{
-			delete it->second;
+			delete sys_it->second;
+		}
+
+		for(entity_it = entities_lookup.begin();
+			   entity_it != entities_lookup.end(); ++entity_it)
+		{
+			delete entity_it->second;
 		}
 	}
 
@@ -186,11 +190,13 @@ public:
 
 	void Remove(Entity *e)
 	{
-		if(entities.size() == 0)
+		std::unordered_map<uint32_t, Entity*>::iterator it;
+		if(entities_lookup.size() == 0 || e == NULL ||
+				(it = entities_lookup.find(e->GetID())) == entities_lookup.end())
 			return;
 
-		entities.erase(std::remove(entities.begin(), entities.end(),
-				e), entities.end());
+		entities_lookup.erase(it->first);
+		delete it->second;
 	}
 
 	/**
@@ -235,6 +241,7 @@ public:
 	 * \param hash	Hash of component type of the system.
 	 */
 	void AddSystem(ISystem* sys, const std::type_index &type) {
+		sys->manager = this;
 		logic_systems.Add(type, sys);
 	}
 
