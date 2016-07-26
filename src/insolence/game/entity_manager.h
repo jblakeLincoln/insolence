@@ -13,6 +13,7 @@
 #include "../insolence_dll.h"
 
 #include "gametime.h"
+#include "messaging.h"
 #include "../component/component.h"
 #include "../component/transform.h"
 
@@ -62,12 +63,16 @@ private:
 public:
 	SystemsContainer logic_systems;
 	SystemsContainer render_systems;
+	MessageManager *messages;
 
 	std::unordered_map<uint32_t, Entity*> entities_lookup;
 	std::unordered_map<std::type_index, uint32_t> component_bits;
 	uint32_t component_bit_count = 1;
 
-	EntityManager() {}
+	EntityManager()
+	{
+		messages = new MessageManager(this);
+	}
 
 	/**
 	 * Creates a container system that will simply store all types of
@@ -82,6 +87,7 @@ public:
 			return;
 
 		System<T> *sys = new System<T>();
+		//sys->messages = messages;
 		logic_systems.Add(type, sys);
 	}
 
@@ -107,6 +113,7 @@ public:
 			return;
 
 		T *sys = new T(args...);
+		sys->messages = messages;
 		sys->manager = this;
 		systems.Add(type, sys);
 	}
@@ -167,6 +174,8 @@ public:
 		{
 			delete entity_it->second;
 		}
+
+		delete messages;
 	}
 
 	/**
@@ -241,6 +250,7 @@ public:
 	 * \param hash	Hash of component type of the system.
 	 */
 	void AddSystem(ISystem* sys, const std::type_index &type) {
+		sys->messages = messages;
 		sys->manager = this;
 		logic_systems.Add(type, sys);
 	}

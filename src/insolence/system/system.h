@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "../game/messaging.h"
 #include "../game/gametime.h"
 
 struct Entity;
@@ -24,6 +25,8 @@ struct INSOLENCE_API ISystem {
 	friend EntityManager;
 protected:
 	EntityManager *manager;
+	MessageManager *messages;
+
 public:
 	const uint32_t priority;
 
