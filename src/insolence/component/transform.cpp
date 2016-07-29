@@ -140,7 +140,7 @@ const float Transform::GetScaleZ() const
 
 const glm::vec2 Transform::GetScaleXY() const
 {
-	return glm::vec2(scale[3][0], position[3][1]);
+	return glm::vec2(scale[0][0], scale[1][1]);
 }
 
 void Transform::SetScale(const glm::vec3& s)
