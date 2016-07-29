@@ -114,7 +114,7 @@ struct Game1 : BaseGameWorld
 
 		centre->Add<TextRenderable>(font)->Text("Hello World, here we are!");
 		centre->Get<TextRenderable>()->colour = glm::vec4(0.9f, 0.6f, 0.1f, 1.f);
-		centre->Get<TextRenderable>()->align = FontAlign::RIGHT;
+		centre->Get<TextRenderable>()->halign = TextAlignH::RIGHT;
 		centre->Add<SpriteRenderable>()->colour = glm::vec4(0.f, 1.f, 0.f, 1.f);
 	}
 

@@ -11,16 +11,26 @@
 
 #include "material.h"
 
-enum FontAlign {
-	LEFT,
-	RIGHT,
-	CENTRE,
-};
-
 enum FontType {
 	NORMAL,
 	PIXEL
 };
+
+namespace TextAlignH {
+	enum AlignH {
+		LEFT,
+		RIGHT,
+		CENTRE,
+	};
+}
+
+namespace TextAlignV {
+	enum AlignV {
+		TOP,
+		BOTTOM,
+		CENTRE
+	};
+}
 
 struct INSOLENCE_API Font {
 	/* Struct of individual glyph information. */
@@ -45,6 +55,7 @@ private:
 	double w;
 	double h;
 
+	int height;
 	int max_glyph_width;
 	bool is_monospace;
 	int kerning;
@@ -56,6 +67,7 @@ public:
 	const bool IsMonospace() const { return is_monospace; }
 	const double GetAtlasWidth() const { return w; }
 	const double GetAtlasHeight() const { return h; }
+	const double GetLineHeight() const { return height; }
 	const FontInfo& GetGlyph(char i) const { return c[i]; }
 
 	static Font* Load(const char *path, int size,
@@ -90,6 +102,7 @@ public:
 
 		FT_Set_Pixel_Sizes(face, 0, size);
 		g = face->glyph;
+		out->height = face->size->metrics.height / 64.0;
 
 		/*
 		 * Texture bleeding is a problem at larger sizes and this seems like

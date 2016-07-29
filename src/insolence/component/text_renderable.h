@@ -14,18 +14,23 @@ struct INSOLENCE_API TextRenderable : Component {
 	Font *font;
 	char *text;
 	glm::vec4 colour;
-	FontAlign align;
 	glm::vec2 scale;
+	TextAlignH::AlignH halign;
+	TextAlignV::AlignV valign;
+	bool hidden;
 
 	TextRenderable(Font *font,
 			const glm::vec4& colour=glm::vec4(1.f),
-			FontAlign align=FontAlign::LEFT,
+			TextAlignH::AlignH halign=TextAlignH::LEFT,
+			TextAlignV::AlignV valign=TextAlignV::BOTTOM,
 			const glm::vec2& scale=glm::vec2(1.f))
 	:
 		font(font),
 		colour(colour),
-		align(align),
+		halign(halign),
+		valign(valign),
 		scale(scale),
+		hidden(false),
 		text(NULL)
 	{
 	}
@@ -40,8 +45,10 @@ struct INSOLENCE_API TextRenderable : Component {
 	{
 		font = other.font;
 		colour = other.colour;
-		align = other.align;
+		halign = other.halign;
+		valign = other.valign;
 		scale = other.scale;
+		hidden = other.hidden;
 
 		if(other.text != NULL)
 			text = strdup(other.text);

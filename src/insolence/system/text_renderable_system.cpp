@@ -11,6 +11,9 @@ void TextRenderableSystem::Manage(const GameTime& gametime)
 {
 	for(it = components.begin(); it!= components.end(); ++it)
 	{
+		if(it->second.hidden == true)
+			continue;
+
 		TextRenderable *t = &it->second;
 		Transform *m = it->first->Get<Transform>();
 
@@ -18,6 +21,6 @@ void TextRenderableSystem::Manage(const GameTime& gametime)
 			continue;
 
 		renderer->AddText(t->font, t->text, m->GetPosXY(),
-				t->colour, t->align, t->scale);
+				t->colour, t->halign, t->valign, t->scale);
 	}
 }

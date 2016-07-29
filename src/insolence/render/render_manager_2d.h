@@ -75,8 +75,8 @@ struct INSOLENCE_API RenderManager2D : public RenderManager
 	 * \param scale	Scaling of text, default 1.
 	 */
 	void AddText(Font* f, const char *text, const glm::vec2& pos,
-			const glm::vec4& colour, FontAlign align,
-			glm::vec2 scale=glm::vec2());
+			const glm::vec4& colour, TextAlignH::AlignH alignh,
+			TextAlignV::AlignV alignv, glm::vec2 scale=glm::vec2());
 };
 
 #endif

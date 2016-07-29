@@ -200,9 +200,11 @@ void RenderManager2D::Add(Texture *t, const glm::mat4&model,
 }
 
 void RenderManager2D::AddText(Font *f, const char *str, const glm::vec2& pos,
-		const glm::vec4& col, FontAlign origin, glm::vec2 scale)
+		const glm::vec4& col, TextAlignH::AlignH halign,
+		TextAlignV::AlignV valign, glm::vec2 scale)
 {
-	float offset = 0;
+	float offset_h = 0;
+	float offset_v = 0;
 	float length = 0;
 
 	if(scale == glm::vec2())
@@ -228,10 +230,19 @@ void RenderManager2D::AddText(Font *f, const char *str, const glm::vec2& pos,
 		length = strlen(str) * f->GetMaxGlyphWidth();
 	length *= scale.x;
 
-	if(origin == FontAlign::CENTRE)
-		offset -= length / 2.0;
-	else if (origin == FontAlign::RIGHT)
-		offset -= length;
+	if(halign == TextAlignH::CENTRE)
+		offset_h -= length / 2.0;
+	else if (halign == TextAlignH::RIGHT)
+		offset_h -= length;
+
+	if(valign == TextAlignV::CENTRE)
+		offset_v = f->GetLineHeight() / 2.f;
+	else if(valign == TextAlignV::TOP)
+		offset_v = -f->GetLineHeight() / 2.f;
+	else if(valign == TextAlignV::BOTTOM)
+		offset_v = f->GetLineHeight();
+
+	offset_v *= scale.y;
 
 	if(Camera::GetCoordinateSystem() == Camera::Coords::Y_DOWN)
 		scale.y = -scale.y;
@@ -244,11 +255,11 @@ void RenderManager2D::AddText(Font *f, const char *str, const glm::vec2& pos,
 
 		if(f->IsMonospace() == true)
 		{
-			offset += f->GetMaxGlyphWidth() / 2 * scale.x;
+			offset_h += f->GetMaxGlyphWidth() / 2 * scale.x;
 		}
 		else
 		{
-			offset += glyph.l * scale.x;
+			offset_h += glyph.l * scale.x;
 		}
 
 		glm::vec3 p;
@@ -257,9 +268,11 @@ void RenderManager2D::AddText(Font *f, const char *str, const glm::vec2& pos,
 		if(Camera::GetCoordinateSystem() == Camera::Coords::Y_DOWN)
 			glyph_t -= glyph.t;
 
-		p.x = offset + pos.x;
+		p.x = offset_h + pos.x;
 		p.y = glyph_t - (glyph.h )
 			* scale.y + pos.y;
+
+		p.y -= offset_v;
 
 		m = glm::translate(m, p);
 
@@ -275,11 +288,11 @@ void RenderManager2D::AddText(Font *f, const char *str, const glm::vec2& pos,
 
 		if(f->IsMonospace() == true)
 		{
-			offset += f->GetMaxGlyphWidth() / 2 * scale.x;
+			offset_h += f->GetMaxGlyphWidth() / 2 * scale.x;
 		}
 		else
 		{
-			offset += glyph.ax * scale.x;
+			offset_h += glyph.ax * scale.x;
 		}
 	}
 }
