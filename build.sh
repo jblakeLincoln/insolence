@@ -93,11 +93,18 @@ function webgl_configure
 
 	ln -s insolence_samples insolence_samples.bc /dev/null 2&>1
 
-	emcc \
+	local webgl_command="\
+emcc \
 libinsolence.bc insolence_samples.bc \
 --preload-file shaders --preload-file assets \
 -s USE_SDL=2 -s USE_FREETYPE=1 -s TOTAL_MEMORY=32777216 \
--o insolence_samples.html
+-o insolence_samples.html"
+
+	if [ "$CONFIGURATION" == "webgl-release" ]; then
+		webgl_command="${webgl_command} -O3"
+	fi
+
+	$webgl_command
 
 	if [ $? -ne 0 ]; then
 		exit

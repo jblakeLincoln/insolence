@@ -25,6 +25,13 @@ if include_openal == true then
 		links {"openal"}
 end
 
+configuration { "WINDOWS or LINUX", "not WebGL*" }
+	defines { "INSOLENCE_OPENGL_DESKTOP" }
+
+configuration "WebGL*"
+	defines { "INSOLENCE_WEBGL" }
+	defines { "INSOLENCE_OPENGL_ES" }
+
 configuration { "LINUX or WebGL*" }
 	buildoptions "-std=c++11"
 
@@ -89,5 +96,5 @@ configuration "Release or WebGL-Debug"
 	defines {"NDEBUG"}
 	flags {"Optimize"}
 
-configuration { "Release", "WebGL-Release" }
+configuration { "Release or WebGL-Release" }
 	buildoptions "-O3"

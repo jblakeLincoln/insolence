@@ -3,15 +3,11 @@ solution "insolence"
 	targetdir "bin"
 	objdir "obj"
 
-	dofile("./src/insolence.lua")
-
 	configuration { "WINDOWS" }
 		defines { "INSOLENCE_EXPORT" }
-	configuration { "WINDOWS or LINUX", "not WebGL*" }
-		defines { "INSOLENCE_OPENGL_DESKTOP" }
-	configuration "WebGL*"
-		defines { "INSOLENCE_WEBGL" }
-		defines { "INSOLENCE_OPENGL_ES" }
+
+	dofile("./src/insolence.lua")
+
 
 solution "insolence_samples"
 	language "C++"
@@ -26,7 +22,3 @@ solution "insolence_samples"
 
 	configuration { "WINDOWS or LINUX",  "not WebGL*" }
 		defines { "INSOLENCE_OPENGL_DESKTOP" }
-	configuration "WebGL*"
-		links { "insolence" }
-		defines { "INSOLENCE_WEBGL" }
-		defines { "INSOLENCE_OPENGL_ES" }
