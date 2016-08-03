@@ -79,7 +79,7 @@ public:
 		}
 
 		if(SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0)
-			log(Log::FATAL, "Window (%s) - Failed to initialise GameController",
+			log(Log::ERR, "Window (%s) - Failed to initialise GameController",
 					__FUNCTION__);
 
 #ifdef INSOLENCE_OPENGL_DESKTOP
