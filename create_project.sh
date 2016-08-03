@@ -90,15 +90,17 @@ function create_game_directory
 			cp bin/*.dll "$DESTINATION_DIR/bin/" >/dev/null 2>&1
 
 		elif [ "$PLATFORM" == "LINUX" ]; then
-			ln -sf "../../bin/libinsolence.so" "$DESTINATION_DIR/bin"
-			ln -sf "../../bin/libinsolence.bc" "$DESTINATION_DIR/bin"
-			ln -sf "../include" "$DESTINATION_DIR"
-			ln -sf "../../src/insolence" "$DESTINATION_DIR/include"
-			ln -sf "../../src/insolence/shaders" "$DESTINATION_DIR/bin/shaders"
+			ln -sf "../../insolence/bin/libinsolence.so" "$DESTINATION_DIR/bin"
+			ln -sf "../../insolence/bin/libinsolence.bc" "$DESTINATION_DIR/bin"
+			ln -sf "../insolence/include" "$DESTINATION_DIR"
+			ln -sf "../../insolence/src/insolence" "$DESTINATION_DIR/include"
+			ln -sf "../../insolence/src/insolence/shaders" "$DESTINATION_DIR/bin/"
+			ln -sf "../insolence/templates" "$DESTINATION_DIR"
 		fi
 	else
 		mkdir -p "$DESTINATION_DIR/include"
 		cp "src/insolence/shaders" "$DESTINATION_DIR/bin" -r
+		cp "templates" "$DESTINATION_DIR/templates" -r
 		rsync -r --include "*/" --include "*.h" --exclude="*" \
 --prune-empty-dirs src/ "$DESTINATION_DIR/include/"
 	fi

@@ -1,0 +1,129 @@
+.insolence_area {
+	width: 640px;
+	height: 480px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+#insolence_game {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	font-family: sans-serif;
+	font-size: 0.8em;
+	font-weight: bold;
+	text-align: center;
+}
+
+#insolence_output {
+	display: block;
+	width: 500px;
+	margin: 10px auto;
+}
+
+#insolence_logo {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	height: auto;
+}
+
+#insolence_loading_element {
+	display: table;
+	background-color: black;
+}
+
+#insolence_canvas {
+	display: none;
+}
+
+#insolence_progress_tag {
+	line-height: 1em;
+	white-space: nowrap;
+}
+
+#progress_container {
+	display: table-cell;
+	vertical-align: middle;
+	color: white;
+}
+
+#progress_elements_container {
+	display: inline-block;
+	max-width: 160px;
+}
+
+#insolence_progress_bar {
+	margin: 10px 0;
+	width: 100%;
+	height: 1px;
+	border-radius: 10em;
+	background-color: black;
+	-webkit-appearance: none;
+}
+
+#insolence_progress_bar::-webkit-progress-bar {
+	height: 5px;
+	border: 1px solid white;
+	border-radius: 10em;
+	background-color: black;
+}
+
+#insolence_progress_bar::-moz-progress-bar {
+	height: 1px;
+	border: 1px solid white;
+	background-color: white;
+}
+
+#insolence_progress_bar::-webkit-progress-value {
+	background-color: white;
+}
+
+#insolence_spinner {
+	display: none;
+	height: 20px;
+	width: 20px;
+	margin: 0px auto;
+	margin-top: 12px;
+	-webkit-animation: rotation .8s linear infinite;
+	-moz-animation: rotation .8s linear infinite;
+	-o-animation: rotation .8s linear infinite;
+	animation: rotation 0.8s linear infinite;
+	border: 4px solid rgb(0, 0, 0);
+	border-top-color: rgb(255,255,255); /* Small segment. */
+	border-radius: 100%;
+	background-color: rgb(0, 0, 0);
+}
+
+.fade_out {
+	-webkit-opacity: 0;
+	-moz-opacity: 0;
+	opacity: 0;
+	-webkit-transition: all 0.4s ease;
+	-moz-transition: all 0.4s ease;
+	-ms-transition: all 0.4s ease;
+	-o-transition: all 0.4s ease;
+	transition: all 0.4s ease;
+}
+
+@-webkit-keyframes rotation {
+  from {-webkit-transform: rotate(0deg);}
+  to {-webkit-transform: rotate(360deg);}
+}
+
+@-moz-keyframes rotation {
+  from {-moz-transform: rotate(0deg);}
+  to {-moz-transform: rotate(360deg);}
+}
+
+@-o-keyframes rotation {
+  from {-o-transform: rotate(0deg);}
+  to {-o-transform: rotate(360deg);}
+}
+
+@keyframes rotation {
+  from {transform: rotate(0deg);}
+  to {transform: rotate(360deg);}
+}

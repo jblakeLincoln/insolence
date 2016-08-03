@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="insolence.css">
+</head>
+<title>Insolence Game</title>
+<body>
+<div id="insolence_game">
+	<h3>Insolence Game</h3>
+	<div id="insolence_loading_element" class="insolence_area">
+		<div id="progress_container">
+			<div id="progress_elements_container">
+				<img id="insolence_logo" src="insolence.svg" />
+				<div id="insolence_spinner"></div>
+				<progress value="0" max="1" id="insolence_progress_bar">
+				</progress>
+				<noscript>
+					<div>JavaScript must be enabled to run.</div>
+				</noscript>
+				<div id="insolence_progress_tag">...</div>
+			</div>
+			</noscript>
+		</div>
+	</div>
+	<canvas id="insolence_canvas" class="insolence_area"
+		oncontextmenu="event.preventDefault()">
+	</canvas>
+	<textarea id="insolence_output" rows="8"></textarea>
+	<script type="text/javascript" src="insolence.js"
+		onload="insolence_run()"></script>
+</div>
+</body>
+</html>
+

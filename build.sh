@@ -96,9 +96,9 @@ function webgl_configure
 	local webgl_command="\
 emcc \
 libinsolence.bc insolence_samples.bc \
---preload-file shaders --preload-file assets \
+--preload-file shaders --preload-file assets --memory-init-file 1 \
 -s USE_SDL=2 -s USE_FREETYPE=1 -s TOTAL_MEMORY=32777216 \
--o insolence_samples.html"
+-o insolence_samples.js"
 
 	if [ "$CONFIGURATION" == "webgl-release" ]; then
 		webgl_command="${webgl_command} -O3"
@@ -109,6 +109,21 @@ libinsolence.bc insolence_samples.bc \
 	if [ $? -ne 0 ]; then
 		exit
 	fi
+
+	cp "../templates/insolence.html" "insolence_samples.html"
+	cp "../templates/insolence.css" .
+	cp "../templates/insolence.svg" .
+
+	local IFS=''
+	local i=0
+	while read -r line; do
+		i=$((i + 1))
+		if [ $i -eq 1 ]; then
+			echo "var project_name = \"insolence_samples\"" > "insolence.js"
+			continue;
+		fi
+		echo  "$line" >> "insolence.js"
+	done < "../templates/insolence.js"
 
 	if [ "$RUN_AFTER_BUILD" == "true" ]; then
 		xdg-open insolence_samples.html
