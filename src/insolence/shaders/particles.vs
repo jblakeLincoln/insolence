@@ -1,21 +1,10 @@
+in vec2 in_verts;
+in vec2 in_uvs;
+in vec2 in_pos;
+in vec4 in_colour;
+in vec2 in_scale;
 
-#ifdef INSOLENCE_GLSL_DESKTOP
-layout(std140) uniform Camera {
-	mat4 mat_proj;
-	mat4 mat_view;
-};
-#endif
-#ifdef INSOLENCE_GLSL_ES
-uniform mat4 mat_proj;
-uniform mat4 mat_view;
-#endif
-
-IN vec2 in_verts;
-IN vec2 in_pos;
-IN vec4 in_colour;
-IN float in_scale;
-
-OUT vec4 fs_colour;
+out vec4 fs_colour;
 
 void main()
 {

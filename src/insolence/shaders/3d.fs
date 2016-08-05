@@ -1,17 +1,12 @@
-IN vec3 frag_vert;
-IN vec3 frag_pos;
-IN vec3 frag_norm;
-IN vec2 frag_uv;
-IN vec4 frag_colour;
+in vec3 frag_vert;
+in vec3 frag_pos;
+in vec3 frag_norm;
+in vec2 frag_uv;
+in vec4 frag_colour;
 
 uniform sampler2D tex_diffuse;
 uniform sampler2D tex_normal;
 uniform bool normal_map;
-
-#ifdef INSOLENCE_GLSL_DESKTOP
-	out vec4 out_colour;
-	#define gl_FragColor out_colour
-#endif
 
 struct DirLight {
 	vec3 direction;

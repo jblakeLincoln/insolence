@@ -10,24 +10,34 @@ const char* Shader::vert_header =
 	/* Version replaced */
 	"#if __VERSION__ < 120 || __VERSION__ == 300\n" /* OpenGL ES */
 	"	#define INSOLENCE_GLSL_ES\n"
-	"	#define IN attribute\n"
-	"	#define OUT varying\n"
+	"	#define in attribute\n"
+	"	#define out varying\n"
+	"	uniform mat4 mat_proj;\n"
+	"	uniform mat4 mat_view;\n"
 	"#else\n" /* OpenGL Desktop */
 	"	#define INSOLENCE_GLSL_DESKTOP\n"
 	"	#define IN in\n"
 	"	#define OUT out\n"
-	"#endif\n";
+	"	layout(std140) uniform Camera {\n"
+	"		mat4 mat_proj;\n"
+	"		mat4 mat_view;\n"
+	"	};\n"
+	"#endif\n"
+	"#line 0\n";
 
 const char *Shader::frag_header =
 	"#if __VERSION__ < 120 || __VERSION__ == 300\n" /* OpenGL ES */
 	"	#define INSOLENCE_GLSL_ES\n"
 	"	precision highp float;\n"
 	"	#define texture texture2D\n"
-	"	#define IN varying \n"
+	"	#define in varying \n"
 	"#else\n" /* OpenGL Desktop */
 	"	#define INSOLENCE_GLSL_DESKTOP\n"
 	"	#define IN in\n"
-	"#endif\n";
+	"	out vec4 out_colour;\n"
+	"	#define gl_FragColor out_colour\n"
+	"#endif\n"
+	"#line 0\n";
 
 
 
