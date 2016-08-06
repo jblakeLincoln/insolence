@@ -128,9 +128,14 @@ public:
 		}
 
 		out->HandleWindowResize();
+
 		Window::active_window = out;
 
 		PollEvents();
+
+		/* For WebGL, which perceives an initial window size of 0, 0 */
+		out->framebuffer_width = width;
+		out->framebuffer_height = height;
 
 		log(Log::INFO, "Window (%s) - Successful window creation",
 				__FUNCTION__);
