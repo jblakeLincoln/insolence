@@ -27,19 +27,27 @@ private:
 	SDL_Window *sdl_window;
 	SDL_GLContext sdl_context;
 
-	uint32_t width;
-	uint32_t height;
-	int framebuffer_width;
-	int framebuffer_height;
+	uint16_t width;
+	uint16_t height;
+	uint16_t framebuffer_width;
+	uint16_t framebuffer_height;
 
 	bool should_close;
 	static bool should_quit;
 
 public:
-	uint32_t GetWidth() { return width; }
-	uint32_t GetHeight() { return height; }
-	int GetFramebufferWidth() { return framebuffer_width; }
-	int GetFramebufferHeight() { return framebuffer_height; }
+	uint16_t GetWidth() { return width; }
+	uint16_t GetHeight() { return height; }
+	uint16_t GetFramebufferWidth() { return framebuffer_width; }
+	uint16_t GetFramebufferHeight() { return framebuffer_height; }
+
+	glm::uvec2 GetSize() {
+		return glm::uvec2(width, height);
+	}
+
+	glm::uvec2 GetFBSize() {
+		return glm::uvec2(framebuffer_width, framebuffer_height);
+	}
 
 	bool ShouldClose() { return should_close || should_quit; }
 	void SetShouldClose(bool c) { should_close = c; }
