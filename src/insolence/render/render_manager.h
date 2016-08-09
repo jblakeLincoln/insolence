@@ -36,7 +36,6 @@ struct INSOLENCE_API RenderManager
 	{
 		Shader **shaders = new Shader*[2];
 		ShaderProgram *program = new ShaderProgram();
-		bool success = true;
 
 		shaders[0] = Shader::CreateFromFile(vert_path, GL_VERTEX_SHADER,
 				ShaderFlags::ADD_HEADER);
@@ -45,35 +44,13 @@ struct INSOLENCE_API RenderManager
 
 		for(int i = 0; i < 2; ++i)
 		{
-			GLint status = shaders[i]->GetShaderiv(GL_COMPILE_STATUS);
-			glAttachShader(program->GetID(), shaders[i]->GetID());
-
-			if(status != GL_TRUE)
+			if(shaders[i]->GetCompileStatus() != GL_TRUE)
 			{
-				log(Log::ERR, "RenderManager (%s) - shader %d (%s) "
-						"compile failed",
-						__FUNCTION__, i, i == 0 ? vert_path : frag_path);
+				shaders[i]->LogCompileInfo("RenderManager (%s) - "
+						"%s ", __FUNCTION__, i == 0 ? "Vert" : "Frag");
 			}
-
-			success = status & success;
-		}
-
-		if(success == false)
-		{
-			for(int i = 0; i < 2; ++i)
-			{
-				char buf[1024];
-				int length = 0;
-				glGetShaderInfoLog(shaders[i]->GetID(), 1024, &length, buf);
-
-				if(length == 0)
-					continue;
-
-				buf[length-1] = '\0';
-
-				log(Log::ERR, "RenderManager (%s) - Shader %d log: %s",
-						__FUNCTION__, i, buf);
-			}
+			else
+				glAttachShader(program->GetID(), shaders[i]->GetID());
 		}
 
 #ifdef INSOLENCE_OPENGL_DESKTOP

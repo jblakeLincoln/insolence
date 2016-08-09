@@ -76,6 +76,19 @@ public:
 	GLint GetShaderiv(GLenum param);
 
 	/**
+	 * Calls glGetShaderiv with the GL_COMPILE_STATUS parameter.
+	 */
+	bool GetCompileStatus();
+
+	/**
+	 * Logs shader compile status to Log::ERR. If shader compilation
+	 * is successful, this log with a blank message.
+	 *
+	 * \param prepend	Variable formatted string to prepend to log message
+	 */
+	void LogCompileInfo(const char *prepend, ...);
+
+	/**
 	 * Create shader from string.
 	 *
 	 * \param source    String to use as shader source.

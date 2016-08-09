@@ -57,3 +57,26 @@ GLint Shader::GetShaderiv(GLenum param)
 	glGetShaderiv(id, param, &output);
 	return output;
 }
+
+bool Shader::GetCompileStatus()
+{
+	return GetShaderiv(GL_COMPILE_STATUS);
+}
+
+void Shader::LogCompileInfo(const char *prepend, ...)
+{
+	char buf[1024];
+	int length = 0;
+	va_list args;
+
+	glGetShaderInfoLog(GetID(), 1024, &length, buf);
+
+	if(length == 0)
+		return;
+
+	buf[length-1] = '\0';
+
+	va_start(args, prepend);
+	log(Log::ERR, "%sShader log: %s", prepend, buf);
+	va_end(args);
+}
