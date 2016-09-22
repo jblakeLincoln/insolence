@@ -3,16 +3,16 @@
 
 #include "../insolence_dll.h"
 
+#include "../game/log.h"
+#include "../render/graphics.h"
+#include "input.h"
+#include "keys.h"
+
 #include <cstdio>
 #include <cstdlib>
 #include <unordered_map>
-#include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
-
-#include "../game/log.h"
-#include "input.h"
-#include "keys.h"
 
 struct INSOLENCE_API Window
 {

@@ -2,14 +2,14 @@
 #define COMPONENT_FONT_H
 
 #include "../insolence_dll.h"
+
 #include "../game/log.h"
+#include "../render/graphics.h"
+#include "material.h"
 
 #include <algorithm>
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include <GL/glew.h>
-
-#include "material.h"
 
 enum FontType {
 	NORMAL,

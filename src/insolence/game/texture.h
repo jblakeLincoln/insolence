@@ -3,10 +3,10 @@
 
 #include "../insolence_dll.h"
 #include "../game/log.h"
+#include "../render/graphics.h"
 
 #include <climits>
 #include <cstdio>
-#include <GL/glew.h>
 #include <glm/vec4.hpp>
 
 

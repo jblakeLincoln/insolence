@@ -4,9 +4,9 @@
 #include "../insolence_dll.h"
 
 #include "../game/log.h"
+#include "graphics.h"
 
 #include <stdio.h>
-#include <GL/glew.h>
 
 enum ShaderFlags {
 	NONE =               1 << 0,

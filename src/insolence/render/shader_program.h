@@ -3,7 +3,7 @@
 
 #include "../insolence_dll.h"
 
-#include <GL/glew.h>
+#include "graphics.h"
 #include "shader.h"
 
 struct INSOLENCE_API ShaderProgram

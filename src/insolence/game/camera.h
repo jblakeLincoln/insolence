@@ -3,11 +3,11 @@
 
 #include "../insolence_dll.h"
 
-#include <GL/glew.h>
-#include <glm/matrix.hpp>
-
 #include "../component/transform.h"
+#include "../render/graphics.h"
 #include "../render/shader_program.h"
+
+#include <glm/matrix.hpp>
 
 struct Window;
 struct INSOLENCE_API Camera

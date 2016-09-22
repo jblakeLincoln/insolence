@@ -3,13 +3,13 @@
 
 #include "../insolence_dll.h"
 
+#include "graphics.h"
+#include "render_manager.h"
+
 #include <map>
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <GL/glew.h>
-
-#include "render_manager.h"
 
 struct Material;
 struct Mesh;

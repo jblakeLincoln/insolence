@@ -3,13 +3,13 @@
 
 #include "../insolence_dll.h"
 #include "../game/log.h"
+#include "../render/graphics.h"
 
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <GL/glew.h>
 
 /* TODO Issue #23: Load in normal maps. */
 struct INSOLENCE_API Mesh {

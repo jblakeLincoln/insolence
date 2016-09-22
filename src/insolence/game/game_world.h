@@ -3,14 +3,14 @@
 
 #include "../insolence_dll.h"
 
-#include <GL/glew.h>
+#include "../render/graphics.h"
+#include "gametime.h"
+
 #include <glm/vec3.hpp>
 
 #ifdef INSOLENCE_WEBGL
 #include <emscripten.h>
 #endif
-
-#include "gametime.h"
 
 struct Entity;
 struct EntityManager;
