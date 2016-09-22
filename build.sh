@@ -39,9 +39,9 @@ function do_make()
 	echo "Building for $CONFIGURATION"
 
 	if [[ $PLATFORM == "LINUX" ]]; then
-		make config="$CONFIGURATION"
+		make config="$CONFIGURATION" -j
 	elif [[ $PLATFORM == "WEBGL" ]]; then
-		emmake make config="$CONFIGURATION"
+		emmake make config="$CONFIGURATION" -j
 	fi
 
 	if [ $? -ne 0 ]; then
