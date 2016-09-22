@@ -6,7 +6,7 @@ GLint Camera::uni_block = -1;
 Camera* Camera::active_camera = 0;
 Camera::Coords Camera::global_coords = Y_UP;
 
-#ifdef INSOLENCE_OPENGL_ES
+#ifdef INSOLENCE_WEBGL
 std::unordered_map<ShaderProgram*, Camera::CameraUniforms> Camera::uniform_dict;
 #endif
 
@@ -105,7 +105,7 @@ void Camera::Post()
 			GL_DYNAMIC_DRAW);
 	glBindBufferBase(GL_UNIFORM_BUFFER, uni_block, ubo);
 
-#elif INSOLENCE_OPENGL_ES
+#elif INSOLENCE_WEBGL
 	std::unordered_map<ShaderProgram*, CameraUniforms>::iterator it;
 	for(it = uniform_dict.begin(); it != uniform_dict.end(); ++it)
 	{

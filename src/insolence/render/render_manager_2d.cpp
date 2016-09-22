@@ -117,7 +117,7 @@ void RenderManager2D::Flush()
 {
 	glUseProgram(shader_program->GetID());
 
-#ifdef INSOLENCE_OPENGL_ES
+#ifdef INSOLENCE_WEBGL
 	Camera::PostToShader_ES(shader_program);
 #endif
 

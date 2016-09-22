@@ -67,7 +67,7 @@ void RenderManager3D::Flush()
 	 * (admittedly on the low end of reasonable), so it stays for now.
 	 */
 
-#ifdef INSOLENCE_OPENGL_ES
+#ifdef INSOLENCE_WEBGL
 	Camera::PostToShader_ES(shader_program);
 #endif
 

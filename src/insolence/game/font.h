@@ -80,7 +80,7 @@ public:
 		int glyph_padding;
 #ifdef INSOLENCE_OPENGL_DESKTOP
 		GLint gl_format = GL_RED;
-#elif INSOLENCE_OPENGL_ES
+#elif INSOLENCE_WEBGL
 		GLint gl_format = GL_LUMINANCE;
 #endif
 

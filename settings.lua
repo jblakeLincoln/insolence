@@ -30,7 +30,6 @@ configuration { "WINDOWS or LINUX", "not WebGL*" }
 
 configuration "WebGL*"
 	defines { "INSOLENCE_WEBGL" }
-	defines { "INSOLENCE_OPENGL_ES" }
 
 configuration { "LINUX or WebGL*" }
 	buildoptions "-std=c++11"

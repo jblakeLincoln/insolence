@@ -26,7 +26,7 @@ void main() {
 #ifdef INSOLENCE_GLSL_DESKTOP
 	frag_norm = mat3(transpose(inverse(model))) * in_norm;
 #endif
-#ifdef INSOLENCE_GLSL_ES
+#ifdef INSOLENCE_GLSL_WEB
 	frag_norm = mat3(model) * in_norm;
 #endif
 

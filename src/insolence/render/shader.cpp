@@ -2,14 +2,14 @@
 
 #ifdef INSOLENCE_OPENGL_DESKTOP
 char Shader::glsl_version[15] = "#version 150\n\0";
-#elif INSOLENCE_OPENGL_ES
+#elif INSOLENCE_WEBGL
 char Shader::glsl_version[15] = "#version 100\n\0";
 #endif
 
 const char* Shader::vert_header =
 	/* Version replaced */
 	"#if __VERSION__ < 120 || __VERSION__ == 300\n" /* OpenGL ES */
-	"	#define INSOLENCE_GLSL_ES\n"
+	"	#define INSOLENCE_GLSL_WEB\n"
 	"	#define in attribute\n"
 	"	#define out varying\n"
 	"	uniform mat4 mat_proj;\n"
@@ -27,7 +27,7 @@ const char* Shader::vert_header =
 
 const char *Shader::frag_header =
 	"#if __VERSION__ < 120 || __VERSION__ == 300\n" /* OpenGL ES */
-	"	#define INSOLENCE_GLSL_ES\n"
+	"	#define INSOLENCE_GLSL_WEB\n"
 	"	precision highp float;\n"
 	"	#define texture texture2D\n"
 	"	#define in varying \n"

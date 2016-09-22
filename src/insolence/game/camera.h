@@ -92,7 +92,7 @@ public:
 		active_camera = c;
 	}
 
-#ifdef INSOLENCE_OPENGL_ES
+#ifdef INSOLENCE_WEBGL
 	struct CameraUniforms {
 		int proj;
 		int view;
@@ -129,7 +129,7 @@ public:
 #ifdef INSOLENCE_OPENGL_DESKTOP
 		uni_block = glGetUniformBlockIndex(program->GetID(), "Camera");
 
-#elif INSOLENCE_OPENGL_ES
+#elif INSOLENCE_WEBGL
 		uniform_dict[program].proj =
 			glGetUniformLocation(program->GetID(), "mat_proj");
 		uniform_dict[program].view =
