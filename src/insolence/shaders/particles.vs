@@ -2,7 +2,7 @@ in vec2 in_verts;
 in vec2 in_uvs;
 in vec2 in_pos;
 in vec4 in_colour;
-in vec2 in_scale;
+in float in_scale;
 
 out vec4 fs_colour;
 
