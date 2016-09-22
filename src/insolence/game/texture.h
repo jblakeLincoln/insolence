@@ -56,16 +56,25 @@ public:
 	static Texture* LoadColour(const glm::vec4& colour)
 	{
 		Texture* output = new Texture();
+		GLubyte data[] = {
+			(GLubyte)(colour.x * 255.f), (GLubyte)(colour.y * 255.f),
+			(GLubyte)(colour.z * 255.f), (GLubyte)(colour.w * 255.f)
+		};
+
 		glGenTextures(1, &output->id);
+		output->width = 1;
+		output->height = 1;
 		output->Bind();
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_FLOAT,
-				&colour[0]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA,
+				GL_UNSIGNED_BYTE, &data[0]);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		// Log success
+
+		log(Log::INFO, "Texture (%s): Created %d, %d, %d, %d",
+				__FUNCTION__, data[0], data[1], data[2], data[3]);
 
 		return output;
 	}
