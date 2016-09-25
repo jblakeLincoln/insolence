@@ -124,9 +124,60 @@ libinsolence.bc insolence_samples.bc \
 		fi
 		echo  "$line" >> "insolence.js"
 	done < "../templates/insolence.js"
+}
 
-	if [ "$RUN_AFTER_BUILD" == "true" ]; then
-		xdg-open insolence_samples.html
+function android_configure
+{
+	type premake5 > /dev/null 2>&1
+
+	if [ $? -ne 0 ]; then
+		echo "premake5 is required for Android builds."
+		exit
+	fi
+
+	if [ ! -d "android/res/drawable-hdpi" ]; then
+		echo $("\
+android/res/drawable* directories missing. Add the following directories
+containing the file 'ic_launcher.png':
+ * drawable-hdpi
+ * drawable-mdpi
+ * drawable-xhdpi
+ * drawable-xxhdpi")
+		exit
+	fi
+
+	if [ ! -d "android/src/org" ]; then
+		echo $("\
+android/src/org/* SDL files missing. Download the SDL source and link
+{SDL_SOURCE}/android-project/src/org")
+		exit
+	fi
+
+	if [ ! -d "android/jni/SDL2" ]; then
+		echo $("\
+android/jni/SDL2/* missing. Download the SDL source and link
+{SDL_SOURCE}/android-project/jni/SDL2")
+		exit
+	fi
+
+	premake5 --file=insolence_android.lua androidmk
+	cd android
+
+	mkdir jni/include > /dev/null 2>&1
+	ln -sf ../../../src/insolence jni/include/
+
+	mkdir assets > /dev/null 2>&1
+	ln -sf ../../src/insolence/assets assets/
+	ln -sf ../../src/insolence/shaders assets/
+
+
+	sed -i "s/\$(LOCAL_PATH)\/\/usr\//\/usr\//g" jni/include/insolence/insolence.mk
+	sed -i "s/\$(LOCAL_PATH)\/\/usr\//\/usr\//g" jni/src/main.mk
+
+	ndk-build PM5_CONFIG=$CONFIGURATION
+
+	if [ $? -ne 0 ]; then
+		exit
 	fi
 
 	cd ..
@@ -136,6 +187,7 @@ for arg in "$@"; do
 	shift
 	case "$arg" in
 		"--run")           set -- "$@" "-r" ;;
+		"--android")       set -- "$@" "-a" ;;
 		"--webgl")         set -- "$@" "-w" ;;
 		"--release")       set -- "$@" "-R" ;;
 		"--help")          set -- "$@" "-h" ;;
@@ -143,10 +195,17 @@ for arg in "$@"; do
 	esac
 done
 
-while getopts "hcwrRe" opt; do
+while getopts "hcawrRe" opt; do
 	case "$opt" in
 		r) #--run
 			RUN_AFTER_BUILD="true"
+			;;
+		a) #--android
+			if [ "$PLATFORM" == "WINDOWS" ]; then
+				echo "Android build is unsupported for Windows."
+				exit
+			fi
+			PLATFORM="ANDROID"
 			;;
 		w) #--webgl
 			if [ "$PLATFORM" == "WINDOWS" ]; then
@@ -185,11 +244,28 @@ case "$PLATFORM" in
 		;;
 	"WEBGL")
 		webgl_configure
-		exit
+		;;
+	"ANDROID")
+		android_configure
 		;;
 esac
 
-if [ "$RUN_AFTER_BUILD" == "true" ]; then
-	cd bin
-	./insolence_samples
+if [ "$RUN_AFTER_BUILD" != "true" ]; then
+	exit
 fi
+
+case "$PLATFORM" in
+	"WINDOWS" | "LINUX")
+		cd bin
+		./insolence_samples
+		;;
+	"WEBGL")
+		cd bin
+		xdg-open insolence_samples.html
+		;;
+	"ANDROID")
+		cd android
+		ant ${CONFIGURATION} install
+		exit
+		;;
+esac
