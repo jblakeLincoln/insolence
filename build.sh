@@ -96,7 +96,7 @@ function webgl_configure
 	local webgl_command="\
 emcc \
 libinsolence.bc insolence_samples.bc \
---preload-file shaders --preload-file assets --memory-init-file 1 \
+--preload-file shaders --preload-file assets --memory-init-file 1 ../lib/libassimp.so \
 -s USE_SDL=2 -s USE_FREETYPE=1 -s TOTAL_MEMORY=32777216 \
 -o insolence_samples.js"
 
