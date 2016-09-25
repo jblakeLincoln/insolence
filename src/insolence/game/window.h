@@ -109,6 +109,22 @@ public:
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+
+#elif INSOLENCE_ANDROID
+		SDL_DisplayMode display_mode;
+
+		if(SDL_GetCurrentDisplayMode(0, &display_mode) == 0)
+		{
+			width = display_mode.w;
+			height = display_mode.h;
+		}
+
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
+				SDL_GL_CONTEXT_PROFILE_ES);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 #endif
 
 		out->sdl_window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
@@ -126,7 +142,7 @@ public:
 		if(out->sdl_context == NULL)
 			log(Log::FATAL, "Window (%s) - Failed to create GL context");
 
-		SDL_GL_SetSwapInterval(1);
+#if INSOLENCE_OPENGL_DESKTOP || INSOLENCE_WEBGL
 		glewExperimental = GL_TRUE;
 
 		if(glewInit() != GLEW_OK)
@@ -134,7 +150,9 @@ public:
 			log(Log::FATAL, "Window (%s) - Failed to initialise GLEW",
 					__FUNCTION__);
 		}
+#endif
 
+		SDL_GL_SetSwapInterval(1);
 		out->HandleWindowResize();
 
 		Window::active_window = out;

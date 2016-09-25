@@ -17,24 +17,24 @@ private:
 	Mesh();
 	Mesh(float* data_in, int vert_count);
 
+	static unsigned int assimp_flags;
+
 public:
 	~Mesh();
 
 	const GLuint num_verts;
 	const float *data;
 
-	static Mesh* LoadFile(const char *file)
+	static const aiScene* GetAiScene(const char *path);
+
+	static Mesh* LoadFile(const char *path)
 	{
-		const aiScene *scene = aiImportFile(file,
-			aiProcess_CalcTangentSpace |
-			//aiProcess_Triangulate |
-			//aiProcess_JoinIdenticalVertices |
-			aiProcess_SortByPType);
+		const aiScene *scene = GetAiScene(path);
 
 		if(scene == NULL)
 		{
 			log(Log::FATAL, "Mesh (%s) - File \'%s\' not found",
-					__FUNCTION__, file);
+					__FUNCTION__, path);
 			return NULL;
 		}
 
@@ -58,7 +58,7 @@ public:
 		}
 		else
 			log(Log::WARN, "Mesh (%s) - %s has no normal data.",
-					__FUNCTION__, file);
+					__FUNCTION__, path);
 
 		if(scene->mMeshes[0]->mTextureCoords != NULL)
 		{
@@ -71,12 +71,12 @@ public:
 		}
 		else
 			log(Log::WARN, "Mesh (%s) - %s has no tex coord data.",
-					__FUNCTION__, file);
+					__FUNCTION__, path);
 
 		aiReleaseImport(scene);
 
 		log(Log::INFO, "Mesh (%s) - Loaded %s successfully.",
-				__FUNCTION__, file);
+				__FUNCTION__, path);
 
 		return new Mesh(mesh_data, vert_count);
 	}

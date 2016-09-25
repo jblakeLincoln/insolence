@@ -200,7 +200,7 @@ struct Game1 : BaseGameWorld
 	}
 };
 
-int main()
+int main(int argc, char **argv)
 {
 	Game1 *game = new Game1();
 	game->Run();

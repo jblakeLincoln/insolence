@@ -1,3 +1,4 @@
+#ifndef INSOLENCE_ANDROID
 #ifndef AUDIO_TRACK_H
 #define AUDIO_TRACK_H
 
@@ -28,4 +29,5 @@ public:
 	void ShouldLoop(bool b);
 };
 
+#endif
 #endif

@@ -1,3 +1,4 @@
+#ifndef INSOLENCE_ANDROID
 #ifndef AUDIO_MANAGER_H
 #define AUDIO_MANAGER_H
 
@@ -72,4 +73,5 @@ public:
 	static AudioManager* Create();
 };
 
+#endif
 #endif

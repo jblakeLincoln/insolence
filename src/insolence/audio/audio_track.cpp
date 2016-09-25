@@ -1,3 +1,5 @@
+#ifndef INSOLENCE_ANDROID
+
 #include "../game/log.h"
 #include "audio_track.h"
 
@@ -17,3 +19,5 @@ void AudioTrack::ShouldLoop(bool b)
 {
 	alSourcei(source, AL_LOOPING, b);
 }
+
+#endif

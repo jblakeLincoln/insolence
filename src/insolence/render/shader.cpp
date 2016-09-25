@@ -4,42 +4,54 @@
 char Shader::glsl_version[15] = "#version 150\n\0";
 #elif INSOLENCE_WEBGL
 char Shader::glsl_version[15] = "#version 100\n\0";
+#elif INSOLENCE_ANDROID
+char Shader::glsl_version[18] = "#version 300 es\n\0";
 #endif
 
-const char* Shader::vert_header =
-	/* Version replaced */
-	"#if __VERSION__ < 120 || __VERSION__ == 300\n" /* OpenGL ES */
-	"	#define INSOLENCE_GLSL_WEB\n"
-	"	#define in attribute\n"
-	"	#define out varying\n"
-	"	uniform mat4 mat_proj;\n"
-	"	uniform mat4 mat_view;\n"
-	"#else\n" /* OpenGL Desktop */
-	"	#define INSOLENCE_GLSL_DESKTOP\n"
-	"	#define IN in\n"
-	"	#define OUT out\n"
-	"	layout(std140) uniform Camera {\n"
-	"		mat4 mat_proj;\n"
-	"		mat4 mat_view;\n"
-	"	};\n"
-	"#endif\n"
-	"#line 0\n";
+const char *Shader::vert_header =
+#ifdef INSOLENCE_WEBGL
+	"#define INSOLENCE_GLSL_WEB\n"
+#elif INSOLENCE_ANDROID
+	"#define INSOLENCE_GLSL_ANDROID\n"
+#elif INSOLENCE_OPENGL_DESKTOP
+	"#define INSOLENCE_GLSL_DESKTOP\n"
+#endif
+
+#if INSOLENCE_OPENGL_DESKTOP || INSOLENCE_ANDROID
+	"layout(std140) uniform Camera {\n"
+	"	mat4 mat_proj;\n"
+	"	mat4 mat_view;\n"
+	"};\n"
+#elif INSOLENCE_WEBGL
+	"#define in attribute\n"
+	"#define out varying\n"
+	"uniform mat4 mat_proj;\n"
+	"uniform mat4 mat_view;\n"
+#endif
+	"#line 1\n";
 
 const char *Shader::frag_header =
-	"#if __VERSION__ < 120 || __VERSION__ == 300\n" /* OpenGL ES */
-	"	#define INSOLENCE_GLSL_WEB\n"
-	"	precision highp float;\n"
-	"	#define texture texture2D\n"
-	"	#define in varying \n"
-	"#else\n" /* OpenGL Desktop */
-	"	#define INSOLENCE_GLSL_DESKTOP\n"
-	"	#define IN in\n"
-	"	out vec4 out_colour;\n"
-	"	#define gl_FragColor out_colour\n"
-	"#endif\n"
-	"#line 0\n";
+#ifdef INSOLENCE_WEBGL
+	"#define INSOLENCE_GLSL_WEB\n"
+#elif INSOLENCE_ANDROID
+	"#define INSOLENCE_GLSL_ANDROID\n"
+#elif INSOLENCE_OPENGL_DESKTOP
+	"#define INSOLENCE_GLSL_DESKTOP\n"
+#endif
 
-
+#if INSOLENCE_WEBGL || INSOLENCE_ANDROID
+	"precision highp float;\n"
+#endif
+#if INSOLENCE_WEBGL
+	"#define texture texture2D\n"
+	"#define in varying \n"
+	"uniform mat4 mat_proj;\n"
+	"uniform mat4 mat_view;\n"
+#elif INSOLENCE_OPENGL_DESKTOP || INSOLENCE_ANDROID
+	"out vec4 out_colour;\n"
+	"#define gl_FragColor out_colour\n"
+#endif
+	"#line 1\n";
 
 Shader::Shader(GLenum type)
 {

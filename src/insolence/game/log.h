@@ -9,6 +9,10 @@
 
 #include "../util/insolence_string.h"
 
+#ifdef INSOLENCE_ANDROID
+#include <SDL2/SDL.h>
+#endif
+
 namespace Log {
 	enum LOG {
 		NONE,
@@ -33,12 +37,18 @@ static void log_to_console(Log::LOG &type, const struct tm *time,
 	int min		= time->tm_min;
 	int sec		= time->tm_sec;
 
+#ifdef INSOLENCE_ANDROID
+	SDL_Log("%04d/%02d/%02d %02d:%02d:%02d: %s",
+			year, month, day, hour, min, sec, line);
+#else
 	printf("%04d/%02d/%02d %02d:%02d:%02d: ",
 			year, month, day, hour, min, sec);
 
 	for(int i = 0; i < type; ++i)
 		printf("*");
 	printf(" %s\n", line);
+#endif
+
 }
 
 static void log_to_file(Log::LOG &type, const struct tm *time,
@@ -51,6 +61,10 @@ static void log_to_file(Log::LOG &type, const struct tm *time,
 	int hour	= time->tm_hour;
 	int min		= time->tm_min;
 	int sec		= time->tm_sec;
+
+#ifdef INSOLENCE_ANDROID
+	return;
+#endif
 
 	if(Log::log_name == NULL)
 	{

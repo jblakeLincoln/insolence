@@ -1,3 +1,4 @@
+#ifndef INSOLENCE_ANDROID
 #include "../game/log.h"
 #include <cerrno>
 #include "audio_manager.h"
@@ -185,3 +186,5 @@ AudioTrack* AudioManager::LoadTrack(const char *filename)
 
 	return output;
 }
+
+#endif

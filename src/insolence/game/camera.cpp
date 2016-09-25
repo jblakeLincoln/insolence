@@ -99,7 +99,7 @@ void Camera::Post()
 
 	block.view = glm::lookAt(view_pos, lookat.GetPos(), upwards_vector);
 
-#ifdef INSOLENCE_OPENGL_DESKTOP
+#if INSOLENCE_OPENGL_DESKTOP || INSOLENCE_ANDROID
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(CameraBlock), &block,
 			GL_DYNAMIC_DRAW);

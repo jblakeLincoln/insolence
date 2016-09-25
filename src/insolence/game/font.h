@@ -70,26 +70,59 @@ public:
 	const double GetLineHeight() const { return height; }
 	const FontInfo& GetGlyph(char i) const { return c[i]; }
 
+	static int GetFTFaceFromFile(const char *path, FT_Library &ft,
+			FT_Face &face)
+#if INSOLENCE_OPENGL_DESKTOP || INSOLENCE_WEBGL
+	{
+		return FT_New_Face(ft, path, 0, &face);
+	}
+#elif INSOLENCE_ANDROID
+	{
+		int ret = -1;
+		FILE *file = fopen(path, "r");
+		size_t file_size;
+		char *buf;
+
+		if(file == NULL)
+			return ret;
+
+		fseek(file, 0, SEEK_END);
+		file_size = ftell(file);
+		rewind(file);
+
+		buf = new char[file_size + 1];
+		buf[file_size] = '\0';
+		fread(buf, 1, file_size, file);
+		fclose(file);
+
+		ret = FT_New_Memory_Face(ft, (FT_Byte*)buf, file_size, 0, &face);
+		delete[] buf;
+
+		return ret;
+	}
+#endif
+
 	static Font* Load(const char *path, int size,
 			FontType type=FontType::NORMAL)
 	{
 		Font *out;
-		FT_Library ft;
 		FT_Face face;
+		FT_Library ft = NULL;
 		FT_GlyphSlot g;
 		int glyph_padding;
-#ifdef INSOLENCE_OPENGL_DESKTOP
+#if INSOLENCE_OPENGL_DESKTOP || INSOLENCE_ANDROID
 		GLint gl_format = GL_RED;
 #elif INSOLENCE_WEBGL
 		GLint gl_format = GL_LUMINANCE;
 #endif
 
 		/* Init Freetype. */
-		if(FT_Init_FreeType(&ft)){
+		if(ft == NULL && FT_Init_FreeType(&ft)){
 			log(Log::FATAL, "FreeType failed to initialise");
+			return NULL;
 		}
 
-		if(FT_New_Face(ft, path, 0, &face))
+		if(Font::GetFTFaceFromFile(path, ft, face) != 0)
 		{
 			log(Log::FATAL, "Font (%d) - Couldn't generate face from %d",
 				   __FUNCTION__, path);

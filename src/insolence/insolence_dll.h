@@ -11,4 +11,8 @@
 	#define INSOLENCE_API
 #endif
 
+#ifdef INSOLENCE_ANDROID
+	#include "util/android_utils.h"
+#endif
+
 #endif

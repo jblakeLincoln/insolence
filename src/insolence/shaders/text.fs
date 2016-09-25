@@ -5,7 +5,7 @@ uniform sampler2D tex;
 
 void main()
 {
-	vec4 t = texture2D(tex, fs_uvs);
+	vec4 t = texture(tex, fs_uvs);
 
 	//if(t.a < 0.5)
 	//	discard;

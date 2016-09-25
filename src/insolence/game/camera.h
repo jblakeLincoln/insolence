@@ -126,7 +126,7 @@ public:
 		if(program == NULL)
 			return;
 
-#ifdef INSOLENCE_OPENGL_DESKTOP
+#if INSOLENCE_OPENGL_DESKTOP || INSOLENCE_ANDROID
 		uni_block = glGetUniformBlockIndex(program->GetID(), "Camera");
 
 #elif INSOLENCE_WEBGL
