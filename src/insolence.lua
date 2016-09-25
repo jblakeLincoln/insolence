@@ -2,7 +2,7 @@ project "insolence"
 	kind "SharedLib"
 	files { "**.h", "**.cpp" }
 
-	dofile("../settings.lua")
+	dofile("../insolence_settings.lua")
 
 	configuration "WebGL*"
 		targetextension ".bc"

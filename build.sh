@@ -53,7 +53,7 @@ function do_make()
 
 function linux_configure
 {
-	premake4 gmake
+	premake4 --file=insolence_projects.lua gmake
 
 	if [ $? -ne 0 ]; then
 		exit;
@@ -71,7 +71,7 @@ function linux_configure
 
 function windows_configure
 {
-	premake4 vs2012
+	premake4 --file=insolence_projects.lua vs2012
 
 	sed -i "s/v110/v140/g" src/insolence.vcxproj
 	sed -i "s/Level3/TurnOffAllWarnings/g" src/insolence.vcxproj
@@ -84,7 +84,7 @@ function windows_configure
 
 function webgl_configure
 {
-	premake4 gmake
+	premake4 --file=insolence_projects.lua gmake
 
 	do_make src
 	do_make samples

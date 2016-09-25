@@ -1,5 +1,3 @@
-#ifdef INSOLENCE_LINKS_OPENAL
-
 #include "../game/log.h"
 #include <cerrno>
 #include "audio_manager.h"
@@ -187,5 +185,3 @@ AudioTrack* AudioManager::LoadTrack(const char *filename)
 
 	return output;
 }
-
-#endif

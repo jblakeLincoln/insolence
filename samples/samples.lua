@@ -2,7 +2,7 @@ project "insolence_samples"
 	kind "ConsoleApp"
 
 	files { "**.h", "**.cpp" }
-	dofile("../settings.lua")
+	dofile("../insolence_settings.lua")
 
 	configuration { "LINUX" }
 		includedirs {

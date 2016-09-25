@@ -1,29 +1,11 @@
-local include_bullet = false
-local include_openal = true
+configurations { "Debug", "Release", "WebGL-Debug", "WebGL-Release" }
 
 if os.get() == "windows" then
 	debugdir "bin"
 end
 
-configurations { "Debug", "Release", "WebGL-Debug", "WebGL-Release" }
-
 defines {"GLM_FORCE_RADIANS"}
-
-if include_bullet == true then
-	defines{"INSOLENCE_LINKS_BULLET"}
-
-	configuration "not WebGL*"
-	links {"BulletDynamics", "BulletCollision", "LinearMath"}
-end
-
-if include_openal == true then
-	defines{"INSOLENCE_LINKS_OPENAL"}
-
-	configuration { "WINDOWS", "not WebGL*" }
-		links { "OpenAL32" }
-	configuration { "LINUX", "not WebGL*" }
-		links {"openal"}
-end
+defines{"INSOLENCE_LINKS_OPENAL"}
 
 configuration { "WINDOWS or LINUX", "not WebGL*" }
 	defines { "INSOLENCE_OPENGL_DESKTOP" }
@@ -31,11 +13,10 @@ configuration { "WINDOWS or LINUX", "not WebGL*" }
 configuration "WebGL*"
 	defines { "INSOLENCE_WEBGL" }
 
-configuration { "LINUX or WebGL*" }
-	buildoptions "-std=c++11"
-
 configuration { "LINUX" }
 	defines {"LINUX"}
+
+	buildoptions "-std=c++11"
 
 	includedirs {
 		"include",
@@ -57,6 +38,7 @@ configuration { "LINUX", "not WebGL*" }
 		"SDL2",
 		"X11", "Xxf86vm", "Xinerama", "Xcursor", "Xrandr", "pthread", "Xi",
 		"assimp",
+		"openal",
 		"freetype"
 	}
 
@@ -81,6 +63,7 @@ configuration { "WINDOWS", "not WebGL*" }
 		"SDL2",
 		"DevIL", "ILU", "ILUT",
 		"assimp",
+		"OpenAL32",
 		"freetype"
 	}
 
