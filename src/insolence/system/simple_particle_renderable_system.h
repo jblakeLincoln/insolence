@@ -17,7 +17,7 @@ private:
 
 	SimpleParticleRenderableSystem() {}
 	RenderManagerSimpleParticles *renderer;
-	void EndCreation(Entity *e, SimpleParticleRenderable *c);
+	void OnCreate(Entity *e, SimpleParticleRenderable *c);
 
 public:
 	SimpleParticleRenderableSystem(RenderManagerSimpleParticles*);

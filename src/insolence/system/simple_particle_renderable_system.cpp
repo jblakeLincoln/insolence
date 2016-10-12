@@ -6,7 +6,7 @@ SimpleParticleRenderableSystem::SimpleParticleRenderableSystem(
 {
 }
 
-void SimpleParticleRenderableSystem::EndCreation(Entity *e,
+void SimpleParticleRenderableSystem::OnCreate(Entity *e,
 		SimpleParticleRenderable *c)
 {
 	r_eng.seed(time(NULL));

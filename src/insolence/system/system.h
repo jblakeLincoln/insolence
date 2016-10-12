@@ -66,7 +66,7 @@ private:
 	{
 		components.emplace(e, *comp);
 		TComponent *t = &(components.find(e)->second);
-		EndCreation(e, t);
+		OnCreate(e, t);
 
 		return t;
 	}
@@ -99,21 +99,21 @@ public:
 	/**
 	 * Overload this function for specialised removal.
 	 */
-	virtual void RemoveOverride(Entity *e, TComponent *c) {}
+	virtual void OnRemove(Entity *e, TComponent *c) {}
 
 	/**
 	 *	Calls Remove and erases the component attached to the sent entity from
 	 *	the storage container.
 	 */
 	void Remove(Entity *e) final {
-		RemoveOverride(e, &components.find(e)->second);
+		OnRemove(e, &components.find(e)->second);
 		components.erase(e);
 	}
 
 	/**
 	 * Override function for performing final actions just before adding.
 	 */
-	virtual void EndCreation(Entity* e, TComponent *c) {}
+	virtual void OnCreate(Entity* e, TComponent *c) {}
 
 	/**
 	 * \return	Component type.
