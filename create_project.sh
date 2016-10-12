@@ -131,7 +131,7 @@ echo \
 	links { "insolence"}
 
 	dofile("./src/game.lua")
-' > "$DESTINATION_DIR/premake4.lua"
+' > "$DESTINATION_DIR/insolence_projects.lua"
 }
 
 #
@@ -151,7 +151,7 @@ echo \
 		fi
 
 		echo -e "$line" >> "$DESTINATION_DIR/src/game.lua"
-	done < "settings.lua"
+	done < "insolence_settings.lua"
 }
 
 ###############
