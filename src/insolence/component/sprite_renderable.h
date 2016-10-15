@@ -13,6 +13,7 @@ struct INSOLENCE_API SpriteRenderable : Component {
 	Animation animation;
 	glm::vec4 colour;
 	glm::vec2 origin;
+	float rot;
 	uint32_t layer;
 	bool hidden;
 
@@ -20,6 +21,7 @@ struct INSOLENCE_API SpriteRenderable : Component {
 			const glm::vec4& colour=glm::vec4(1.f),
 			const glm::vec2 &origin=glm::vec2(0.f),
 			const Animation& animation=Animation(),
+			float rot=0,
 			uint32_t layer=0,
 			bool hidden=false)
 	:
@@ -27,6 +29,7 @@ struct INSOLENCE_API SpriteRenderable : Component {
 		colour(colour),
 		animation(animation),
 		origin(origin),
+		rot(rot),
 		layer(layer),
 		hidden(hidden)
 	{}

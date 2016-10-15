@@ -19,8 +19,13 @@ void SpriteRenderableSystem::Manage(const GameTime& gametime)
 		s->animation.Progress(gametime.GetFrameTime());
 
 		glm::mat4 model = m->GetModelMatrix();
-		model[3][0] -= s->origin.x;
-		model[3][1] -= s->origin.y;
+
+		model = glm::translate(model,
+				glm::vec3(s->origin.x, s->origin.y, 0.f));
+		model = glm::rotate(model, glm::radians(360 - s->rot),
+				glm::vec3(0.f, 0.f, 1.f));
+		model = glm::translate(model,
+				glm::vec3(-s->origin.x, -s->origin.y, 0.f));
 
 		renderer->Add(s->texture, model, s->colour,
 				s->animation.GetAnimationRectangle(s->texture), s->layer);
