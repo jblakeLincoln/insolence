@@ -17,7 +17,7 @@ struct Texture;
 struct INSOLENCE_API RenderManager2D : public RenderManager
 {
 	typedef std::unordered_map<Texture*, std::vector<float> > def_tex_data;
-	typedef std::map<uint32_t, def_tex_data> def_layer_data;
+	typedef std::map<int, def_tex_data> def_layer_data;
 
 	GLuint vao;
 	GLuint vbo_verts;
@@ -29,8 +29,8 @@ struct INSOLENCE_API RenderManager2D : public RenderManager
 	GLint attrib_colour;
 	GLint attrib_model_uv;
 
-	std::map<uint32_t, std::unordered_map<Texture*, std::vector<float>>> data;
-	std::map<uint32_t, std::unordered_map<Texture*, float> >count;
+	std::map<int, std::unordered_map<Texture*, std::vector<float>>> data;
+	std::map<int, std::unordered_map<Texture*, float> >count;
 
 	RenderManager2D(const char *vs=NULL, const char *fs=NULL);
 	~RenderManager2D();
@@ -49,7 +49,7 @@ struct INSOLENCE_API RenderManager2D : public RenderManager
 	 * \param layer		Placement in draw queue, 0 drawn last.
 	 */
 	void Add(Texture *tex, const glm::mat4 &model, const glm::vec4& colour,
-			uint32_t layer);
+			int layer);
 
 	/**
 	 * Queue up a sprite to be drawn.
@@ -62,7 +62,7 @@ struct INSOLENCE_API RenderManager2D : public RenderManager
 	 *
 	 */
 	void Add(Texture *tex, const glm::mat4 &model, const glm::vec4& colour,
-			const glm::vec4 &rect, uint32_t layer);
+			const glm::vec4 &rect, int layer);
 
 	/**
 	 * Queue up text sprites to be drawn.

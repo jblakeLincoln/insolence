@@ -21,6 +21,6 @@ void TextRenderableSystem::Manage(const GameTime& gametime)
 			continue;
 
 		renderer->AddText(t->font, t->text, m->GetPosXY(),
-				t->colour, t->halign, t->valign, t->scale);
+				t->colour, t->halign, t->valign, t->scale * m->GetScaleXY());
 	}
 }

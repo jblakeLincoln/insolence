@@ -14,7 +14,7 @@ struct INSOLENCE_API SpriteRenderable : Component {
 	glm::vec4 colour;
 	glm::vec2 origin;
 	float rot;
-	uint32_t layer;
+	int layer;
 	bool hidden;
 
 	SpriteRenderable(Texture* texture=Texture::GetDefault(),
@@ -22,7 +22,7 @@ struct INSOLENCE_API SpriteRenderable : Component {
 			const glm::vec2 &origin=glm::vec2(0.f),
 			const Animation& animation=Animation(),
 			float rot=0,
-			uint32_t layer=0,
+			int layer=0,
 			bool hidden=false)
 	:
 		texture(texture),

@@ -51,14 +51,25 @@ struct INSOLENCE_API Font {
 	};
 
 private:
-	FontInfo c[128];
+	static constexpr char const *default_character_set =
+		"abcdefghijklmnopqrstuvwxyz"
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		"1234567890!\"£$%^&*€()"
+		"-=_+[]{};'#:@~,./<>?\\|¬"
+		" \0";
+
+	//FontInfo c[128];
+	std::unordered_map<char, FontInfo> chars_pixelsize;
+	std::unordered_map<char, FontInfo> chars_scaled;
+
 	double w;
 	double h;
 
-	int height;
+	double height;
 	int max_glyph_width;
 	bool is_monospace;
 	int kerning;
+	int pixel_size;
 
 public:
 	Material *mat;
@@ -68,7 +79,9 @@ public:
 	const double GetAtlasWidth() const { return w; }
 	const double GetAtlasHeight() const { return h; }
 	const double GetLineHeight() const { return height; }
-	const FontInfo& GetGlyph(char i) const { return c[i]; }
+	const double GetPixelSize() const { return pixel_size; }
+	const FontInfo& GetGlyph(char i) { return chars_pixelsize[i]; }
+	const FontInfo& GetScaledGlyph(char i) { return chars_scaled[i]; }
 
 	static int GetFTFaceFromFile(const char *path, FT_Library &ft,
 			FT_Face &face)
@@ -136,6 +149,7 @@ public:
 		FT_Set_Pixel_Sizes(face, 0, size);
 		g = face->glyph;
 		out->height = face->size->metrics.height / 64.0;
+		out->pixel_size = size;
 
 		/*
 		 * Texture bleeding is a problem at larger sizes and this seems like
@@ -152,7 +166,7 @@ public:
 		 * Find out the width for the whole texture, and create an empty
 		 * one of that width and height;
 		 */
-		for(int i = 32; i < 128; ++i)
+		for(int i = 0; i < strlen(default_character_set); ++i)
 		{
 			if(FT_Load_Char(face, i, FT_LOAD_RENDER))
 				continue;
@@ -175,27 +189,37 @@ public:
 		 */
 		int x = 0;
 
-		for(int i = 32; i < 128; ++i)
+		for(int i = 0; i < strlen(default_character_set); ++i)
 		{
-			if(FT_Load_Char(face, i, FT_LOAD_RENDER))
+			if(FT_Load_Char(face, default_character_set[i], FT_LOAD_RENDER))
 				continue;
 
+			FontInfo *c = &out->chars_pixelsize[default_character_set[i]];
+			FontInfo *cs = &out->chars_scaled[default_character_set[i]];
 
 			x += glyph_padding;
 
-			out->c[i].ax = g->advance.x >> 6;
-			out->c[i].ay = g->advance.y >> 6;
-			out->c[i].x = x;
-			out->c[i].w = g->bitmap.width;
-			out->c[i].h = g->bitmap.rows;
-			out->c[i].l = g->bitmap_left;
-			out->c[i].t = g->bitmap_top;
+			c->ax = g->advance.x >> 6;
+			c->ay = g->advance.y >> 6;
+			c->x = x;
+			c->w = g->bitmap.width;
+			c->h = g->bitmap.rows;
+			c->l = g->bitmap_left;
+			c->t = g->bitmap_top;
 
-			glTexSubImage2D(GL_TEXTURE_2D, 0, x, 0, out->c[i].w,
-					out->c[i].h, gl_format, GL_UNSIGNED_BYTE,
+			cs->ax = c->ax / size;
+			cs->ay = c->ay / size;
+			cs->x  = c->x / size;
+			cs->w  = c->w / size;
+			cs->h  = c->h / size;
+			cs->l  = c->l / size;
+			cs->t  = c->t / size;
+
+			glTexSubImage2D(GL_TEXTURE_2D, 0, x, 0, c->w,
+					c->h, gl_format, GL_UNSIGNED_BYTE,
 					g->bitmap.buffer);
 
-			x += out->c[i].w;
+			x += c->w;
 		}
 
 		if(type == FontType::NORMAL)
