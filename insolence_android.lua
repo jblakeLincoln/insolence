@@ -60,7 +60,8 @@ solution "Insolence"
 
 		files {
 			"samples/**.cpp",
-			"android/jni/SDL2/src/main/android/SDL_android_main.c"
+			"android/jni/SDL2/src/main/android/SDL_android_main.c",
+			"android/jni/include/insolence/util/android_jni.cpp"
 		}
 
 		includedirs {
