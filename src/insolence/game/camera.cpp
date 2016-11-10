@@ -55,7 +55,7 @@ void Camera::Post()
 		int prev_h = window_fb_height;
 
 		window_fb_width = window->GetFramebufferWidth();
-		window_fb_height= window->GetFramebufferHeight();
+		window_fb_height = window->GetFramebufferHeight();
 
 		if(window_fb_width > 0 && window_fb_height > 0)
 			perspective.aspect_ratio =
@@ -204,4 +204,14 @@ void Camera::UpdatePerspective()
 			perspective.aspect_ratio,
 			perspective.z_near,
 			perspective.z_far);
+}
+
+void Camera::SetViewport(int x, int y, int w, int h) {
+	window = NULL;
+	viewport_x = x;
+	viewport_y = y;
+	window_fb_width = w;
+	window_fb_height = h;
+
+	glViewport(x, y, w, h);
 }

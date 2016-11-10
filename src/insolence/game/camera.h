@@ -69,6 +69,8 @@ private:
 	Window *window = NULL;
 	int window_fb_width;
 	int window_fb_height;
+	int viewport_x = 0;
+	int viewport_y = 0;
 
 	static GLint uni_block;
 	static Camera *active_camera;
@@ -151,6 +153,7 @@ public:
 	void UpdatePerspective();
 	void UpdateOrtho();
 
+	void SetViewport(int x, int y, int w, int h);
 	void SetType(Type t);
 };
 
