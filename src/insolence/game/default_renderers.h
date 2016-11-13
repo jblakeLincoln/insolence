@@ -1,6 +1,7 @@
 #ifndef DEFAULT_RENDERERS_H
 #define DEFAULT_RENDERERS_H
 
+#include "gametime.h"
 #include "../render/render_manager_2d.h"
 #include "../render/render_manager_3d.h"
 
@@ -17,7 +18,7 @@ public:
 	RenderManager3D *Renderer3D;
 	RenderManager2D *RendererText;
 
-	void Flush();
+	void Flush(const GameTime &gametime);
 
 	static DefaultRenderer *Get()
 	{

@@ -60,7 +60,7 @@ RenderManager3D::~RenderManager3D()
 	}
 }
 
-void RenderManager3D::Flush()
+void RenderManager3D::Flush(const GameTime &gametime)
 {
 	/*
 	 * This looks pretty awful ... but it works to a reasonable standard

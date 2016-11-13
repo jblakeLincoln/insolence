@@ -74,13 +74,13 @@ protected:
 	 */
 	virtual void Update(const GameTime& gametime)=0;
 
-	virtual void PreDraw() {}
+	virtual void PreDraw(const GameTime &gametime) {}
 
 	/**
 	 * Called once per tick by Update. Use this to separate out your game
 	 * logic from rendering.
 	 */
-	virtual void Draw() {}
+	virtual void Draw(const GameTime &gametime) {}
 
 	/**
 	 * Called once, when a call is made to close the window and exit. Use

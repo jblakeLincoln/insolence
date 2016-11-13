@@ -113,7 +113,7 @@ RenderManager2D::~RenderManager2D()
 	glDeleteVertexArrays(1, &vao);
 }
 
-void RenderManager2D::Flush()
+void RenderManager2D::Flush(const GameTime &gametime)
 {
 	glUseProgram(shader_program->GetID());
 

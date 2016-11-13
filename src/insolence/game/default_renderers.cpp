@@ -16,9 +16,9 @@ DefaultRenderer::~DefaultRenderer()
 	delete RendererText;
 }
 
-void DefaultRenderer::Flush()
+void DefaultRenderer::Flush(const GameTime &gametime)
 {
-	Renderer2D->Flush();
-	RendererText->Flush();
-	Renderer3D->Flush();
+	Renderer2D->Flush(gametime);
+	RendererText->Flush(gametime);
+	Renderer3D->Flush(gametime);
 }

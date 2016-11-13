@@ -38,7 +38,7 @@ struct INSOLENCE_API RenderManager2D : public RenderManager
 	/**
 	 * Virtual from RenderManager - deals with flushing the draw.
 	 */
-	void Flush();
+	void Flush(const GameTime &gametime);
 
 	/**
 	 * Queue up a sprite to be drawn.

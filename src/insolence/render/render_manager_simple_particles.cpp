@@ -72,7 +72,7 @@ void RenderManagerSimpleParticles::Add(float *data_in, int count)
 	data[data_in] = count;
 }
 
-void RenderManagerSimpleParticles::Flush()
+void RenderManagerSimpleParticles::Flush(const GameTime &gametime)
 {
 	glUseProgram(shader_program->GetID());
 #ifdef INSOLENCE_WEBGL

@@ -5,6 +5,7 @@
 
 #include "../game/log.h"
 #include "shader_program.h"
+#include "../game/gametime.h"
 
 #include <glm/matrix.hpp>
 
@@ -20,7 +21,7 @@ struct INSOLENCE_API RenderManager
 	/**
 	 * The renderer drawing at the end of the frame.
 	 */
-	virtual void Flush()=0;
+	virtual void Flush(const GameTime &gametime)=0;
 
 	RenderManager() {}
 	virtual ~RenderManager();

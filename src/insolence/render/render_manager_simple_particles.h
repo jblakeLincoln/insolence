@@ -29,7 +29,7 @@ struct INSOLENCE_API RenderManagerSimpleParticles : public RenderManager
 	~RenderManagerSimpleParticles();
 
 	void Add(float *data, int count);
-	void Flush();
+	void Flush(const GameTime &gametime);
 };
 
 #endif
