@@ -97,11 +97,13 @@ function webgl_configure
 emcc \
 libinsolence.bc insolence_samples.bc \
 --preload-file shaders --preload-file assets --memory-init-file 1 ../lib/libassimp.so \
--s USE_SDL=2 -s USE_FREETYPE=1 -s TOTAL_MEMORY=32777216 \
+-s USE_SDL=2 -s USE_FREETYPE=1 \
 -o insolence_samples.js"
 
 	if [ "$CONFIGURATION" == "webgl-release" ]; then
-		webgl_command="${webgl_command} -O3"
+		webgl_command="${webgl_command} -O3 -s TOTAL_MEMORY=65554432"
+	else
+		webgl_command="${webgl_command} -s ALLOW_MEMORY_GROWTH=1"
 	fi
 
 	$webgl_command
