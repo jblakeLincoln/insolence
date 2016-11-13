@@ -33,6 +33,7 @@ private:
 	uint16_t framebuffer_height;
 
 	bool should_close;
+	bool is_fullscreen;
 	static bool should_quit;
 
 public:
@@ -49,9 +50,35 @@ public:
 		return glm::uvec2(framebuffer_width, framebuffer_height);
 	}
 
-	bool ShouldClose() { return should_close || should_quit; }
-	void SetShouldClose(bool c) { should_close = c; }
-	static void SetShouldQuit(bool c) { should_quit = c; }
+	bool ShouldClose() {
+		return should_close || should_quit;
+	}
+
+	void SetShouldClose(bool c) {
+		should_close = c;
+	}
+
+	static void SetShouldQuit(bool c) {
+		should_quit = c;
+	}
+
+	void SetFullscreen(bool f) {
+		uint32_t flag = f ? SDL_WINDOW_FULLSCREEN : 0;
+
+		if(f != is_fullscreen)
+			SDL_SetWindowFullscreen(sdl_window, flag);
+
+		is_fullscreen = f;
+	}
+
+	void SetWindowSize(uint32_t w, uint32_t h) {
+		SDL_SetWindowSize(sdl_window, w, h);
+		HandleWindowResize();
+	}
+
+	bool IsFullScreen() {
+		return is_fullscreen;
+	}
 
 	void SetTitle(const char *format, ...);
 
@@ -162,6 +189,8 @@ public:
 		/* For WebGL, which perceives an initial window size of 0, 0 */
 		out->framebuffer_width = width;
 		out->framebuffer_height = height;
+
+		out->is_fullscreen = false;
 
 		log(Log::INFO, "Window (%s) - Successful window creation",
 				__FUNCTION__);
