@@ -18,8 +18,12 @@ private:
 	 * Initialises ID to zero;
 	 */
 	Texture();
-
 	static Texture *tex_default;
+
+	GLint internal_format;
+	GLint format;
+	GLenum datatype;
+
 
 public:
 	GLuint id;
@@ -49,6 +53,8 @@ public:
 	GLint GetID() {
 		return id;
 	}
+
+	void Blank(uint32_t w, uint32_t h);
 
 	/**
 	 * Load a 1x1 texture with an RGBA colour.
@@ -87,6 +93,9 @@ public:
 	 */
 
 	static Texture* LoadFile(const char *path);
+
+	static Texture* CreateBlank(uint32_t w, uint32_t h, GLint in_iformat=GL_RGB,
+			GLint in_format=GL_RGB, GLenum in_type=GL_UNSIGNED_BYTE);
 };
 
 #endif
