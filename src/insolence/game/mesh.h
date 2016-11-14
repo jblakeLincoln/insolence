@@ -49,7 +49,7 @@ public:
 					scene->mMeshes[0]->mVertices[i][j];
 		}
 
-		if(scene->mMeshes[0]->mNormals != NULL)
+		if(scene->mMeshes[0]->HasNormals() == true)
 		{
 			for(int i = 0; i < vert_count; ++i)
 				for(int j = 0; j < 3; ++j)
@@ -60,7 +60,7 @@ public:
 			log(Log::WARN, "Mesh (%s) - %s has no normal data.",
 					__FUNCTION__, path);
 
-		if(scene->mMeshes[0]->mTextureCoords != NULL)
+		if(scene->mMeshes[0]->HasTextureCoords(0) > 0)
 		{
 			for(int i = 0; i < vert_count; ++i)
 			{
