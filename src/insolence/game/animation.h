@@ -10,16 +10,18 @@
 
 struct Texture;
 struct INSOLENCE_API Animation {
-	int current_frame;
-	int cols;
-	int frames;
-	float frame_time;
-	glm::vec2 offset;
-	glm::vec2 size;
+private:
+	uint32_t current_frame;
 	glm::vec4 rect;
 	TimeSpan timer;
 
 public:
+	glm::vec2 offset;
+	glm::vec2 size;
+	uint32_t cols;
+	uint32_t frames;
+	float frame_time;
+
 	Animation();
 	~Animation();
 

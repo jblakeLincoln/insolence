@@ -4,17 +4,15 @@
 
 Animation::Animation()
 :
-	frames(0),
-	cols(0),
+	frames(1),
+	cols(1),
 	offset(glm::vec2(0)),
 	rect(glm::vec4(0, 0, 1, 1)),
 	frame_time(0)
-{
-}
+{}
 
 Animation::~Animation()
-{
-}
+{}
 
 Animation::Animation(int in_frames, int in_cols,
 		const glm::vec4& in_rect, int in_time)
@@ -22,14 +20,18 @@ Animation::Animation(int in_frames, int in_cols,
 	cols(in_cols),
 	offset(glm::vec2(in_rect.x, in_rect.y)),
 	size(glm::vec2(in_rect.z, in_rect.w)),
+	rect(in_rect),
 	frame_time(in_time),
 	timer(0)
 {}
 
 void Animation::Progress(const TimeSpan& frametime)
 {
-	if(frames == 0)
+	if(frames == 0 || frame_time == 0)
 		return;
+
+	if(cols == 0)
+		cols = 1;
 
 	timer += frametime;
 
