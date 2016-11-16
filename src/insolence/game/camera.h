@@ -114,12 +114,17 @@ public:
 		int uni_view = glGetUniformLocation(shader_program->GetID(),
 				"mat_view");
 
+		if(uni_proj < 0 && uni_view < 0)
+			return;
+
 		glUniformMatrix4fv(uni_proj, 1, GL_FALSE,
 				&active_camera->block.proj[0][0]);
 		glUniformMatrix4fv(uni_view, 1, GL_FALSE,
 				&active_camera->block.view[0][0]);
 
 		uniform_dict[shader_program].manually_posted = true;
+		uniform_dict[shader_program].proj = uni_proj;
+		uniform_dict[shader_program].view = uni_view;
 	}
 #endif
 
@@ -129,13 +134,20 @@ public:
 			return;
 
 #if INSOLENCE_OPENGL_DESKTOP || INSOLENCE_ANDROID
-		uni_block = glGetUniformBlockIndex(program->GetID(), "Camera");
+		GLint ub = glGetUniformBlockIndex(program->GetID(), "Camera");
+
+		if(ub >= 0)
+			uni_block = ub;
 
 #elif INSOLENCE_WEBGL
-		uniform_dict[program].proj =
-			glGetUniformLocation(program->GetID(), "mat_proj");
-		uniform_dict[program].view =
-			glGetUniformLocation(program->GetID(), "mat_view");
+		GLint uni_proj = glGetUniformLocation(program->GetID(), "mat_proj");
+		GLint uni_view = glGetUniformLocation(program->GetID(), "mat_view");
+
+		if(uni_proj < 0 && uni_view < 0)
+			return;
+
+		uniform_dict[program].proj = uni_proj;
+		uniform_dict[program].view = uni_view;
 		uniform_dict[program].manually_posted = false;
 #endif
 	}
