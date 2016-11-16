@@ -262,7 +262,7 @@ void RenderManager2D::AddText(Font *f, const char *str, const glm::vec2& pos,
 
 		if(str[i] == '\n' || i == 0)
 		{
-			double new_offset_v;
+			double new_offset_v = 0;
 			length = lengths[line_count];
 
 			if(f->IsMonospace() == true)
