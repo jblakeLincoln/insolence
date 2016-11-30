@@ -135,12 +135,12 @@ public:
 	 */
 	template<typename First, typename... Types>
 	uint32_t GetBitmask() {
-		uint32_t mask = GetComponentID(typeid(First));
+		uint32_t mask = GetComponentID(typeid(First*));
 
 		if(sizeof...(Types) == 0)
 			return mask;
 
-		GetBitmaskMultiple(&mask, std::tuple<Types...>());
+		GetBitmaskMultiple(&mask, std::tuple<Types*...>());
 		return mask;
 	}
 

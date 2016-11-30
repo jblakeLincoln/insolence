@@ -127,12 +127,12 @@ public:
 
 	template<typename First, typename... Types>
 	bool Has() {
-		bool ret = component_mask & GetComponentID(typeid(First));
+		bool ret = component_mask & GetComponentID(typeid(First*));
 
 		if(ret == 0 || sizeof...(Types) == 0)
 			return ret;
 
-		return HasComponent(std::tuple<Types...>());
+		return HasComponent(std::tuple<Types*...>());
 	}
 
 	bool Has(uint32_t mask) {
@@ -154,7 +154,7 @@ T* Entity::Add(Args... args)
 	if(CheckSystemExists(type) == false)
 		SendSystemToManager((ISystem*)new System<T>(), type);
 
-	component_mask |= GetComponentID(type);
+	component_mask |= GetComponentID(typeid(T*));
 
 	return (T*)(components[type] = (T*)SendToManager(&component, type));
 }
@@ -172,7 +172,7 @@ void Entity::Remove()
 
 	RemoveFromManager(type);
 	components.erase(type);
-	component_mask &= ~(GetComponentID(type));
+	component_mask &= ~(GetComponentID(typeid(T*)));
 }
 
 #endif
