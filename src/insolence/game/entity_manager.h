@@ -130,6 +130,22 @@ public:
 		return e;
 	}
 
+	template<typename... T>
+	std::vector<Entity*> GetAllWithComponent()
+	{
+		std::vector<Entity*> out;
+
+		std::unordered_map<uint32_t, Entity*>::iterator it;
+
+		for(it = entities_lookup.begin(); it != entities_lookup.end(); ++it)
+		{
+			if(it->second->Has<T...>())
+				out.push_back(it->second);
+		}
+
+		return out;
+	}
+
 	/**
 	 * Get the bitmask identifier of a component or multiple components.
 	 */
