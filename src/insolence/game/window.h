@@ -297,6 +297,14 @@ public:
 					Input::SetMouseButton(event.button.button,
 							event.button.state == SDL_PRESSED);
 					break;
+
+				case SDL_FINGERUP:
+				case SDL_FINGERMOTION:
+				case SDL_FINGERDOWN:
+					Input::SetTouch(event.tfinger.fingerId,
+							event.type != SDL_FINGERUP,
+							event.tfinger.x, event.tfinger.y);
+
 			}
 		}
 

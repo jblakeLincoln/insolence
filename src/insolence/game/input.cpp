@@ -10,9 +10,18 @@ std::bitset<JMOUSE_MAX_BTNS> Input::mouse_prev;
 std::bitset<JMOUSE_MAX_BTNS> Input::mouse_up;
 std::bitset<JMOUSE_MAX_BTNS> Input::mouse_down;
 
-Input::GamePad Input::pads[JPAD_MAX_PADS];
+std::bitset<JTOUCH_MAX_TOUCHES> Input::touches;
+std::bitset<JTOUCH_MAX_TOUCHES> Input::touches_prev;
+std::bitset<JTOUCH_MAX_TOUCHES> Input::touches_up;
+std::bitset<JTOUCH_MAX_TOUCHES> Input::touches_down;
 
+
+Input::GamePad Input::pads[JPAD_MAX_PADS];
 std::unordered_map<int, SDL_GameController*> Input::game_controllers;
+
+Input::TouchInfo Input::default_touch;
+std::unordered_map<int, int> Input::touch_ids;
+Input::TouchInfo Input::touch_info[JTOUCH_MAX_TOUCHES];
 
 std::unordered_map<short, short> Input::mouse_dictionary =
 {

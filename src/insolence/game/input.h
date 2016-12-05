@@ -44,6 +44,22 @@ private:
 
 	static std::unordered_map<int, SDL_GameController*> game_controllers;
 
+	static std::bitset<JTOUCH_MAX_TOUCHES> touches;
+	static std::bitset<JTOUCH_MAX_TOUCHES> touches_prev;
+	static std::bitset<JTOUCH_MAX_TOUCHES> touches_up;
+	static std::bitset<JTOUCH_MAX_TOUCHES> touches_down;
+
+	struct TouchInfo {
+		uint32_t id;
+		int state = 0;
+		float x = 0;
+		float y = 0;
+	}; static TouchInfo touch_info[JTOUCH_MAX_TOUCHES];
+
+	static std::unordered_map<int, int> touch_ids;
+	static TouchInfo default_touch;
+
+
 public:
 	static void OpenJoystick(int id)
 	{
@@ -94,6 +110,25 @@ public:
 		mouse[btn] = state;
 	}
 
+	static void SetTouch(uint32_t id, bool state, float x, float y)
+	{
+		if(touch_ids.find(id) == touch_ids.end())
+		{
+			if(touch_ids.size() >= JTOUCH_MAX_TOUCHES)
+				return;
+			int i = touch_ids.size();
+			touch_ids[id] = i;
+		}
+
+		int rid = touch_ids.find(id)->second;
+
+		TouchInfo *t = &touch_info[rid];
+		touches[rid] = state;
+		t->id = id;
+		t->x = x;
+		t->y = y;
+	}
+
 	/**
 	 * Update key and mouse states, and sets the current states to previous.
 	 */
@@ -101,6 +136,7 @@ public:
 	{
 		std::bitset<JKEY_MAX_KEYS> key_changes = keys ^ keys_prev;
 		std::bitset<JMOUSE_MAX_BTNS> mouse_changes = mouse ^ mouse_prev;
+		std::bitset<JTOUCH_MAX_TOUCHES> touch_changes = touches ^ touches_prev;
 
 		keys_down = key_changes & keys;
 		keys_up = key_changes & (~keys);
@@ -109,6 +145,10 @@ public:
 		mouse_down = mouse_changes & mouse;
 		mouse_up = mouse_changes & (~mouse);
 		mouse_prev = mouse;
+
+		touches_down = touch_changes & touches;
+		touches_up = touch_changes & (~touches);
+		touches_prev = touches;
 
 		for(int i = 0; i < JPAD_MAX_PADS; ++i)
 		{
@@ -122,6 +162,18 @@ public:
 			p->pad_btns_down = pad_changes & p->pad_btns;
 			p->pad_btns_up = pad_changes & (~p->pad_btns);
 			p->pad_btns_prev = p->pad_btns;
+		}
+
+		for(int i = 0; i < JTOUCH_MAX_TOUCHES; ++i)
+		{
+			if(touches_down[i])// && touches_prev[i])
+				touch_info[i].state = JTOUCH_DOWN;
+			else if(touches_up[i])// && touches_prev[i] == false)
+				touch_info[i].state = JTOUCH_UP;
+			else if(touches[i])
+				touch_info[i].state = JTOUCH_HOLD;
+			else
+				touch_info[i].state = 0;
 		}
 	}
 
@@ -153,6 +205,14 @@ public:
 			return JMOUSE_HOLD;
 
 		return 0;
+	}
+
+	static const TouchInfo* GetTouch(uint32_t id)
+	{
+		if(id > JTOUCH_MAX_TOUCHES - 1)
+			return &default_touch;
+
+		return &touch_info[id];
 	}
 
 	static glm::vec2 GetCursorPos()

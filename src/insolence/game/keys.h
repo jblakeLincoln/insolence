@@ -126,4 +126,10 @@
 #define JBTN_PRESS                             1
 #define JBTN_HOLD                              2
 
+#define JTOUCH_UP                             -1
+#define JTOUCH_DOWN                            1
+#define JTOUCH_HOLD                            2
+
+#define JTOUCH_MAX_TOUCHES                     8
+
 #endif
