@@ -74,6 +74,10 @@ public:
 		messages = new MessageManager(this);
 	}
 
+	uint32_t GetCount() {
+		return entities_lookup.size();
+	}
+
 	/**
 	 * Creates a container system that will simply store all types of
 	 * components. Not entirely necessary to call since if a component is made
