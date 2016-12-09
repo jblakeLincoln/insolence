@@ -4,12 +4,17 @@
 
 Animation::Animation()
 :
-	frames(1),
-	cols(1),
-	offset(glm::vec2(0)),
-	rect(glm::vec4(0, 0, 1, 1)),
-	frame_time(0)
-{}
+	rect(glm::vec4(0, 0, 1, 1))
+{
+}
+
+void Animation::Setup(Texture *t)
+{
+	if(t == NULL)
+		return;
+
+	size = glm::vec2(t->GetWidth(), t->GetHeight());
+}
 
 Animation::~Animation()
 {}
@@ -23,15 +28,30 @@ Animation::Animation(int in_frames, int in_cols,
 	rect(in_rect),
 	frame_time(in_time),
 	timer(0)
-{}
+{
+}
+
+void Animation::SetFrame(int frame)
+{
+	if(cols == 0)
+		cols = 1;
+
+	float current_col = frame % cols;
+	float current_row = frame / cols;
+
+	rect.x = offset.x + (size.x * (float)current_col);
+	rect.y = offset.y + (size.y * (float)current_row);
+	rect.z = size.x;
+	rect.w = size.y;
+}
 
 void Animation::Progress(const TimeSpan& frametime)
 {
 	if(frames == 0 || frame_time == 0)
+	{
+		SetFrame(0);
 		return;
-
-	if(cols == 0)
-		cols = 1;
+	}
 
 	timer += frametime;
 
@@ -41,15 +61,7 @@ void Animation::Progress(const TimeSpan& frametime)
 					(int)(frame_time * frames)));
 	}
 
-	current_frame = (double)timer.ElapsedMilliseconds() / frame_time;
-
-	float current_col = current_frame % cols;
-	float current_row = current_frame / cols;
-
-	rect.x = offset.x + (size.x * (float)current_col);
-	rect.y = offset.y + (size.y * (float)current_row);
-	rect.z = size.x;
-	rect.w = size.y;
+	SetFrame((double)timer.ElapsedMilliseconds() / frame_time);
 }
 
 glm::vec4 Animation::GetAnimationRectangle(const Texture *t) const

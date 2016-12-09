@@ -18,9 +18,9 @@ private:
 public:
 	glm::vec2 offset;
 	glm::vec2 size;
-	uint32_t cols;
-	uint32_t frames;
-	float frame_time;
+	uint32_t cols = 1;
+	uint32_t frames = 0;
+	float frame_time = 0;
 
 	Animation();
 	~Animation();
@@ -33,6 +33,9 @@ public:
 	 */
 	Animation(int frames, int cols,
 		const glm::vec4& in_rect, int time);
+
+	void Setup(Texture *t);
+	void SetFrame(int frame);
 
 	void Progress(const TimeSpan& frametime);
 
