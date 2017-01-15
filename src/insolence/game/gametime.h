@@ -44,6 +44,10 @@ public:
 	const TimeSpan& GetFrameTime() const {
 		return frame_time;
 	}
+
+	const double GetDeltaTime() const {
+		return frame_time.GetTime() / (1000.f / 60.f) / 1000.f;
+	}
 };
 
 #endif

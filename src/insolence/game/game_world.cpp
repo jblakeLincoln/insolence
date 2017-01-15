@@ -99,25 +99,13 @@ void BaseGameWorld::Run(int width, int height, const char *title,
 	return;
 #endif
 
-	double accumulator = 0;
-
 	BaseInitialise();
 
 	while(window->ShouldClose() == false)
 	{
-		int frame_time_start = Time::NowMilliseconds();
-
-		while(accumulator >= FRAME_TIME)
-		{
-			BaseUpdate();
-
-			accumulator -= FRAME_TIME;
-		}
-
+		BaseUpdate();
 		BaseDraw();
 		gametime.Update();
-
-		accumulator += Time::NowMilliseconds() - frame_time_start;
 	}
 
 	BaseUnload();
