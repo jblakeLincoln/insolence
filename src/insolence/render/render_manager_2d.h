@@ -9,74 +9,65 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "../game/font.h"
 #include "render_manager.h"
+#include "../game/font.h"
 
+struct Font;
 struct Texture;
-/* TODO Issue #13: Logging. */
 struct INSOLENCE_API RenderManager2D : public RenderManager
 {
-	typedef std::unordered_map<Texture*, std::vector<float> > def_tex_data;
-	typedef std::map<int, def_tex_data> def_layer_data;
+	struct Data {
+		glm::vec4 m1;
+		glm::vec4 m2;
+		glm::vec4 m3;
+		glm::vec4 m4;
+		glm::vec4 colour;
+		glm::vec4 rect;
+	};
+
+private:
+	/*
+	 * We have a hash map of Texture/Data, for batching per texture,
+	 * contained within an ordered map which is sorted by render order.
+	 */
+	typedef std::unordered_map<Texture*, std::vector<Data>> map_data_t;
+	typedef std::map<int, map_data_t> data_2d_t;
+	data_2d_t data;
 
 	GLuint vao;
-	GLuint vbo_verts;
-	GLuint vbo_data;
 
-	GLint attrib_verts;
-	GLint attrib_uv;
-	GLint attrib_models[4];
-	GLint attrib_colour;
-	GLint attrib_model_uv;
+	struct VBOs {
+		GLuint model;
+		GLuint data;
+	} vbos;
 
-	std::map<int, std::unordered_map<Texture*, std::vector<float>>> data;
-	std::map<int, std::unordered_map<Texture*, float> >count;
+	struct ModelAttribs {
+		GLint verts;
+		GLint uvs;
+	} model_attribs;
 
-	RenderManager2D(const char *vs=NULL, const char *fs=NULL);
+	struct DataAttribs {
+		GLint model[4];
+		GLint colour;
+		GLint rect;
+	} data_attribs;
+
+	void Setup(const char *vs_path, const char *fs_path);
+	void ModelBufferSetup();
+	void DataBufferSetup();
+
+public:
+	RenderManager2D();
+	RenderManager2D(const char *vs, const char *fs);
 	~RenderManager2D();
 
-	/**
-	 * Virtual from RenderManager - deals with flushing the draw.
-	 */
+	void Add(Texture*,
+			const glm::mat4&,
+			const glm::vec4 &colour = glm::vec4(1.f),
+			const glm::vec4 &rect   = glm::vec4(0.f, 0.f, 1.f, 1.f),
+			int layer               = 0);
+
 	void Flush(const GameTime &gametime);
-
-	/**
-	 * Queue up a sprite to be drawn.
-	 *
-	 * \param tex		Pointer to texture.
-	 * \param model		Model matrix of sprite.
-	 * \param colour	colour of sprite.
-	 * \param layer		Placement in draw queue, 0 drawn last.
-	 */
-	void Add(Texture *tex, const glm::mat4 &model, const glm::vec4& colour,
-			int layer);
-
-	/**
-	 * Queue up a sprite to be drawn.
-	 *
-	 * \param tex		Pointer to texture.
-	 * \param model		Model matrix of sprite.
-	 * \param colour	Colour of sprite.
-	 * \param rect		Sprite rectangle.
-	 * \param layer		Placement in draw queue, 0 drawn last.
-	 *
-	 */
-	void Add(Texture *tex, const glm::mat4 &model, const glm::vec4& colour,
-			const glm::vec4 &rect, int layer);
-
-	/**
-	 * Queue up text sprites to be drawn.
-	 *
-	 * \param f		Font to draw.
-	 * \param text	Text to draw from ASCII range 32 to 128.
-	 * \param pos	Position to start drawing from (considering alignment).
-	 * \param col	Colour to draw.
-	 * \param align	Alignment of font, affecting draw position.
-	 * \param scale	Scaling of text, default 1.
-	 */
-	void AddText(Font* f, const char *text, const glm::vec2& pos,
-			const glm::vec4& colour, TextAlignH::AlignH alignh,
-			TextAlignV::AlignV alignv, glm::vec2 scale=glm::vec2());
 };
 
 #endif

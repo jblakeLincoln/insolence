@@ -5,67 +5,45 @@
 
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
+#include <string>
 
 #include "component.h"
 #include "../game/font.h"
-#include "../util/insolence_string.h"
 
 struct INSOLENCE_API TextRenderable : Component {
+	struct Modifiers {
+		Modifiers() {}
+
+		enum AlignH {
+			H_LEFT,
+			H_RIGHT,
+			H_CENTRE,
+		} halign = H_LEFT;
+
+		enum AlignV {
+			V_TOP,
+			V_BOTTOM,
+			V_CENTRE
+		} valign = V_BOTTOM;
+
+		glm::vec2 scale = glm::vec2(1.f);
+	} modifiers;
+
 	Font *font;
-	char *text;
+	std::string text;
 	glm::vec4 colour;
-	glm::vec2 scale;
-	TextAlignH::AlignH halign;
-	TextAlignV::AlignV valign;
 	bool hidden;
 
 	TextRenderable(Font *font,
-			const glm::vec4& colour=glm::vec4(1.f),
-			TextAlignH::AlignH halign=TextAlignH::LEFT,
-			TextAlignV::AlignV valign=TextAlignV::BOTTOM,
-			const glm::vec2& scale=glm::vec2(1.f))
-	:
-		font(font),
-		colour(colour),
-		halign(halign),
-		valign(valign),
-		scale(scale),
-		hidden(false),
-		text(NULL)
+			const std::string &str   = "",
+			const glm::vec4& colour  = glm::vec4(1.f),
+			const Modifiers &mod = Modifiers())
+		: font(font)
+		, text(str)
+		, colour(colour)
+		, modifiers(mod)
+		, hidden(false)
 	{
-	}
-
-	~TextRenderable()
-	{
-		if(text != NULL)
-			free(text);
-	}
-
-	TextRenderable(const TextRenderable &other)
-	{
-		font = other.font;
-		colour = other.colour;
-		halign = other.halign;
-		valign = other.valign;
-		scale = other.scale;
-		hidden = other.hidden;
-
-		if(other.text != NULL)
-			text = strdup(other.text);
-		else
-			text = NULL;
-	}
-
-	void Text(const char *format, ...)
-	{
-		if(text != NULL)
-			free(text);
-
-		va_list args;
-		va_start(args, format);
-		if(vasprintf(&text, format, args) < 0)
-			printf("**** TextRenderable vasprintf error\n");
-		va_end(args);
 	}
 };
 

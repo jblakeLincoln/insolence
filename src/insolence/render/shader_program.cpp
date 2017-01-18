@@ -17,15 +17,12 @@ void ShaderProgram::AttachShader(Shader *shader)
 	glAttachShader(id, shader->GetID());
 }
 
-/* Untested. */
-void ShaderProgram::EnableAttrib(int buffer, const char *attrib_name, int size,
-		GLenum type, GLboolean normalised, GLsizei stride,
-		const GLvoid *pointer)
+GLint ShaderProgram::GetUniformLocation(const char *name)
 {
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	GLuint index = glGetAttribLocation(id, attrib_name);
-
-	glVertexAttribPointer(index, size, type, normalised, stride, pointer);
-	glEnableVertexAttribArray(index);
+	return glGetUniformLocation(id, name);
 }
 
+GLint ShaderProgram::GetAttribLocation(const char *name)
+{
+	return glGetAttribLocation(id, name);
+}
