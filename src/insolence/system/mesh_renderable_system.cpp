@@ -14,6 +14,6 @@ void MeshRenderableSystem::Manage(const GameTime& gametime)
 		Transform *m = it->first->Get<Transform>();
 
 		renderer->Add(it->second.mesh, it->second.material,
-				it->second.colour, m->GetModelMatrix());
+				m->GetModelMatrix(), it->second.colour);
 	}
 }
