@@ -27,6 +27,8 @@ struct INSOLENCE_API TextRenderable : Component {
 		} valign = V_BOTTOM;
 
 		glm::vec2 scale = glm::vec2(1.f);
+		glm::vec2 offset = glm::vec2(0.f);
+		float line_spacing = 1.f;
 	} modifiers;
 
 	Font *font;

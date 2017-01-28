@@ -13,6 +13,7 @@ struct INSOLENCE_API SpriteRenderable : Component {
 	Animation animation;
 	glm::vec4 colour;
 	glm::vec2 origin;
+	glm::vec3 offset;
 	float rot;
 	int layer;
 	bool hidden;

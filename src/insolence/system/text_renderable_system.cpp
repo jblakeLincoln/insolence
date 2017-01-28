@@ -48,6 +48,7 @@ void TextRenderableSystem::Manage(const GameTime& gametime)
 
 		float modifier_x = 0.f;
 		float modifier_y = 0.f;
+		float line_height = f->GetLineHeight() * t->modifiers.line_spacing;
 
 		if(t->modifiers.halign == Modifiers::H_RIGHT)
 			modifier_x = -longest;
@@ -56,15 +57,20 @@ void TextRenderableSystem::Manage(const GameTime& gametime)
 
 		if(t->modifiers.valign == Modifiers::V_CENTRE)
 		{
-			float lh = f->GetLineHeight() / f->GetPixelSize();
+			float lh = line_height / f->GetPixelSize();
 			modifier_y = (lengths.size() * lh * t->modifiers.scale.y / 2.f) +
 				(lh * t->modifiers.scale.y / 4.f);
 		}
 		else if(t->modifiers.valign == Modifiers::V_BOTTOM)
 		{
-			modifier_y = (f->GetLineHeight() * (lengths.size() - 1)) /
+			modifier_y = (line_height * (lengths.size() - 1)) /
 				font_size * t->modifiers.scale.y;
 		}
+
+		if(m->GetScaleX() != 0.f)
+			modifier_x += t->modifiers.offset.x * (1.f / m->GetScaleX());
+		if(m->GetScaleY() != 0.f)
+			modifier_y += t->modifiers.offset.y * (1.f / m->GetScaleY());
 
 		model = glm::translate(model, glm::vec3(modifier_x, modifier_y, 0.f));
 		glm::mat4 pen = model;
@@ -87,7 +93,7 @@ void TextRenderableSystem::Manage(const GameTime& gametime)
 
 				pen = glm::translate(model, glm::vec3(
 							x,
-							-(f->GetLineHeight() * lc) / font_size *
+							-(line_height * lc) / font_size *
 								t->modifiers.scale.y,
 							0.f));
 
@@ -107,6 +113,7 @@ void TextRenderableSystem::Manage(const GameTime& gametime)
 						glyph->l * t->modifiers.scale.x,
 						(glyph->t - glyph->h) * t->modifiers.scale.y,
 						0.f) / font_size);
+
 			glyph_model = glm::scale(glyph_model, glm::vec3(
 						glyph->w * t->modifiers.scale.x,
 						glyph->h * t->modifiers.scale.y,
