@@ -24,6 +24,7 @@ private:
 	Window();
 	~Window() {}
 
+
 	SDL_Window *sdl_window;
 	SDL_GLContext sdl_context;
 
@@ -37,6 +38,7 @@ private:
 	static bool should_quit;
 
 public:
+	static Window *GetActive() { return active_window; }
 	uint16_t GetWidth() { return width; }
 	uint16_t GetHeight() { return height; }
 	uint16_t GetFramebufferWidth() { return framebuffer_width; }
