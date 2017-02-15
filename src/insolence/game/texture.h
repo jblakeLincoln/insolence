@@ -7,6 +7,7 @@
 
 #include <climits>
 #include <cstdio>
+#include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
 
@@ -48,6 +49,10 @@ public:
 
 	GLuint GetHeight() {
 		return height;
+	}
+
+	glm::vec2 GetSize() {
+		return glm::vec2(width, height);
 	}
 
 	GLint GetID() {
