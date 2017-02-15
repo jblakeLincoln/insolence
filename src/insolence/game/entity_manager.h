@@ -165,6 +165,8 @@ public:
 	}
 
 	Entity* GetByID(uint32_t id) {
+		if(entities_lookup.find(id) == entities_lookup.end())
+			return NULL;
 		return entities_lookup[id];
 	}
 
