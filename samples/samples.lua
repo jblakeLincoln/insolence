@@ -1,14 +1,15 @@
-project "insolence_samples"
-	kind "ConsoleApp"
+kind "ConsoleApp"
+dofile("../insolence_settings.lua")
 
-	files { "**.h", "**.cpp" }
-	dofile("../insolence_settings.lua")
+configuration { "LINUX" }
+	includedirs {
+		"../src"
+	}
 
-	configuration { "LINUX" }
-		includedirs {
-			"../src"
-		}
+	libdirs {
+		"../bin"
+	}
 
-	configuration { "LINUX", "not WebGL*" }
-		links { "insolence" }
+configuration { "LINUX", "not WebGL*" }
+	links { "insolence" }
 

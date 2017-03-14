@@ -3,6 +3,8 @@
 CONFIGURATION="debug"
 OPERATING_SYSTEM=""
 RUN_AFTER_BUILD="false"
+SELECTED_SAMPLE=""
+DEFAULT_SAMPLE="blank_project"
 
 if [ "$SYSTEMROOT" == "C:\\Windows" ]; then
 	PLATFORM="WINDOWS"
@@ -22,7 +24,8 @@ On Windows, this script can be used within a Bash environment
 (i.e. Cygwin). Configuring the project via premake is an option anywhere.
 
 Options:
- -r|--run            Run 'insolence_samples'
+ -r|--run            Run a sample project specified by name.
+                     Defaults to 'blank_project'.
 
  -w|--webgl          Build for WebGL
  -R|--release        Release build
@@ -51,16 +54,27 @@ function do_make()
 	popd > /dev/null 2>&1
 }
 
+function do_make_samples
+{
+	if [[ -z ${SELECTED_SAMPLE} ]]; then
+		return
+	fi
+
+	create_sample_lua
+	premake4 --file=insolence_samples.lua gmake
+	do_make "samples/${SELECTED_SAMPLE}"
+}
+
 function linux_configure
 {
-	premake4 --file=insolence_projects.lua gmake
+	premake4 --file=insolence.lua gmake
 
 	if [ $? -ne 0 ]; then
 		exit;
 	fi
 
 	do_make src
-	do_make samples
+	do_make_samples
 
 	cd bin
 	export LD_LIBRARY_PATH=.
@@ -69,9 +83,23 @@ function linux_configure
 	cd -
 }
 
+function create_sample_lua
+{
+	for d in samples/*/; do
+		sample_name=$(basename $d)
+		echo \
+'project "'${sample_name}'"
+	objdir "../../obj/'${sample_name}'"
+	files { "**.h", "**.cpp" }
+	dofile("../samples.lua")
+' >	"samples/${sample_name}/${sample_name}.lua"
+
+	done
+}
+
 function windows_configure
 {
-	premake4 --file=insolence_projects.lua vs2012
+	premake4 --file=insolence.lua vs2012
 
 	sed -i "s/v110/v140/g" src/insolence.vcxproj
 	sed -i "s/Level3/TurnOffAllWarnings/g" src/insolence.vcxproj
@@ -84,21 +112,24 @@ function windows_configure
 
 function webgl_configure
 {
-	premake4 --file=insolence_projects.lua gmake
+	premake4 --file=insolence.lua gmake
 
 	do_make src
-	do_make samples
+	do_make_samples
 
 	cd bin
 
-	ln -s insolence_samples insolence_samples.bc /dev/null 2&>1
+	ln -s ${SELECTED_SAMPLE} ${SELECTED_SAMPLE}.bc /dev/null 2&>1
 
 	local webgl_command="\
 emcc \
-libinsolence.bc insolence_samples.bc \
---preload-file shaders --preload-file assets --memory-init-file 1 ../lib/libassimp.so \
--s USE_SDL=2 -s USE_FREETYPE=1 \
--o insolence_samples.js"
+libinsolence.bc \
+--preload-file shaders --memory-init-file 1 \
+-s USE_SDL=2 -s USE_FREETYPE=1"
+
+	if [[ -z "$SELECTED_SAMPLE" ]]; then
+		webgl_command="${webgl_command} ${SELECTED_SAMPLE}.bc -o ${SELECTED_SAMPLE}.js --preload-file assets"
+	fi
 
 	if [ "$CONFIGURATION" == "webgl-release" ]; then
 		webgl_command="${webgl_command} -O3 -s TOTAL_MEMORY=65554432"
@@ -112,7 +143,7 @@ libinsolence.bc insolence_samples.bc \
 		exit
 	fi
 
-	cp "../templates/insolence.html" "insolence_samples.html"
+	cp "../templates/insolence.html" "${SELECTED_SAMPLE}.html"
 	cp "../templates/insolence.css" .
 	cp "../templates/insolence.svg" .
 
@@ -121,7 +152,7 @@ libinsolence.bc insolence_samples.bc \
 	while read -r line; do
 		i=$((i + 1))
 		if [ $i -eq 1 ]; then
-			echo "var project_name = \"insolence_samples\"" > "insolence.js"
+			echo "var project_name = \"${SELECTED_SAMPLE}\"" > "insolence.js"
 			continue;
 		fi
 		echo  "$line" >> "insolence.js"
@@ -201,6 +232,11 @@ while getopts "hcawrRe" opt; do
 	case "$opt" in
 		r) #--run
 			RUN_AFTER_BUILD="true"
+			if [[ ! -z "$2" ]]; then
+				SELECTED_SAMPLE=${2}
+			else
+				SELECTED_SAMPLE=${DEFAULT_SAMPLE}
+			fi
 			;;
 		a) #--android
 			if [ "$PLATFORM" == "WINDOWS" ]; then
@@ -259,11 +295,11 @@ fi
 case "$PLATFORM" in
 	"WINDOWS" | "LINUX")
 		cd bin
-		./insolence_samples
+		./${SELECTED_SAMPLE}
 		;;
 	"WEBGL")
 		cd bin
-		xdg-open insolence_samples.html
+		xdg-open ${SELECTED_SAMPLE}.html
 		;;
 	"ANDROID")
 		cd android
