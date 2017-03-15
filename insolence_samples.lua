@@ -7,7 +7,7 @@ solution "insolence_samples"
 	}
 
 	dofile("./samples/blank_project/blank_project.lua")
-	dofile("./samples/textured_sprites/textured_sprites.lua")
+	dofile("./samples/textured_sprite/textured_sprite.lua")
 
 	configuration { "WINDOWS or LINUX",  "not WebGL*" }
 		defines { "INSOLENCE_OPENGL_DESKTOP" }
