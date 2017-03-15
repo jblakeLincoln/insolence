@@ -78,7 +78,7 @@ function linux_configure
 
 	cd bin
 	export LD_LIBRARY_PATH=.
-	ln -sf ../src/insolence/assets > /dev/null 2>&1
+	ln -sf ../samples/samples_assets > /dev/null 2>&1
 	ln -sf ../src/insolence/shaders > /dev/null 2>&1
 	cd -
 }
@@ -128,7 +128,7 @@ libinsolence.bc \
 -s USE_SDL=2 -s USE_FREETYPE=1"
 
 	if [[ -z "$SELECTED_SAMPLE" ]]; then
-		webgl_command="${webgl_command} ${SELECTED_SAMPLE}.bc -o ${SELECTED_SAMPLE}.js --preload-file assets"
+		webgl_command="${webgl_command} ${SELECTED_SAMPLE}.bc -o ${SELECTED_SAMPLE}.js --preload-file sample_assets"
 	fi
 
 	if [ "$CONFIGURATION" == "webgl-release" ]; then
