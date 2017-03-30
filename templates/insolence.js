@@ -1,4 +1,4 @@
-var project_name = "";
+// var project_name -- filled in by script to lead to relevant files
 
 var progress_counts = [ 0, 0, 0 ]
 var progress_totals = [ 0, 0, 0 ]

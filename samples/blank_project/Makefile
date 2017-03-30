@@ -1,0 +1,36 @@
+PROJECT_NAME = blank_project
+CXX = g++
+
+INCLUDE = -I ../../include -I /usr/include/freetype2 -I ../../src
+
+LINUX_LIBS = -L /usr/lib/x86_64 -lGLEW -lGL -lGLU -L ../../bin -linsolence
+LINUX_LIBS+= -lSDL2 -lassimp -lopenal -lfreetype
+LINUX_LIBS+= -lX11 -lXxf86vm -lXinerama -lXcursor -lXrandr -lpthread -lXi
+
+DEFINES = -D GLM_FORCE_RADIANS
+
+CPP_FLAGS = --std=c++11
+CPP_FILES = main.cpp
+
+LINUX_FLAGS = -D INSOLENCE_OPENGL_DESKTOP -D LINUX -o ../../bin/$(PROJECT_NAME)
+WEBGL_FLAGS = -D INSOLENCE_WEBGL --memory-init-file 1 -s USE_SDL=2 -s USE_FREETYPE=1
+
+WEBGL_DEPENDENCIES = --preload-file samples_assets --preload-file shaders
+
+.PHONY: debug
+
+debug:
+	$(CXX) $(INCLUDE) $(CPP_FILES) -O0 $(CPP_FLAGS) $(LINUX_LIBS) $(DEFINES) $(LINUX_FLAGS)
+
+webgl-debug:
+	emcc $(INCLUDE) $(CPP_FILES) $(CPP_FLAGS) $(DEFINES) $(WEBGL_FLAGS) -o ../../bin/$(PROJECT_NAME).bc
+
+webgl-release:
+	emcc $(INCLUDE) $(CPP_FILES) $(CPP_FLAGS) $(DEFINES) $(WEBGL_FLAGS) -o ../../bin/$(PROJECT_NAME).bc -O3
+
+# Called from bin for relative file paths to all be good
+webgl-output-debug:
+	emcc libinsolence.bc $(PROJECT_NAME).bc $(WEBGL_FLAGS) $(WEBGL_DEPENDENCIES) -o $(PROJECT_NAME).js -s ALLOW_MEMORY_GROWTH=1
+
+webgl-output-release:
+	emcc libinsolence.bc $(PROJECT_NAME).bc $(WEBGL_FLAGS) $(WEBGL_DEPENDENCIES) -o $(PROJECT_NAME).js -O3 -s TOTAL_MEMORY=67108864

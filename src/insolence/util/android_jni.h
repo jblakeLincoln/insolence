@@ -5,7 +5,7 @@
 
 #include "android_utils.h"
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
 #include <cstdio>
