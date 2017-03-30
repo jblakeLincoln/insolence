@@ -8,7 +8,6 @@ src/*.dll
 *.sln
 *.suo
 *.make
-Makefile
 *.vcxproj
 *.vcxproj.*
 tags
