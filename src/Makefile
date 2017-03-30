@@ -10,11 +10,9 @@ DEFINES = -D GLM_FORCE_RADIANS
 DEFINES+= -D INSOLENCE_OPENGL_DESKTOP -D LINUX
 
 CPP_FLAGS = --std=c++11 -fPIC -shared
-CPP_FILES = $(wildcard insolence/*/*.cpp)
-
-obj := $(patsubst %.cpp,%.o,$(wildcard insolence/*/*.cpp))
+CPP_FILES = insolence/stu.cpp
 
 .PHONY: all
 
 all:
-	$(CXX) $(INCLUDES) $(CPP_FILES) $(CPP_FLAGS) $(DEFINES) -o ../bin/libinsolence.so
+	$(CXX) $(INCLUDES) $(CPP_FILES) $(CPP_FLAGS) $(LIBS) $(DEFINES) -o ../bin/libinsolence.so
