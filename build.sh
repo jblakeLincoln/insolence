@@ -55,9 +55,18 @@ function linux_make()
 	make $CONFIGURATION
 	cd ..
 
+	if [ $? -ne 0 ]; then
+		exit
+	fi
+
 	if [ ! -z ${SELECTED_SAMPLE} ]; then
 		cd samples/${SELECTED_SAMPLE}
 		make $CONFIGURATION
+
+		if [ $? -ne 0 ]; then
+			exit
+		fi
+
 	fi
 
 	popd > /dev/null 2>&1
