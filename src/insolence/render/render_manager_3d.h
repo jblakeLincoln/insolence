@@ -39,7 +39,7 @@ struct INSOLENCE_API RenderManager3D : public RenderManager {
 private:
 	struct DirLight {
 		glm::vec3 direction = glm::vec3(0.f, -0.3f, -0.4f);
-		glm::vec3 diffuse   = glm::vec3(0.f);
+		glm::vec3 diffuse   = glm::vec3(1.f);
 		glm::vec3 ambient   = glm::vec3(0.0f);
 		glm::vec3 specular  = glm::vec3(0.1f);
 	} dir_light;
