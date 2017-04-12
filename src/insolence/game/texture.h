@@ -99,8 +99,8 @@ public:
 
 	static Texture* LoadFile(const char *path);
 
-	static Texture* CreateBlank(uint32_t w, uint32_t h, GLint in_iformat=GL_RGB,
-			GLint in_format=GL_RGB, GLenum in_type=GL_UNSIGNED_BYTE);
+	static Texture* CreateBlank(uint32_t w, uint32_t h, GLint in_iformat=GL_RGBA,
+			GLint in_format=GL_RGBA, GLenum in_type=GL_UNSIGNED_BYTE);
 };
 
 #endif

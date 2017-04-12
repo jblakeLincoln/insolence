@@ -2,6 +2,7 @@
 
 Window *Window::active_window = NULL;
 bool Window::should_quit = false;
+std::string Window::text_input;
 
 Window::Window()
 	:

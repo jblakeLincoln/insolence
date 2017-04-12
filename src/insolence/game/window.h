@@ -10,6 +10,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <string>
 #include <unordered_map>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
@@ -247,17 +248,23 @@ private:
 	}
 
 public:
+	static std::string text_input;
+
 	/**
 	 * Process all window callbacks and update input.
 	 */
 	static void PollEvents()
 	{
 		SDL_Event event;
+		text_input.clear();
 
 		while(SDL_PollEvent(&event))
 		{
 			switch(event.type)
 			{
+				case SDL_TEXTINPUT:
+					text_input = event.text.text;
+					break;
 				case SDL_QUIT:
 					Window::SetShouldQuit(true);
 					break;

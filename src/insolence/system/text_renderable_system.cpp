@@ -19,8 +19,10 @@ void TextRenderableSystem::Manage(const GameTime& gametime)
 		TextRenderable *t = &it->second;
 		Transform *m = it->first->Get<Transform>();
 
-		if(m == NULL || t->font == NULL || t->text.length() == 0)
+		if(m == NULL || t->font == NULL || t->text.length() == 0) {
+			t->line_lengths = {};
 			continue;
+		}
 
 		const char *str = t->text.c_str();
 		Font *f = t->font;
@@ -127,5 +129,7 @@ void TextRenderableSystem::Manage(const GameTime& gametime)
 			pen = glm::translate(pen,
 					glm::vec3(glyph->ax, 0.f, 0.f) / font_size * t->modifiers.scale.y);
 		}
+
+		t->line_lengths = std::move(lengths);
 	}
 }

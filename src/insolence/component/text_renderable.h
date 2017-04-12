@@ -35,6 +35,7 @@ struct INSOLENCE_API TextRenderable : Component {
 	std::string text;
 	glm::vec4 colour;
 	bool hidden;
+	std::vector<float> line_lengths;
 
 	TextRenderable(Font *font,
 			const std::string &str   = "",

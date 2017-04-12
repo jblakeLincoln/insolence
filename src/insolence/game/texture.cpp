@@ -102,6 +102,7 @@ void Texture::Blank(uint32_t w, uint32_t h)
 {
 	width = w;
 	height = h;
+	Bind();
 	glTexImage2D(GL_TEXTURE_2D, 0, internal_format, w, h, 0, format,
 			datatype, NULL);
 }
