@@ -70,7 +70,7 @@ public:
 	const FontInfo& GetGlyph(char i) { return chars_pixelsize[i]; }
 	const FontInfo& GetScaledGlyph(char i) { return chars_scaled[i]; }
 
-	static Font* Load(const char *path, int size, FontType);
+	static Font* Load(const char *path, int size, FontType = FontType::NORMAL);
 };
 
 #endif

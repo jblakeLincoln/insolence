@@ -33,7 +33,7 @@ int Font::GetFTFaceFromFile(const char *path, FT_Library &ft,
 #endif
 
 Font* Font::Load(const char *path, int size,
-		FontType type=FontType::NORMAL)
+		FontType type)
 {
 	Font *out;
 	FT_Face face;
@@ -54,7 +54,7 @@ Font* Font::Load(const char *path, int size,
 
 	if(Font::GetFTFaceFromFile(path, ft, face) != 0)
 	{
-		log(Log::FATAL, "Font (%d) - Couldn't generate face from %d",
+		log(Log::FATAL, "Font (%s) - Couldn't generate face from %s",
 			   __FUNCTION__, path);
 		return NULL;
 	}
