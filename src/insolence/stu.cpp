@@ -5,6 +5,7 @@
 #include "audio/audio_track.cpp"
 #include "component/bounding_box.cpp"
 #include "component/rigid_body.cpp"
+#include "component/text_renderable.cpp"
 #include "component/transform.cpp"
 #include "game/animation.cpp"
 #include "game/camera.cpp"

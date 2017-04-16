@@ -19,34 +19,20 @@ void TextRenderableSystem::Manage(const GameTime& gametime)
 		TextRenderable *t = &it->second;
 		Transform *m = it->first->Get<Transform>();
 
-		if(m == NULL || t->font == NULL || t->text.length() == 0) {
-			t->line_lengths = {};
+		if(m == NULL || t->font == NULL || t->GetText().length() == 0)
 			continue;
-		}
 
-		const char *str = t->text.c_str();
 		Font *f = t->font;
 
 		glm::mat4 model = m->GetModelMatrix();
-		int len = strlen(str);
+		int len = strlen(t->GetText().c_str());
 		float font_size = f->GetPixelSize();
 		float longest = 0;
-		std::vector<float> lengths;
 
-		for(float ii = 0, l = 0;  ii < len; ++ii)
-		{
-			int i = ii;
-			const Font::FontInfo *glyph = &f->GetGlyph(str[i]);
-
-			l += glyph->ax;
-
-			if(i != len - 1 && str[i] != '\n')
-				continue;
-
-			lengths.push_back(l / f->GetPixelSize() * t->modifiers.scale.x);
-			longest = std::max(longest, lengths.back());
-			l = 0;
-		}
+		std::vector<float> lengths = t->GetLineLengths();
+		static bool print = true;
+		for(size_t i = 0; i < lengths.size(); ++i)
+			longest = std::max(longest, lengths[i]);
 
 		float modifier_x = 0.f;
 		float modifier_y = 0.f;
@@ -76,6 +62,7 @@ void TextRenderableSystem::Manage(const GameTime& gametime)
 
 		model = glm::translate(model, glm::vec3(modifier_x, modifier_y, 0.f));
 		glm::mat4 pen = model;
+		const char *str = t->GetRenderText().c_str();
 
 		for(int i = 0, line_count = 0; i < len; ++i)
 		{
@@ -86,6 +73,8 @@ void TextRenderableSystem::Manage(const GameTime& gametime)
 					x = (longest / 2.f) - (lengths[line_count] / 2.f);
 				else if(t->modifiers.halign == Modifiers::H_RIGHT)
 					x = longest - lengths[line_count];
+
+				x *= (f->GetPixelSize() / t->modifiers.scale.x);
 				++line_count;
 
 				int lc = line_count;
@@ -129,7 +118,5 @@ void TextRenderableSystem::Manage(const GameTime& gametime)
 			pen = glm::translate(pen,
 					glm::vec3(glyph->ax, 0.f, 0.f) / font_size * t->modifiers.scale.y);
 		}
-
-		t->line_lengths = std::move(lengths);
 	}
 }

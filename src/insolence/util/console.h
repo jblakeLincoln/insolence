@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 #include <string>
-#include <vector>
+#include <list>
 #include "../game/entity_manager.h"
 
 struct Camera;
@@ -30,7 +30,9 @@ struct Console {
 	Framebuffer *fb_console;
 	Font *font;
 
-	std::vector<Entity*> lines;
+	std::list<Entity*> lines;
+	Entity *e_current_line = nullptr;
+	int cumulative_lines = 0;
 	std::string current_line = PREFIX_STRING;
 	std::vector<std::string> lines_list;
 
@@ -40,6 +42,7 @@ struct Console {
 
 	TimeSpan transition_timer;
 
+	void PushLine();
 	void UpdateText();
 	void UpdateCaret();
 

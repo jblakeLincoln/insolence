@@ -1,6 +1,7 @@
 #include "console.h"
 
 #include "math.h"
+#include <string.h>
 #include "../game/camera.h"
 #include "../game/font.h"
 #include "../render/framebuffer.h"
@@ -30,17 +31,7 @@ Console::Console()
 	caret->Get<SpriteRenderable>()->colour = glm::vec4(0.2f, 0.2f, 0.6f, 1.f);
 	caret->Get<Transform>()->SetPosY(bottom_padding / 2.f);
 
-	for(size_t i = 0; i < 40; ++i) {
-		Entity *e = mgr->CreateEntity();
-		e->Add<TextRenderable>(font);
-		e->Get<TextRenderable>()->colour = glm::vec4(0.8f, 0.8f, 0.8f, 1.f);
-		e->Get<TextRenderable>()->modifiers.scale = glm::vec2(FONT_SIZE);
-		e->Get<TextRenderable>()->modifiers.valign = TextRenderable::Modifiers::V_BOTTOM;
-		e->Get<Transform>()->SetPosX(left_padding);
-		e->Get<Transform>()->SetPosY(i * FONT_SIZE + (bottom_padding));
-		lines.push_back(e);
-	}
-
+	PushLine();
 	UpdateCaret();
 }
 
@@ -63,8 +54,6 @@ void Console::ToggleState()
 
 void Console::UpdateCaret()
 {
-	float caret_vis_pos = 0;
-
 	if(Input::GetKey(JKEY_KEY_LCTRL))
 	{
 		/* Go to previous word. */
@@ -92,6 +81,11 @@ void Console::UpdateCaret()
 			else
 				caret_pos = current_line.length();
 		}
+		else if(Input::GetKey(JKEY_KEY_C) == JKEY_PRESS)
+		{
+			current_line += "^C";
+			PushLine();
+		}
 	}
 
 	/* Go to line start. */
@@ -101,12 +95,43 @@ void Console::UpdateCaret()
 	if(Input::GetKey(JKEY_KEY_END) == JKEY_PRESS)
 		caret_pos = current_line.length();
 
-	for(size_t i = 0; i < caret_pos && i < current_line.length(); ++i) {
-		const Font::FontInfo &glyph = font->GetScaledGlyph(current_line[i]);
-		caret_vis_pos += glyph.ax * FONT_SIZE;
+	glm::vec2 vis_caret_pos;
+	int caret_pos_in_line = 0;
+
+	const std::vector<int> &line_counts
+		= e_current_line->Get<TextRenderable>()->GetLineCounts();
+
+	bool movedown = false;
+
+	for(size_t i = 0; i < line_counts.size(); ++i) {
+		if(caret_pos_in_line + line_counts[i] >= caret_pos)
+		{
+			/*
+			 * If we're at the beginning of a line, stop the caret going back up
+			 * */
+			if(caret_pos_in_line + line_counts[i] == caret_pos &&
+					line_counts.size() != 1 &&
+					caret_pos_in_line + line_counts[i] != current_line.length())
+				movedown = true;
+			break;
+		}
+		caret_pos_in_line += line_counts[i];
+		++vis_caret_pos.y;
 	}
 
-	caret->Get<Transform>()->SetPosX(caret_vis_pos + left_padding);
+	for(size_t i = caret_pos_in_line; i < caret_pos; ++i) {
+		const Font::FontInfo &glyph = font->GetScaledGlyph(current_line[i]);
+		vis_caret_pos.x += glyph.ax * FONT_SIZE;
+	}
+
+	if(movedown == true) {
+		++vis_caret_pos.y;
+		vis_caret_pos.x = 0;
+	}
+
+	caret->Get<Transform>()->SetPosXY(vis_caret_pos.x + left_padding,
+			-(vis_caret_pos.y * FONT_SIZE) + (bottom_padding / 2) -
+			(FONT_SIZE * cumulative_lines));
 }
 
 void Console::UpdateText()
@@ -136,21 +161,35 @@ void Console::UpdateText()
 	if(Input::GetKey(JKEY_KEY_DEL) == JKEY_PRESS && caret_pos < current_line.length())
 		current_line.erase(caret_pos, 1);
 
-	lines[0]->Get<TextRenderable>()->text = current_line;
+	e_current_line->Get<TextRenderable>()->SetText(current_line.c_str());
 
-	if(modification == true) {
-		lines_list.push_back(std::move(current_line));
-		current_line = PREFIX_STRING;
-		caret_pos = PREFIX_STRING.length();
-
-		int count = 1;
-		for(std::vector<std::string>::reverse_iterator i = lines_list.rbegin();
-				i != lines_list.rend() && count < 40; ++i, ++count) {
-			lines[count]->Get<TextRenderable>()->text = *i;
-		}
-	}
+	if(modification == true)
+		PushLine();
 
 	UpdateCaret();
+}
+
+void Console::PushLine()
+{
+	if(e_current_line != nullptr) {
+		e_current_line->Get<TextRenderable>()->SetText(current_line.c_str());
+		cumulative_lines += e_current_line->Get<TextRenderable>()->GetLineLengths().size();
+		lines.push_back(e_current_line);
+	}
+
+	current_line = PREFIX_STRING;
+	caret_pos = PREFIX_STRING.length();
+
+
+	e_current_line = mgr->CreateEntity();
+	e_current_line->Add<TextRenderable>(font);
+	e_current_line->Get<TextRenderable>()->colour = glm::vec4(0.8f, 0.8f, 0.8f, 1.f);
+	e_current_line->Get<TextRenderable>()->modifiers.scale = glm::vec2(FONT_SIZE);
+	e_current_line->Get<TextRenderable>()->modifiers.valign = TextRenderable::Modifiers::V_TOP;
+	e_current_line->Get<TextRenderable>()->SetMaxWidth(
+			640.f - caret->Get<Transform>()->GetScaleX() - left_padding);
+	e_current_line->Get<Transform>()->SetPosX(left_padding);
+	e_current_line->Get<Transform>()->SetPosY(FONT_SIZE + bottom_padding - (FONT_SIZE * cumulative_lines));// + FONT_SIZE);
 }
 
 void Console::Draw(const GameTime &gametime)
@@ -189,15 +228,21 @@ void Console::Draw(const GameTime &gametime)
 	glClearColor(0.0f, 0.f, 0.f, 0.7f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+	mgr->FlushDraw(gametime);
+	int y_offset = 0;
+	y_offset += (cumulative_lines - 1) * FONT_SIZE;
+	y_offset += e_current_line->Get<TextRenderable>()->GetLineLengths().size() * FONT_SIZE;
+
 	camera->MakeOrtho(0, Window::GetActive()->GetFramebufferWidth(),
-			Window::GetActive()->GetFramebufferHeight(), 0, -1.f, 1.f);
+			Window::GetActive()->GetFramebufferHeight() - y_offset, -y_offset,
+			-1.f, 1.f);
 	camera->pos.SetPosZ(1.f);
 	camera->Post();
-	mgr->FlushDraw(gametime);
 	DefaultRenderer::Get()->Flush(gametime);
 	fb_console->Unbind();
 
-	model = glm::translate(model, glm::vec3(0.f, pos_y, 0.f));
+	model = glm::translate(model, glm::vec3(0.f, pos_y - y_offset, 0.f));
 	model = glm::scale(model, glm::vec3(
 			Window::GetActive()->GetFramebufferWidth(),
 			Window::GetActive()->GetFramebufferHeight(),
