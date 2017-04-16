@@ -4,17 +4,24 @@
 #include <stddef.h>
 #include <string>
 #include <list>
+#include "command_parser.h"
 #include "../game/entity_manager.h"
 
 struct Camera;
 struct Font;
 struct Framebuffer;
 struct Console {
+private:
 	/* Using floats is giving a linker error. Seems to be a clang bug. */
 	static constexpr double TRANSITION_TIME = 150;
 	static constexpr double FONT_SIZE = 24;
 	static constexpr double PIXEL_SIZE = FONT_SIZE * 1.5;
 	static const std::string PREFIX_STRING;
+
+	/* Const until modification stuff is written. */
+	const glm::vec4 caret_colour      = glm::vec4(0.2f, 0.2f, 0.6f, 1.f);
+	const glm::vec4 text_colour       = glm::vec4(0.8f, 0.8f, 0.8f, 1.f);
+	const glm::vec4 background_colour = glm::vec4(0.f, 0.f, 0.f, 0.7f);
 
 	enum State {
 		HIDDEN,
@@ -25,16 +32,16 @@ struct Console {
 	float left_padding = 6.f;
 	float bottom_padding = 6.f;
 
+	Font *font;
 	Camera *camera;
 	EntityManager *mgr;
 	Framebuffer *fb_console;
-	Font *font;
 
 	std::list<Entity*> lines;
 	Entity *e_current_line = nullptr;
-	int cumulative_lines = 0;
 	std::string current_line = PREFIX_STRING;
-	std::vector<std::string> lines_list;
+
+	int cumulative_lines = 0;
 
 	Entity *caret;
 	int caret_pos;
@@ -50,7 +57,11 @@ public:
 	Console();
 	~Console();
 
+	CommandParser<> *parser;
+	CommandParser<uint64_t> *entity_parser;
+
 	void ToggleState();
+	void Print(const char*, ...);
 	void Draw(const GameTime &gametime);
 };
 

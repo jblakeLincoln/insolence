@@ -7,6 +7,9 @@
 #include "game_loop.h"
 #include "window.h"
 
+#include "../util/console.h"
+#include "../util/console_functions.cpp"
+
 #include "../render/render_manager_2d.h"
 #include "../render/render_manager_3d.h"
 #include "../system/sprite_renderable_system.h"
@@ -33,10 +36,14 @@ void Game::Run()
 	entity_manager->AddRenderSystem<TextRenderableSystem>(
 			DefaultRenderer::Get()->RendererText);
 
+	console = new Console();
+	RegisterConsoleFunctions();
+
 	loop->Start();
 
 	delete entity_manager;
 	delete loop;
+	delete console;
 	Window::Destroy(window);
 }
 

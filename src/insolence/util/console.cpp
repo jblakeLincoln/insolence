@@ -14,6 +14,9 @@ Console::Console()
 	camera = new Camera(Window::GetActive(), Camera::ORTHO);
 	mgr = new EntityManager();
 	font = Font::Load("samples_assets/ProFontWindows.ttf", PIXEL_SIZE);
+
+	parser = new CommandParser<>();
+	entity_parser = new CommandParser<uint64_t>();
 	bottom_padding = (font->GetLineHeight() - font->GetGlyph('W').h) / PIXEL_SIZE * FONT_SIZE;
 
 	mgr->AddRenderSystem<SpriteRenderableSystem>(
@@ -28,7 +31,7 @@ Console::Console()
 	caret = mgr->CreateEntity();
 	caret->Add<SpriteRenderable>();
 	caret->Get<Transform>()->SetScaleXY(caret_width, FONT_SIZE);
-	caret->Get<SpriteRenderable>()->colour = glm::vec4(0.2f, 0.2f, 0.6f, 1.f);
+	caret->Get<SpriteRenderable>()->colour = caret_colour;
 	caret->Get<Transform>()->SetPosY(bottom_padding / 2.f);
 
 	PushLine();
@@ -164,9 +167,44 @@ void Console::UpdateText()
 	e_current_line->Get<TextRenderable>()->SetText(current_line.c_str());
 
 	if(modification == true)
+	{
+		std::string command_to_parse = current_line.c_str() + PREFIX_STRING.length();
 		PushLine();
 
+		if(parser->ParseCommand(command_to_parse.c_str()) == -1)
+			Print("Command '%s' not found", parser->GetLastCommand());
+	}
+
 	UpdateCaret();
+}
+
+void Console::Print(const char *fmt, ...)
+{
+	va_list args;
+	char *line;
+
+	va_start(args, fmt);
+
+	if(vasprintf(&line, fmt, args) < 0)
+		return;
+	va_end(args);
+
+	Entity *e = mgr->CreateEntity();
+
+	e->Add<TextRenderable>(font);
+	e->Get<TextRenderable>()->colour = text_colour;
+	e->Get<TextRenderable>()->modifiers.scale = glm::vec2(FONT_SIZE);
+	e->Get<TextRenderable>()->modifiers.valign = TextRenderable::Modifiers::V_TOP;
+	e->Get<TextRenderable>()->SetMaxWidth(640.f - caret->Get<Transform>()->GetScaleX() - left_padding);
+	e->Get<Transform>()->SetPosX(left_padding);
+	e->Get<Transform>()->SetPosY(FONT_SIZE + bottom_padding - (FONT_SIZE * cumulative_lines));// + FONT_SIZE);
+	e->Get<TextRenderable>()->SetText(line);
+
+	cumulative_lines += e->Get<TextRenderable>()->GetLineLengths().size();
+	lines.push_back(e);
+
+	if(e_current_line != nullptr)
+		e_current_line->Get<Transform>()->SetPosY(FONT_SIZE + bottom_padding - (FONT_SIZE * cumulative_lines));// + FONT_SIZE);
 }
 
 void Console::PushLine()
@@ -180,10 +218,9 @@ void Console::PushLine()
 	current_line = PREFIX_STRING;
 	caret_pos = PREFIX_STRING.length();
 
-
 	e_current_line = mgr->CreateEntity();
 	e_current_line->Add<TextRenderable>(font);
-	e_current_line->Get<TextRenderable>()->colour = glm::vec4(0.8f, 0.8f, 0.8f, 1.f);
+	e_current_line->Get<TextRenderable>()->colour = text_colour;
 	e_current_line->Get<TextRenderable>()->modifiers.scale = glm::vec2(FONT_SIZE);
 	e_current_line->Get<TextRenderable>()->modifiers.valign = TextRenderable::Modifiers::V_TOP;
 	e_current_line->Get<TextRenderable>()->SetMaxWidth(
@@ -195,6 +232,9 @@ void Console::PushLine()
 void Console::Draw(const GameTime &gametime)
 {
 	UpdateText();
+
+	if(state != VISIBLE && switching == false)
+		return;
 
 	glm::mat4 model;
 	float pos_y = state == VISIBLE ?
@@ -218,14 +258,18 @@ void Console::Draw(const GameTime &gametime)
 		transition_timer.SetTime(0);
 	}
 
+	pos_y = fmax(pos_y, -Game::Get()->window->GetFramebufferHeight());
+	pos_y = fmin(pos_y, 0);
+
+	glDisable(GL_DEPTH_TEST);
 	Camera *other_camera = Camera::GetActiveCamera();
 	Camera::SetActiveCamera(camera);
-	glDisable(GL_DEPTH_TEST);
 
 	fb_console->Bind();
 	mgr->Manage(gametime);
 
-	glClearColor(0.0f, 0.f, 0.f, 0.7f);
+	glClearColor(background_colour.r, background_colour.g, background_colour.b,
+			background_colour.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 

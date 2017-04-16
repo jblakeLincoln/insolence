@@ -38,6 +38,7 @@
 #include "system/text_renderable_system.cpp"
 #include "util/android_jni.cpp"
 #include "util/android_utils.cpp"
+#include "util/command_parser.cpp"
 #include "util/console.cpp"
 
 #endif

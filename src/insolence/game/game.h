@@ -6,6 +6,7 @@
 #include <glm/vec3.hpp>
 
 struct BaseGameLoop;
+struct Console;
 struct Entity;
 struct EntityManager;
 
@@ -29,6 +30,7 @@ public:
 
 	static Entity* CreateEntity();
 
+	Console *console = nullptr;
 	EntityManager *entity_manager = nullptr;
 	Window *window = nullptr;
 	BaseGameLoop *loop = nullptr;
