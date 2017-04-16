@@ -7,7 +7,7 @@
  * an entity, and controlling its animation properties.
  */
 
-struct Game1 : BaseGameWorld
+struct Game1 : BaseGameLoop
 {
 	Camera *camera;
 	Texture *tex;
@@ -15,12 +15,12 @@ struct Game1 : BaseGameWorld
 
 	void Initialise()
 	{
-		camera = new Camera(GetWindow());
+		camera = new Camera(Game::Get()->window);
 		camera->pos.MoveZ(2);
 
 		tex = Texture::LoadFile("samples_assets/mega.png");
 
-		sprite = entity_manager->CreateEntity();
+		sprite = Game::CreateEntity();
 		/* Attach component that hooks into the 2D renderer. */
 		sprite->Add<SpriteRenderable>(tex);
 		/* Size of single frame on the spritesheet. */
@@ -56,10 +56,8 @@ struct Game1 : BaseGameWorld
 
 int main(int argc, char **argv)
 {
-	Game1 *game = new Game1();
-	game->Run();
-
-	delete game;
+	Game::Get()->loop = new Game1();
+	Game::Get()->Run();
 
 	return 0;
 }

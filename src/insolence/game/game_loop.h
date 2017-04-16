@@ -6,8 +6,6 @@
 #include "../render/graphics.h"
 #include "gametime.h"
 
-#include <glm/vec3.hpp>
-
 #ifdef INSOLENCE_WEBGL
 #include <emscripten.h>
 #endif
@@ -15,21 +13,11 @@
 struct Entity;
 struct EntityManager;
 struct Window;
-struct INSOLENCE_API BaseGameWorld {
+struct INSOLENCE_API BaseGameLoop {
 private:
 	const double FRAME_TIME = 1000.f / 60.f;
 
-	struct InitialiseProperties {
-		int window_width;
-		int window_height;
-		const char *window_title;
-		bool resizable;
-	} initialise_properties;
-
-	Window *window;
 	GameTime gametime;
-	bool is_running = false;
-	glm::vec3 clear_colour;
 
 	/**
 	 * Create a window and declare the game world as "running".
@@ -89,19 +77,13 @@ protected:
 	virtual void Unload()=0;
 
 public:
-	EntityManager *entity_manager;
-
-	BaseGameWorld() {}
-	virtual ~BaseGameWorld() {}
+	BaseGameLoop() {}
+	virtual ~BaseGameLoop() {}
 
 	/**
 	 * Begins the game loop.
 	 */
-	void Run(int width=640, int height=480,
-			const char *title="Game", bool resizable=true);
-
-	Window* GetWindow() { return window; }
-	void SetClearColour(const glm::vec3& col);
+	void Start();
 };
 
 #endif

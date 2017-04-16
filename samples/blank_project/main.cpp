@@ -5,13 +5,13 @@
 #include <insolence/component/text_renderable.h>
 #include <insolence/render/render_manager_2d.h>
 
-struct Game1 : BaseGameWorld
+struct Game1 : BaseGameLoop
 {
 	Camera *camera;
 
 	void Initialise()
 	{
-		camera = new Camera(GetWindow());
+		camera = new Camera(Game::Get()->window);
 	}
 
 	void Update(const GameTime& time)
@@ -26,12 +26,6 @@ struct Game1 : BaseGameWorld
 
 int main(int argc, char **argv)
 {
-	Game1 *game = new Game1();
-	game->Run();
-
-	delete game;
-
-	return 0;
+	Game::Get()->loop = new Game1();
+	Game::Get()->Run();
 }
-
-
