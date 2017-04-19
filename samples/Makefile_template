@@ -1,8 +1,10 @@
-CXX = g++
+CXX = clang++
+
+FILES = $(shell find -name "*.cpp" -or -name "*.h")
 
 INCLUDE = -I ../../include -I /usr/include/freetype2 -I ../../src
 
-LINUX_LIBS = -L /usr/lib/x86_64 -lGLEW -lGL -lGLU -L ../../bin -linsolence
+LINUX_LIBS = -L /usr/lib/x86_64 -lGLEW -lGL -lGLU -L ../../bin
 LINUX_LIBS+= -lSDL2 -lassimp -lopenal -lfreetype
 LINUX_LIBS+= -lX11 -lXxf86vm -lXinerama -lXcursor -lXrandr -lpthread -lXi
 
@@ -11,15 +13,23 @@ DEFINES = -D GLM_FORCE_RADIANS
 CPP_FLAGS = --std=c++11
 CPP_FILES = main.cpp
 
-LINUX_FLAGS = -D INSOLENCE_OPENGL_DESKTOP -D LINUX -o ../../bin/$(PROJECT_NAME)
+LINUX_FLAGS = -D INSOLENCE_OPENGL_DESKTOP -D LINUX
 WEBGL_FLAGS = -D INSOLENCE_WEBGL --memory-init-file 1 -s USE_SDL=2 -s USE_FREETYPE=1
+
+LINUX_DEBUG   = -O0 -linsolence-debug
+LINUX_RELEASE = -O3 -linsolence
 
 WEBGL_DEPENDENCIES = --preload-file samples_assets --preload-file shaders
 
-.PHONY: debug
+.PHONY: debug release
+debug: ../../bin/$(PROJECT_NAME)-debug
+release: ../../bin/$(PROJECT_NAME)
 
-debug:
-	$(CXX) $(INCLUDE) $(CPP_FILES) -O0 $(CPP_FLAGS) $(LINUX_LIBS) $(DEFINES) $(LINUX_FLAGS)
+../../bin/$(PROJECT_NAME)-debug: $(FILES)
+	$(CXX) $(INCLUDE) $(CPP_FILES) $(CPP_FLAGS) $(LINUX_LIBS) $(DEFINES) $(LINUX_FLAGS) $(LINUX_DEBUG) -o $@
+
+../../bin/$(PROJECT_NAME): $(FILES)
+	$(CXX) $(INCLUDE) $(CPP_FILES) $(CPP_FLAGS) $(LINUX_LIBS) $(DEFINES) $(LINUX_FLAGS) $(LINUX_RELEASE) -o $@
 
 webgl-debug:
 	emcc $(INCLUDE) $(CPP_FILES) $(CPP_FLAGS) $(DEFINES) $(WEBGL_FLAGS) -o ../../bin/$(PROJECT_NAME).bc

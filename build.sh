@@ -14,8 +14,6 @@ Usage:
 
 Builds the insolence framework as a shared library, and a sample project
 which can optionally be run. On Linux, this is the de facto build system.
-On Windows, this script can be used within a Bash environment
-(i.e. Cygwin). Configuring the project via premake is an option anywhere.
 
 Options:
  -r|--run            Run a sample project specified by name.
@@ -206,10 +204,14 @@ if [ "$RUN_AFTER_BUILD" != "true" ]; then
 fi
 
 case "$PLATFORM" in
-	"WINDOWS" | "LINUX")
+	"LINUX")
 		cd bin
 		export LD_LIBRARY_PATH=.
-		./${SELECTED_SAMPLE}
+		if [ ${CONFIGURATION} == "debug" ]; then
+			./${SELECTED_SAMPLE}-debug
+		else
+			./${SELECTED_SAMPLE}
+		fi
 		;;
 	"WEBGL")
 		cd bin
