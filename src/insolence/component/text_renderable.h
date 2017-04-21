@@ -111,7 +111,7 @@ public:
 		, hidden(false)
 	{
 		flags |= TEXT_CHANGED;
-		text = str;
+		SetText(str.c_str());
 	}
 };
 

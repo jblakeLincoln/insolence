@@ -10,7 +10,7 @@ void TextRenderable::UpdateRenderText()
 		return;
 	flags &= ~TEXT_CHANGED;
 
-	char *str = strdup(text.c_str());
+	const char *str = text.c_str();
 	float max_length = FLT_MAX;
 
 	if(modifiers.max_width != FLT_MAX)
@@ -19,88 +19,57 @@ void TextRenderable::UpdateRenderText()
 	line_lengths = {};
 	line_counts = {};
 
-	char *str_ptr = str;
 	float line_length = 0;
 	int line_num_chars = 0;
 
+	struct {
+		float glyphs_len = 0;
+		int char_count = 0;
+	} current_word, current_line;
+
+	bool wrap_by_word = true;
+
 	/*
-	 * Iterate over the string word by word. Insert a line break whenever the
-	 * next word exceeds the maximum line length. Store the glyph lengths and
-	 * character counts of each line.
+	 * Iterate over the string either character by character or word by word,
+	 * depending on whether the skip flag is set. Insert a line break whenever
+	 * the next word or character exceeds the maximum line length. Store the
+	 * glyph lengths and character line_counts of each line.
 	 *
-	 * TODO: Support line breaks properly, and generally rewrite to actually
-	 * not be horrible.
+	 * TODO: Fix wrapping so that the first word exceeding the line limit
+	 *       doesn't prevent the wrap of the second word.
 	 */
-	while(true)
-	{
-		const char *newline_ptr = strchr(str_ptr, '\n');
-		const char *nul_ptr = strchr(str_ptr, '\0');
-		const char *space_ptr = strchr(str_ptr, ' ');
-		const char *next_break = nul_ptr;
-		intptr_t next_break_ptr = (intptr_t)nul_ptr;
+	for(size_t i = 0; i < text.length() + 1; ++i) {
+		char c = text[i];
+		current_word.glyphs_len += font->GetGlyph(str[i]).ax;
+		++current_word.char_count;
 
-		if(newline_ptr != nullptr)
-			next_break_ptr = glm::min((intptr_t)next_break, (intptr_t)newline_ptr);
-		if(space_ptr != nullptr)
-			next_break_ptr = glm::min((intptr_t)next_break, (intptr_t)space_ptr);
-		next_break = (const char*)next_break_ptr;
+		if(wrap_by_word == true && text[i] != ' ' && text[i] != '\n' && text[i] != '\0')
+			continue;
 
-		float word_length = 0;
-		int word_num_chars = next_break - str_ptr;
+		bool exceeds_max =
+			current_line.glyphs_len + current_word.glyphs_len > max_length;
 
-		for(size_t i = 0; i < next_break - str_ptr + 1; ++i)
-			word_length += font->GetGlyph(str_ptr[i]).ax;
-
-		if(line_length + word_length >= max_length)
+		if((exceeds_max == false ||
+					(exceeds_max == true && current_line.char_count == 0)))
 		{
-			if(line_length > 0)
-				*(str_ptr - 1) = '\n';
-			else
-			{
-				line_length = word_length;
-				line_num_chars = word_num_chars;
-			}
+			current_line.glyphs_len += current_word.glyphs_len;
+			current_line.char_count += current_word.char_count;
+			current_word.glyphs_len = 0;
+			current_word.char_count = 0;
 
-			line_lengths.push_back(line_length);
-			line_counts.push_back(line_num_chars);
-			line_length = 0;
-			line_num_chars = 0;
+			if(text[i] != '\0' && text[i] != '\n')
+				continue;
 		}
 
-		if(*(str_ptr + (int)word_num_chars) == '\n' ||
-				*(str_ptr + (int)word_num_chars) == '\0')
-		{
-			float actual_line_length = line_length + word_length;
-			int actual_line_num_chars = line_num_chars + word_num_chars;
+		line_lengths.push_back(current_line.glyphs_len);
+		line_counts.push_back(current_line.char_count);
 
-			if(line_length + word_length < max_length)
-			{
-				word_length = 0;
-				word_num_chars = 0;
-			}
+		current_line.glyphs_len = 0;
+		current_line.char_count = 0;
 
-			line_lengths.push_back(actual_line_length);
-			line_counts.push_back(actual_line_num_chars);
-
-			line_length = 0;
-			line_num_chars = 0;
+		if(text[i] == '\0' && current_word.char_count != 0) {
+			line_lengths.push_back(current_word.glyphs_len);
+			line_counts.push_back(current_word.char_count);
 		}
-		else
-		{
-			line_length += word_length;
-			line_num_chars += word_num_chars;
-		}
-
-		if(space_ptr == nullptr && newline_ptr == nullptr)
-			break;
-		++line_num_chars;
-		str_ptr += word_num_chars + 1;
 	}
-
-	//for(size_t i = 0; i < line_lengths.size(); ++i)
-	//	line_lengths[i] = line_lengths[i] / font->GetPixelSize() * modifiers.scale.x;
-
-	render_text = str;
-	free(str);
 }
-
