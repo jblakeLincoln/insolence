@@ -86,11 +86,11 @@ public:
 	Transform pos;
 	Transform lookat;
 
-	static Camera* GetActiveCamera() {
+	static Camera* GetActive() {
 		return active_camera;
 	}
 
-	static void SetActiveCamera(Camera* c) {
+	static void SetActive(Camera* c) {
 		active_camera = c;
 	}
 

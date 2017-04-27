@@ -84,8 +84,8 @@ void RenderManager3D::Flush(const GameTime &gametime)
 
 	glUseProgram(shader_program->GetID());
 
-	if(Camera::GetActiveCamera() != NULL)
-		view_pos = Camera::GetActiveCamera()->pos.GetPos();
+	if(Camera::GetActive() != NULL)
+		view_pos = Camera::GetActive()->pos.GetPos();
 
 	glUniform3fv(uniforms.view_pos,            1, &view_pos[0]);
 	glUniform3fv(dir_light_uniforms.direction, 1, &dir_light.direction[0]);

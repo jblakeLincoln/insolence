@@ -12,6 +12,10 @@ const std::string Console::PREFIX_STRING = "$ ";
 Console::Console()
 {
 	camera = new Camera(Window::GetActive(), Camera::ORTHO);
+
+	if(Camera::GetActive() == camera)
+		Camera::SetActive(nullptr);
+
 	mgr = new EntityManager();
 	font = Font::Load("samples_assets/ProFontWindows.ttf", PIXEL_SIZE);
 
@@ -262,8 +266,8 @@ void Console::Draw(const GameTime &gametime)
 	pos_y = fmin(pos_y, 0);
 
 	glDisable(GL_DEPTH_TEST);
-	Camera *other_camera = Camera::GetActiveCamera();
-	Camera::SetActiveCamera(camera);
+	Camera *other_camera = Camera::GetActive();
+	Camera::SetActive(camera);
 
 	fb_console->Bind();
 	mgr->Manage(gametime);
@@ -297,7 +301,7 @@ void Console::Draw(const GameTime &gametime)
 			glm::vec4(1.f), glm::vec4(0, 0, 1, -1), 0);
 	DefaultRenderer::Get()->Flush(gametime);
 
-	Camera::SetActiveCamera(other_camera);
+	Camera::SetActive(other_camera);
 
 	glEnable(GL_DEPTH_TEST);
 }

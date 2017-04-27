@@ -12,7 +12,8 @@
 #include "../system/text_renderable_system.h"
 #include "default_renderers.h"
 
-void BaseGameLoop::BaseInitialise() {
+void BaseGameLoop::BaseInitialise()
+{
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
@@ -20,7 +21,7 @@ void BaseGameLoop::BaseInitialise() {
 
 	Initialise();
 
-	if(Camera::GetActiveCamera() == NULL)
+	if(Camera::GetActive() == NULL)
 		log(Log::WARN, "GameWorld - No camera set");
 }
 
@@ -37,8 +38,8 @@ void BaseGameLoop::BaseDraw()
 	glClearColor(clear_colour.x, clear_colour.y, clear_colour.z, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	if(Camera::GetActiveCamera() != NULL)
-		Camera::GetActiveCamera()->Post();
+	if(Camera::GetActive() != NULL)
+		Camera::GetActive()->Post();
 
 	PreDraw(gametime);
 	Game::Get()->entity_manager->FlushDraw(gametime);

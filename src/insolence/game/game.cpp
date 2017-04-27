@@ -36,9 +36,9 @@ void Game::Run()
 	entity_manager->AddRenderSystem<TextRenderableSystem>(
 			DefaultRenderer::Get()->RendererText);
 
+
 	console = new Console();
 	RegisterConsoleFunctions();
-
 	loop->Start();
 
 	delete entity_manager;
