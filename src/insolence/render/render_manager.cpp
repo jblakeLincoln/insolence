@@ -25,8 +25,8 @@ ShaderProgram* RenderManager::CreateShaderProgramFromPair(const char *vert_path,
 		else
 			glAttachShader(program->GetID(), shaders[i]->GetID());
 
-		shaders[i]->LogCompileInfo("RenderManager (%s) - "
-				"%s ", __FUNCTION__, i == 0 ? "Vert" : "Frag");
+		shaders[i]->LogCompileInfo("RenderManager (%s) "
+				"%s ", __FUNCTION__, i == 0 ? vert_path : frag_path);
 	}
 
 #ifdef INSOLENCE_OPENGL_DESKTOP

@@ -80,6 +80,7 @@ void Shader::LogCompileInfo(const char *prepend, ...)
 	char buf[1024];
 	int length = 0;
 	va_list args;
+	char *prepend_line;
 
 	glGetShaderInfoLog(GetID(), 1024, &length, buf);
 
@@ -89,6 +90,12 @@ void Shader::LogCompileInfo(const char *prepend, ...)
 	buf[length-1] = '\0';
 
 	va_start(args, prepend);
-	log(Log::ERR, "%sShader log: %s", prepend, buf);
+
+	if(vasprintf(&prepend_line, prepend, args) < 0)
+		log(Log::ERR, "Shader log: %s", buf);
+	else
+		log(Log::ERR, "%sShader log: %s", prepend_line, buf);
+
 	va_end(args);
+	free(prepend_line);
 }
