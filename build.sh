@@ -76,6 +76,9 @@ function webgl_make()
 
 	cd src
 	make webgl-${CONFIGURATION}
+	if [ $? -ne 0 ]; then
+		exit
+	fi
 	cd ..
 
 	if [ ! -z ${SELECTED_SAMPLE} ]; then
@@ -84,7 +87,9 @@ function webgl_make()
 
 		cd ../../bin
 		make webgl-output-${CONFIGURATION} -f ../samples/${SELECTED_SAMPLE}/Makefile
-
+		if [ $? -ne 0 ]; then
+			exit
+		fi
 		cp "../templates/insolence.html" "${SELECTED_SAMPLE}.html"
 		cp "../templates/insolence.css" .
 		cp "../templates/insolence.svg" .
