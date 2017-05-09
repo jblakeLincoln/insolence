@@ -4,7 +4,7 @@
 
 #include "../game/texture.h"
 #include "../game/window.h"
-
+#include "../util/math.h"
 
 Framebuffer::~Framebuffer()
 {
@@ -16,10 +16,17 @@ Framebuffer::~Framebuffer()
 Framebuffer* Framebuffer::Create(Window *w)
 {
 	Framebuffer *out = new Framebuffer();
+	GLenum rb_internalformat = GL_DEPTH_COMPONENT24;
 
 	out->window = w;
 	out->dimensions = glm::ivec2(
 				w->GetFramebufferWidth(), w->GetFramebufferHeight());
+
+#ifdef INSOLENCE_WEBGL
+	out->dimensions.x = NearestPow2(out->dimensions.x);
+	out->dimensions.y = NearestPow2(out->dimensions.y);
+	rb_internalformat = GL_DEPTH_COMPONENT16;
+#endif
 
 	out->tex = Texture::CreateBlank(out->dimensions.x, out->dimensions.y);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -34,7 +41,7 @@ Framebuffer* Framebuffer::Create(Window *w)
 
 	glGenRenderbuffers(1, &out->rbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, out->rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+	glRenderbufferStorage(GL_RENDERBUFFER, rb_internalformat,
 			out->dimensions.x, out->dimensions.y);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
@@ -51,21 +58,8 @@ Framebuffer* Framebuffer::Create(Window *w)
 
 void Framebuffer::Bind()
 {
+	/* TODO: Handle window resizes. */
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-	if(dimensions.x == window->GetFramebufferWidth() &&
-			dimensions.y == window->GetFramebufferHeight())
-		return;
-
-	dimensions = glm::ivec2(
-			window->GetFramebufferWidth(), window->GetFramebufferHeight());
-
-	tex->Blank(dimensions.x, dimensions.y);
-
-	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
-		window->GetFramebufferWidth(), window->GetFramebufferHeight());
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
 void Framebuffer::Unbind()

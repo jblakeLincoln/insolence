@@ -292,9 +292,9 @@ void Console::Draw(const GameTime &gametime)
 
 	model = glm::translate(model, glm::vec3(0.f, pos_y - y_offset, 0.f));
 	model = glm::scale(model, glm::vec3(
-			Window::GetActive()->GetFramebufferWidth(),
-			Window::GetActive()->GetFramebufferHeight(),
-			1)
+		fb_console->tex->GetWidth(),
+		fb_console->tex->GetHeight(),
+		1)
 	);
 
 	DefaultRenderer::Get()->Renderer2D->Add(fb_console->tex, model,
