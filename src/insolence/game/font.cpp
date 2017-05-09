@@ -131,9 +131,11 @@ Font* Font::Load(const char *path, int size,
 		cs->l  = c->l / size;
 		cs->t  = c->t / size;
 
-		glTexSubImage2D(GL_TEXTURE_2D, 0, x, 0, c->w,
-				c->h, gl_format, GL_UNSIGNED_BYTE,
-				g->bitmap.buffer);
+		if(g->bitmap.buffer != nullptr) {
+			glTexSubImage2D(GL_TEXTURE_2D, 0, x, 0, c->w,
+					c->h, gl_format, GL_UNSIGNED_BYTE,
+					g->bitmap.buffer);
+		}
 
 		x += c->w;
 	}

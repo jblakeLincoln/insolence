@@ -100,9 +100,33 @@ Texture *Texture::CreateBlank(uint32_t w, uint32_t h, GLint in_iformat,
 
 void Texture::Blank(uint32_t w, uint32_t h)
 {
+	void *data;
+	int data_size = 0;
+
 	width = w;
 	height = h;
 	Bind();
+
+	if(datatype == GL_UNSIGNED_BYTE)
+		data_size = sizeof(uint8_t);
+	else if(datatype == GL_FLOAT)
+		data_size = sizeof(float);
+
+	/*
+	 * Does this look dumb? It is dumb.
+	 * The texture needs setting to zero to suppress WebGL errors even though
+	 * the implementation always seems to make sure it's set to zero.
+	 *
+	 * Functions designed to zero out textures are GL4.3 onwards.
+	 * Can't really stack allocate it.
+	 * So here we are.
+	 */
+	data_size *= w * h;
+	data = malloc(data_size);
+	memset(data, 0, data_size);
+
 	glTexImage2D(GL_TEXTURE_2D, 0, internal_format, w, h, 0, format,
-			datatype, NULL);
+			datatype, data);
+
+	free(data);
 }
