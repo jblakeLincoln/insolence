@@ -3,8 +3,6 @@
 
 #include "../insolence_dll.h"
 
-#include "render_manager.h"
-
 #include <list>
 #include <unordered_map>
 #include <vector>
@@ -12,7 +10,9 @@
 
 struct Material;
 struct Mesh;
-struct INSOLENCE_API RenderManager3D : public RenderManager {
+struct ShaderProgram;
+struct INSOLENCE_API RenderManager3D
+{
 
 	/*
 	 * TODO: Dynamic number of point lights.
@@ -97,12 +97,14 @@ private:
 	std::unordered_map<Mesh*, material_table_t> data;
 
 	std::list<PointLight*> point_lights;
+	ShaderProgram *shader_program;
 
 	void CreateMeshBuffer(Mesh *m);
 	void UpdatePointLight(const PointLight &, int index);
+	RenderManager3D();
 
 public:
-	RenderManager3D();
+	RenderManager3D(ShaderProgram*);
 	~RenderManager3D();
 	void Add(Mesh *mesh, Material *material,
 			const glm::mat4 &model, const glm::vec4 &colour);

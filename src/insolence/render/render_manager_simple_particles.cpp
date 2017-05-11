@@ -2,8 +2,14 @@
 
 #include "../game/camera.h"
 
-RenderManagerSimpleParticles::RenderManagerSimpleParticles()
+RenderManagerSimpleParticles::RenderManagerSimpleParticles(ShaderProgram *prog)
 {
+	if(prog == nullptr) {
+		log(Log::FATAL, "RenderManagerSimpleParticles - Failed to create "
+				"shader program");
+		return;
+	}
+
 	float verts[] = {
 		0.f, 1.f, // Top left
 		1.f, 1.f, // Top right
@@ -13,20 +19,12 @@ RenderManagerSimpleParticles::RenderManagerSimpleParticles()
 		0.f, 1.f // Top left
 	};
 
+	shader_program = prog;
+
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 	glGenBuffers(1, &vbo_verts);
 	glGenBuffers(1, &vbo_data);
-
-	shader_program = CreateShaderProgramFromPair("shaders/particles.vs",
-			"shaders/particles.fs");
-
-	if(shader_program == NULL)
-	{
-		log(Log::FATAL, "RenderManagerSimpleParticles - Failed to create "
-				"shader program");
-		return;
-	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_verts);
 	attrib_verts = glGetAttribLocation(shader_program->GetID(), "in_verts");

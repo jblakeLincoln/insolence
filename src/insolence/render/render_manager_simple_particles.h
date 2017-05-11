@@ -4,9 +4,9 @@
 #include "../insolence_dll.h"
 
 #include <unordered_map>
-#include "render_manager.h"
 
-struct INSOLENCE_API RenderManagerSimpleParticles : public RenderManager
+struct ShaderProgram;
+struct INSOLENCE_API RenderManagerSimpleParticles
 {
 	struct Layout {
 		glm::vec2 pos;
@@ -24,8 +24,9 @@ struct INSOLENCE_API RenderManagerSimpleParticles : public RenderManager
 	GLint attrib_scale;
 
 	std::unordered_map<float*, uint32_t> data;
+	ShaderProgram *shader_program;
 
-	RenderManagerSimpleParticles();
+	RenderManagerSimpleParticles(ShaderProgram*);
 	~RenderManagerSimpleParticles();
 
 	void Add(float *data, int count);

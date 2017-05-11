@@ -4,14 +4,12 @@
 #include "../game/material.h"
 #include "../game/mesh.h"
 
-RenderManager3D::RenderManager3D()
+RenderManager3D::RenderManager3D(ShaderProgram *prog)
 {
-	shader_program = CreateShaderProgramFromPair(
-			"shaders/3d.vs",
-			"shaders/3d.fs");
-
-	if(shader_program == NULL)
+	if(prog == nullptr)
 		return;
+
+	shader_program = prog;
 
 	dir_light_uniforms.direction =
 		shader_program->GetUniformLocation("dir_light.direction");
@@ -55,6 +53,7 @@ RenderManager3D::RenderManager3D()
 	point_light_uniforms[0].specular =
 		shader_program->GetUniformLocation("point_lights[0].specular");
 
+	/* TODO: Move this elsewhere. */
 	Camera::Setup(shader_program);
 }
 

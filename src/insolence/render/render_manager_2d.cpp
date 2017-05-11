@@ -3,25 +3,13 @@
 #include "../game/camera.h"
 #include "../game/texture.h"
 
-RenderManager2D::RenderManager2D()
+RenderManager2D::RenderManager2D(ShaderProgram *prog)
 {
-	Setup(NULL, NULL);
-}
-
-RenderManager2D::RenderManager2D(const char *vs, const char *fs)
-{
-	Setup(vs, fs);
-}
-
-void RenderManager2D::Setup(const char *vs, const char *fs)
-{
-	shader_program = CreateShaderProgramFromPair(
-			vs == NULL ? "shaders/2d.vs" : vs,
-			fs == NULL ? "shaders/2d.fs" : fs
-	);
-
-	if(shader_program == NULL)
+	if(prog == nullptr)
 		return;
+
+	shader_program = prog;
+	glUseProgram(shader_program->GetID());
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
@@ -30,6 +18,8 @@ void RenderManager2D::Setup(const char *vs, const char *fs)
 
 	ModelBufferSetup();
 	DataBufferSetup();
+
+	/* TODO: Control this elsewhere. */
 	Camera::Setup(shader_program);
 }
 

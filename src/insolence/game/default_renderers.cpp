@@ -1,12 +1,20 @@
 #include "default_renderers.h"
 
+#include "game.h"
+
 DefaultRenderer* DefaultRenderer::renderer_instance;
 
 DefaultRenderer::DefaultRenderer()
 {
-	Renderer2D = new RenderManager2D();
-	Renderer3D = new RenderManager3D();
-	RendererText = new RenderManager2D("shaders/2d.vs", "shaders/text.fs");
+	Renderer2D = new RenderManager2D(
+			Game::Get()->resources.shader_programs.Get(
+				EngineResources::ShaderProgram::DEFAULT_2D));
+	Renderer3D = new RenderManager3D(
+			Game::Get()->resources.shader_programs.Get(
+				EngineResources::ShaderProgram::DEFAULT_3D));
+	RendererText = new RenderManager2D(
+			Game::Get()->resources.shader_programs.Get(
+				EngineResources::ShaderProgram::DEFAULT_TEXT));
 }
 
 DefaultRenderer::~DefaultRenderer()

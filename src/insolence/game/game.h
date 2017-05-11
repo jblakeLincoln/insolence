@@ -4,6 +4,7 @@
 #include "../insolence_dll.h"
 
 #include <glm/vec3.hpp>
+#include "resource_manager.h"
 
 struct BaseGameLoop;
 struct Console;
@@ -14,6 +15,8 @@ struct INSOLENCE_API Game {
 private:
 	Game() = default;
 	~Game() = default;
+
+	void CreateShaderPrograms();
 
 public:
 	static Game* Get() {
@@ -28,6 +31,10 @@ public:
 		bool is_resizable        = true;
 	} startup_properties;
 
+	struct {
+		ResourceManager<ShaderProgram> shader_programs;
+	} resources;
+
 	static Entity* CreateEntity();
 
 	Console *console = nullptr;
@@ -37,6 +44,15 @@ public:
 
 	glm::vec3 clear_colour;
 	void Run();
+};
+
+namespace EngineResources {
+	enum ShaderProgram {
+		DEFAULT_2D,
+		DEFAULT_3D,
+		DEFAULT_TEXT,
+		PARTICLES
+	};
 };
 
 #endif

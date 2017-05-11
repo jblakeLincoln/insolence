@@ -28,6 +28,8 @@ void Game::Run()
 			startup_properties.window_title.c_str(),
 			startup_properties.is_resizable);
 
+	CreateShaderPrograms();
+
 	entity_manager = new EntityManager();
 	entity_manager->AddRenderSystem<SpriteRenderableSystem>(
 			DefaultRenderer::Get()->Renderer2D);
@@ -50,4 +52,19 @@ void Game::Run()
 Entity* Game::CreateEntity()
 {
 	return Game::Get()->entity_manager->CreateEntity();
+}
+
+void Game::CreateShaderPrograms()
+{
+	resources.shader_programs.Add(EngineResources::ShaderProgram::DEFAULT_2D,
+			ShaderProgram::FromPair("shaders/2d.vs", "shaders/2d.fs"));
+
+	resources.shader_programs.Add(EngineResources::ShaderProgram::DEFAULT_3D,
+			ShaderProgram::FromPair("shaders/3d.vs", "shaders/3d.fs"));
+
+	resources.shader_programs.Add(EngineResources::ShaderProgram::DEFAULT_TEXT,
+			ShaderProgram::FromPair("shaders/2d.vs", "shaders/text.fs"));
+
+	resources.shader_programs.Add(EngineResources::ShaderProgram::PARTICLES,
+			ShaderProgram::FromPair("shaders/particles.vs", "shaders/particles.fs"));
 }

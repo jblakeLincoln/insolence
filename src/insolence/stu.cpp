@@ -26,7 +26,6 @@
 #include "render/framebuffer.cpp"
 #include "render/render_manager_2d.cpp"
 #include "render/render_manager_3d.cpp"
-#include "render/render_manager.cpp"
 #include "render/render_manager_simple_particles.cpp"
 #include "render/shader.cpp"
 #include "render/shader_program.cpp"

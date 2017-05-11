@@ -12,14 +12,16 @@ private:
 	GLuint id;
 
 public:
+	static ShaderProgram *FromPair(const char *vert_path, const char *frag_path);
+
 	ShaderProgram();
 	~ShaderProgram();
-
-	void AttachShader(Shader *shader);
 
 	GLuint GetID() const {
 		return id;
 	}
+
+	void AttachShader(Shader *shader);
 
 	GLint GetUniformLocation(const char *name);
 	GLint GetAttribLocation(const char *name);

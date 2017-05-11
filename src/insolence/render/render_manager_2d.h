@@ -9,12 +9,12 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "render_manager.h"
 #include "../game/font.h"
 
 struct Font;
 struct Texture;
-struct INSOLENCE_API RenderManager2D : public RenderManager
+struct ShaderProgram;
+struct INSOLENCE_API RenderManager2D
 {
 	struct Data {
 		glm::vec4 m1;
@@ -26,6 +26,7 @@ struct INSOLENCE_API RenderManager2D : public RenderManager
 	};
 
 private:
+	RenderManager2D() = default;
 	/*
 	 * We have a hash map of Texture/Data, for batching per texture,
 	 * contained within an ordered map which is sorted by render order.
@@ -34,6 +35,7 @@ private:
 	typedef std::map<int, map_data_t> data_2d_t;
 	data_2d_t data;
 
+	ShaderProgram *shader_program;
 	GLuint vao;
 
 	struct VBOs {
@@ -52,13 +54,11 @@ private:
 		GLint rect;
 	} data_attribs;
 
-	void Setup(const char *vs_path, const char *fs_path);
 	void ModelBufferSetup();
 	void DataBufferSetup();
 
 public:
-	RenderManager2D();
-	RenderManager2D(const char *vs, const char *fs);
+	RenderManager2D(ShaderProgram*);
 	~RenderManager2D();
 
 	void Add(Texture*,
