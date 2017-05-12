@@ -51,11 +51,12 @@ function linux_make()
 
 	cd src
 	make $CONFIGURATION
-	cd ..
 
 	if [ $? -ne 0 ]; then
 		exit
 	fi
+
+	cd ..
 
 	if [ ! -z ${SELECTED_SAMPLE} ]; then
 		cd samples/${SELECTED_SAMPLE}
