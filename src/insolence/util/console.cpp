@@ -23,10 +23,8 @@ Console::Console()
 	entity_parser = new CommandParser<uint64_t>();
 	bottom_padding = (font->GetLineHeight() - font->GetGlyph('W').h) / PIXEL_SIZE * FONT_SIZE;
 
-	mgr->AddSystem<SpriteRenderableSystem>(
-			DefaultRenderer::Get()->Renderer2D);
-	mgr->AddSystem<TextRenderableSystem>(
-			DefaultRenderer::Get()->RendererText);
+	mgr->AddSystem<SpriteRenderableSystem>();
+	mgr->AddSystem<TextRenderableSystem>();
 
 	fb_console = Framebuffer::Create(Window::GetActive());
 
@@ -287,7 +285,10 @@ void Console::Draw(const GameTime &gametime)
 			-1.f, 1.f);
 	camera->pos.SetPosZ(1.f);
 	camera->Post();
-	DefaultRenderer::Get()->Flush(gametime);
+
+	Game::Get()->renderers.sprite->Flush(gametime);
+	Game::Get()->renderers.text->Flush(gametime);
+
 	fb_console->Unbind();
 
 	model = glm::translate(model, glm::vec3(0.f, pos_y - y_offset, 0.f));
@@ -297,9 +298,9 @@ void Console::Draw(const GameTime &gametime)
 		1)
 	);
 
-	DefaultRenderer::Get()->Renderer2D->Add(fb_console->tex, model,
+	Game::Get()->renderers.sprite->Add(fb_console->tex, model,
 			glm::vec4(1.f), glm::vec4(0, 0, 1, -1), 0);
-	DefaultRenderer::Get()->Flush(gametime);
+	Game::Get()->renderers.sprite->Flush(gametime);
 
 	Camera::SetActive(other_camera);
 

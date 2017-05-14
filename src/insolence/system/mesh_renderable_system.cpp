@@ -3,9 +3,9 @@
 #include "../component/transform.h"
 #include "../render/render_manager_3d.h"
 
-MeshRenderableSystem::MeshRenderableSystem(RenderManager3D* r)
-	:	renderer(r)
+MeshRenderableSystem::MeshRenderableSystem()
 {
+	renderer = Game::Get()->renderers.mesh;
 }
 
 void MeshRenderableSystem::Manage(const GameTime& gametime)

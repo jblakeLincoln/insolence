@@ -11,7 +11,7 @@ private:
 	RenderManager2D* renderer;
 
 public:
-	TextRenderableSystem(RenderManager2D*);
+	TextRenderableSystem();
 	void Manage(const GameTime&);
 };
 

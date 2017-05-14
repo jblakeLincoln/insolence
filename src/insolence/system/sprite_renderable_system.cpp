@@ -2,9 +2,9 @@
 
 #include "../render/render_manager_2d.h"
 
-SpriteRenderableSystem::SpriteRenderableSystem(RenderManager2D* r)
-	:	renderer(r)
+SpriteRenderableSystem::SpriteRenderableSystem()
 {
+	renderer = Game::Get()->renderers.sprite;
 }
 
 void SpriteRenderableSystem::Manage(const GameTime& gametime)

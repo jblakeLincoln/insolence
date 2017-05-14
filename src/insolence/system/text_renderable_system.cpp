@@ -3,9 +3,10 @@
 #include "../component/transform.h"
 #include "../render/render_manager_2d.h"
 
-TextRenderableSystem::TextRenderableSystem(RenderManager2D* r)
-:	renderer(r)
-{}
+TextRenderableSystem::TextRenderableSystem()
+{
+	renderer = Game::Get()->renderers.text;
+}
 
 void TextRenderableSystem::Manage(const GameTime& gametime)
 {

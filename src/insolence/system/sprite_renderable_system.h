@@ -11,19 +11,8 @@ private:
 	RenderManager2D* renderer;
 
 public:
-	SpriteRenderableSystem(RenderManager2D*);
+	SpriteRenderableSystem();
 	void Manage(const GameTime&);
 };
-
-static void DrawSprite(const glm::mat4 &model, const SpriteRenderable &s,
-		RenderManager2D* r = DefaultRenderer::Get()->Renderer2D)
-{
-	glm::mat4 m = model;
-	m[3][0] -= s.origin.x;
-	m[3][1] -= s.origin.y;
-
-	r->Add(s.texture, m, s.colour,
-			s.animation.GetAnimationRectangle(s.texture), s.layer);
-}
 
 #endif

@@ -10,7 +10,6 @@
 #include "../system/sprite_renderable_system.h"
 #include "../system/mesh_renderable_system.h"
 #include "../system/text_renderable_system.h"
-#include "default_renderers.h"
 
 void BaseGameLoop::BaseInitialise()
 {
@@ -41,7 +40,11 @@ void BaseGameLoop::BaseDraw()
 	if(Camera::GetActive() != NULL)
 		Camera::GetActive()->Post();
 
-	DefaultRenderer::Get()->Flush(gametime);
+	Game::Get()->renderers.sprite->Flush(gametime);
+	Game::Get()->renderers.mesh->Flush(gametime);
+	Game::Get()->renderers.particles->Flush(gametime);
+	Game::Get()->renderers.text->Flush(gametime);
+
 	Draw(gametime);
 	Game::Get()->window->SwapBuffers();
 }

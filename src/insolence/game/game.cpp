@@ -1,7 +1,6 @@
 #include "game.h"
 
 #include "camera.h"
-#include "default_renderers.h"
 #include "input.h"
 #include "game_loop.h"
 #include "window.h"
@@ -9,6 +8,7 @@
 #include "../ecs/entity_manager.h"
 #include "../render/render_manager_2d.h"
 #include "../render/render_manager_3d.h"
+#include "../render/render_manager_simple_particles.h"
 #include "../system/sprite_renderable_system.h"
 #include "../system/mesh_renderable_system.h"
 #include "../system/text_renderable_system.h"
@@ -27,23 +27,26 @@ void Game::Run()
 			startup_properties.is_resizable);
 
 	CreateShaderPrograms();
+	CreateRenderers();
 
 	entity_manager = new EntityManager();
-	entity_manager->AddSystem<SpriteRenderableSystem>(
-			DefaultRenderer::Get()->Renderer2D);
-	entity_manager->AddSystem<MeshRenderableSystem>(
-			DefaultRenderer::Get()->Renderer3D);
-	entity_manager->AddSystem<TextRenderableSystem>(
-			DefaultRenderer::Get()->RendererText);
-
+	entity_manager->AddSystem<SpriteRenderableSystem>();
+	entity_manager->AddSystem<MeshRenderableSystem>();
+	entity_manager->AddSystem<TextRenderableSystem>();
 
 	console = new Console();
 	RegisterConsoleFunctions();
 	loop->Start();
 
-	delete entity_manager;
-	delete loop;
 	delete console;
+	delete entity_manager;
+
+	delete renderers.sprite;
+	delete renderers.mesh;
+	delete renderers.text;
+	delete renderers.particles;
+
+	delete loop;
 	Window::Destroy(window);
 }
 
@@ -65,4 +68,23 @@ void Game::CreateShaderPrograms()
 
 	resources.shader_programs.Add(EngineResources::ShaderProgram::PARTICLES,
 			ShaderProgram::FromPair("shaders/particles.vs", "shaders/particles.fs"));
+}
+
+void Game::CreateRenderers()
+{
+	renderers.sprite =
+		new RenderManager2D(resources.shader_programs.Get(
+					EngineResources::ShaderProgram::DEFAULT_2D));
+
+	renderers.mesh =
+		new RenderManager3D(resources.shader_programs.Get(
+					EngineResources::ShaderProgram::DEFAULT_3D));
+
+	renderers.text =
+		new RenderManager2D(resources.shader_programs.Get(
+					EngineResources::ShaderProgram::DEFAULT_TEXT));
+
+	renderers.particles =
+		new RenderManagerSimpleParticles(resources.shader_programs.Get(
+					EngineResources::ShaderProgram::PARTICLES));
 }

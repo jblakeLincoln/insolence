@@ -11,7 +11,7 @@ private:
 	RenderManager3D* renderer;
 
 public:
-	MeshRenderableSystem(RenderManager3D*);
+	MeshRenderableSystem();
 	void Manage(const GameTime&);
 };
 

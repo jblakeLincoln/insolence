@@ -11,12 +11,20 @@ struct Console;
 struct Entity;
 struct EntityManager;
 
+struct Console;
+struct Entity;
+struct EntityManager;
+struct RenderManager2D;
+struct RenderManager3D;
+struct RenderManagerSimpleParticles;
+struct Window;
 struct INSOLENCE_API Game {
 private:
 	Game() = default;
 	~Game() = default;
 
 	void CreateShaderPrograms();
+	void CreateRenderers();
 
 public:
 	static Game* Get() {
@@ -34,6 +42,13 @@ public:
 	struct {
 		ResourceManager<ShaderProgram> shader_programs;
 	} resources;
+
+	struct {
+		RenderManager2D *sprite;
+		RenderManager3D *mesh;
+		RenderManager2D *text;
+		RenderManagerSimpleParticles *particles;
+	} renderers;
 
 	static Entity* CreateEntity();
 

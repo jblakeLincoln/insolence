@@ -1,11 +1,10 @@
 #include "point_light_system.h"
 
-#include "../game/default_renderers.h"
 #include "../component/transform.h"
 
 PointLightSystem::PointLightSystem()
 {
-	renderer = DefaultRenderer::Get()->Renderer3D;
+	renderer = Game::Get()->renderers.mesh;
 }
 
 void PointLightSystem::

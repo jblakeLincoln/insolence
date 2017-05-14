@@ -9,7 +9,6 @@
 #include "ecs/entity_manager.cpp"
 #include "game/animation.cpp"
 #include "game/camera.cpp"
-#include "game/default_renderers.cpp"
 #include "game/font.cpp"
 #include "game/game.cpp"
 #include "game/game_loop.cpp"
