@@ -6,12 +6,16 @@
 #include "../component/mesh_renderable.h"
 
 struct RenderManager3D;
-struct INSOLENCE_API MeshRenderableSystem : System<MeshRenderable> {
+template<>
+struct INSOLENCE_API System<MeshRenderable> : SystemBase<MeshRenderable> {
 private:
 	RenderManager3D* renderer;
 
 public:
-	MeshRenderableSystem();
+	System<MeshRenderable>() {
+		renderer = Game::Get()->renderers.mesh;
+	}
+
 	void Manage(const GameTime&);
 };
 

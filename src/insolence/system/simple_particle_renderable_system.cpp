@@ -1,12 +1,6 @@
 #include "simple_particle_renderable_system.h"
 
-SimpleParticleRenderableSystem::SimpleParticleRenderableSystem(
-		RenderManagerSimpleParticles *r)
-	:	renderer(r)
-{
-}
-
-void SimpleParticleRenderableSystem::
+void System<SimpleParticleRenderable>::
 OnAdd(Entity &e, SimpleParticleRenderable &c)
 {
 	r_eng.seed(time(NULL));
@@ -50,7 +44,7 @@ OnAdd(Entity &e, SimpleParticleRenderable &c)
 	c.uninitialised = false;
 }
 
-void SimpleParticleRenderableSystem::
+void System<SimpleParticleRenderable>::
 Manage(const GameTime &gametime, Entity &e, SimpleParticleRenderable &c)
 {
 	if(c.alive == false)

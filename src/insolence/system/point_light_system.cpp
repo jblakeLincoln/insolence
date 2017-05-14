@@ -2,12 +2,7 @@
 
 #include "../component/transform.h"
 
-PointLightSystem::PointLightSystem()
-{
-	renderer = Game::Get()->renderers.mesh;
-}
-
-void PointLightSystem::
+void System<PointLight>::
 Manage(const GameTime &gametime, Entity &e, PointLight &c)
 {
 	if(c.light == NULL)
@@ -20,13 +15,13 @@ Manage(const GameTime &gametime, Entity &e, PointLight &c)
 			glm::vec4(c.light->diffuse, 1.f));
 }
 
-void PointLightSystem::
+void System<PointLight>::
 OnAdd(Entity &e, PointLight &c)
 {
 	c.light = renderer->RequestPointLight();
 }
 
-void PointLightSystem::
+void System<PointLight>::
 OnRemove(Entity &e, PointLight &c)
 {
 	if(c.light != NULL)

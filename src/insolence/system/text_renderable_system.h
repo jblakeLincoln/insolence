@@ -6,12 +6,16 @@
 #include "../component/text_renderable.h"
 
 struct RenderManager2D;
-struct INSOLENCE_API TextRenderableSystem : System<TextRenderable> {
+template<>
+struct INSOLENCE_API System<TextRenderable> : SystemBase<TextRenderable> {
 private:
 	RenderManager2D* renderer;
 
 public:
-	TextRenderableSystem();
+	System<TextRenderable>() {
+		renderer = Game::Get()->renderers.text;
+	}
+
 	void Manage(const GameTime&);
 };
 

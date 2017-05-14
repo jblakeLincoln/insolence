@@ -4,9 +4,12 @@
 #include "../component/point_light.h"
 
 struct RenderManager3D;
-struct PointLightSystem : SystemBase<PointLight> {
+template<>
+struct System<PointLight> : SystemBase<PointLight> {
 	RenderManager3D *renderer;
-	PointLightSystem();
+	System<PointLight>() {
+		renderer = Game::Get()->renderers.mesh;
+	}
 
 	void Manage(const GameTime&, Entity&, PointLight&);
 	void OnAdd(Entity&, PointLight&);

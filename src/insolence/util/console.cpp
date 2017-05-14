@@ -23,9 +23,6 @@ Console::Console()
 	entity_parser = new CommandParser<uint64_t>();
 	bottom_padding = (font->GetLineHeight() - font->GetGlyph('W').h) / PIXEL_SIZE * FONT_SIZE;
 
-	mgr->AddSystem<SpriteRenderableSystem>();
-	mgr->AddSystem<TextRenderableSystem>();
-
 	fb_console = Framebuffer::Create(Window::GetActive());
 
 	caret_pos = PREFIX_STRING.length();

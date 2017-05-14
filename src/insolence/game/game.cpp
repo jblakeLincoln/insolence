@@ -30,12 +30,9 @@ void Game::Run()
 	CreateRenderers();
 
 	entity_manager = new EntityManager();
-	entity_manager->AddSystem<SpriteRenderableSystem>();
-	entity_manager->AddSystem<MeshRenderableSystem>();
-	entity_manager->AddSystem<TextRenderableSystem>();
-
 	console = new Console();
 	RegisterConsoleFunctions();
+
 	loop->Start();
 
 	delete console;

@@ -21,7 +21,7 @@ struct INSOLENCE_API SimpleParticleParams {
 struct SimpleParticleRenderableSystem;
 struct INSOLENCE_API SimpleParticleRenderable
 {
-friend SimpleParticleRenderableSystem;
+friend System<SimpleParticleRenderable>;
 protected:
 	bool uninitialised = true;
 	bool alive = true;

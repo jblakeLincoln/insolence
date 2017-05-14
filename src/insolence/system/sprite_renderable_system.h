@@ -6,12 +6,16 @@
 #include "../component/sprite_renderable.h"
 
 struct RenderManager2D;
-struct INSOLENCE_API SpriteRenderableSystem : System<SpriteRenderable> {
+template<>
+struct INSOLENCE_API System<SpriteRenderable> : SystemBase<SpriteRenderable> {
 private:
 	RenderManager2D* renderer;
 
 public:
-	SpriteRenderableSystem();
+	System<SpriteRenderable>() {
+		renderer = Game::Get()->renderers.sprite;
+	}
+
 	void Manage(const GameTime&);
 };
 

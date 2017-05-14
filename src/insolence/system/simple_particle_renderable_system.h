@@ -10,17 +10,20 @@
 #include "../ecs/system.h"
 
 struct RenderManagerSimpleParticles;
-struct SimpleParticleRenderableSystem : System<SimpleParticleRenderable>
+template<>
+struct System<SimpleParticleRenderable> : SystemBase<SimpleParticleRenderable>
 {
 private:
 	std::default_random_engine r_eng;
 	RenderManagerSimpleParticles *renderer;
 
-	SimpleParticleRenderableSystem() {}
-	void OnAdd(Entity&, SimpleParticleRenderable&);
 
 public:
-	SimpleParticleRenderableSystem(RenderManagerSimpleParticles*);
+	void OnAdd(Entity&, SimpleParticleRenderable&);
+	System<SimpleParticleRenderable>() {
+		renderer = Game::Get()->renderers.particles;
+	}
+
 	void Manage(const GameTime &gametime, Entity &e, SimpleParticleRenderable&);
 };
 #endif
