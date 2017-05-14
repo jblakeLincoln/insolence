@@ -11,13 +11,14 @@ void TextRenderableSystem::Manage(const GameTime& gametime)
 {
 	typedef TextRenderable::Modifiers Modifiers;
 
-	for(it = components.begin(); it!= components.end(); ++it)
+	for(it = 0; it < components.size(); ++it)
 	{
-		if(it->second.hidden == true)
+		TextRenderable *t = &components[it];
+
+		if(t->hidden == true)
 			continue;
 
-		TextRenderable *t = &it->second;
-		Transform *m = it->first->Get<Transform>();
+		Transform *m = entities[it]->Get<Transform>();
 
 		if(m == NULL || t->font == NULL || t->GetText().length() == 0)
 			continue;

@@ -3,12 +3,10 @@
 
 #include "../insolence_dll.h"
 
-#include "component.h"
-#include "transform.h"
 #include "../game/animation.h"
 #include "../game/texture.h"
 
-struct INSOLENCE_API SpriteRenderable : Component {
+struct INSOLENCE_API SpriteRenderable {
 	Texture *texture;
 	Animation animation;
 	glm::vec4 colour;

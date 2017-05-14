@@ -41,8 +41,6 @@ void BaseGameLoop::BaseDraw()
 	if(Camera::GetActive() != NULL)
 		Camera::GetActive()->Post();
 
-	PreDraw(gametime);
-	Game::Get()->entity_manager->FlushDraw(gametime);
 	DefaultRenderer::Get()->Flush(gametime);
 	Draw(gametime);
 	Game::Get()->window->SwapBuffers();

@@ -9,27 +9,27 @@ PointLightSystem::PointLightSystem()
 }
 
 void PointLightSystem::
-Manage(const GameTime &gametime, Entity *e, PointLight *c)
+Manage(const GameTime &gametime, Entity &e, PointLight &c)
 {
-	if(c->light == NULL)
+	if(c.light == NULL)
 		return;
 
-	c->light->pos = e->Get<Transform>()->GetPos();
+	c.light->pos = e.Get<Transform>()->GetPos();
 
 	renderer->Add(NULL, Material::GetDefault(),
-			glm::scale(e->Get<Transform>()->GetModelMatrix(), glm::vec3(0.1f)),
-			glm::vec4(c->light->diffuse, 1.f));
+			glm::scale(e.Get<Transform>()->GetModelMatrix(), glm::vec3(0.1f)),
+			glm::vec4(c.light->diffuse, 1.f));
 }
 
 void PointLightSystem::
-OnCreate(Entity *e, PointLight *c)
+OnAdd(Entity &e, PointLight &c)
 {
-	c->light = renderer->RequestPointLight();
+	c.light = renderer->RequestPointLight();
 }
 
 void PointLightSystem::
-OnRemove(Entity *e, PointLight *c)
+OnRemove(Entity &e, PointLight &c)
 {
-	if(c->light != NULL)
-		renderer->FreePointLight(c->light);
+	if(c.light != NULL)
+		renderer->FreePointLight(c.light);
 }

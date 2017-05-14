@@ -1,6 +1,6 @@
 #include "messaging.h"
-#include "entity.h"
-#include "entity_manager.h"
+
+#include "../ecs/entity_manager.h"
 
 MessageManager::MessageManager(EntityManager *mgr)
 :	manager(mgr)
@@ -35,4 +35,3 @@ void MessageManager::Clear()
 {
 	messages.clear();
 }
-

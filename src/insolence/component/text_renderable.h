@@ -9,7 +9,6 @@
 
 #include <float.h>
 
-#include "component.h"
 #include "../game/font.h"
 
 struct TextRenderableSystem;
@@ -22,7 +21,7 @@ struct TextRenderableSystem;
  * line_lengths and line_counts represent visual lengths and character count
  * for the visual representation.
  */
-struct INSOLENCE_API TextRenderable : Component {
+struct INSOLENCE_API TextRenderable {
 private:
 	std::vector<float> line_lengths;
 	std::vector<int> line_counts;

@@ -7,20 +7,20 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include "../component/simple_particle_renderable.h"
-#include "system.h"
+#include "../ecs/system.h"
 
 struct RenderManagerSimpleParticles;
 struct SimpleParticleRenderableSystem : System<SimpleParticleRenderable>
 {
 private:
 	std::default_random_engine r_eng;
+	RenderManagerSimpleParticles *renderer;
 
 	SimpleParticleRenderableSystem() {}
-	RenderManagerSimpleParticles *renderer;
-	void OnCreate(Entity *e, SimpleParticleRenderable *c);
+	void OnAdd(Entity&, SimpleParticleRenderable&);
 
 public:
 	SimpleParticleRenderableSystem(RenderManagerSimpleParticles*);
-	void Manage(const GameTime &gametime, Entity *e, SimpleParticleRenderable*);
+	void Manage(const GameTime &gametime, Entity &e, SimpleParticleRenderable&);
 };
 #endif

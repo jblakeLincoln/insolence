@@ -1,3 +1,5 @@
+#include "../ecs/entity_manager.h"
+
 static int Console_CreateEntity(char *args) {
 	if(args != nullptr) {
 		Game::Get()->console->Print("Expected no arguments");

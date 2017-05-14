@@ -4,13 +4,12 @@
 
 #include "../insolence_dll.h"
 
-#include "component.h"
 #include "../physics/physics_manager.h"
 #include <btBulletDynamicsCommon.h>
 
 struct PhysicsManager;
 struct RigidBodySystem;
-struct INSOLENCE_API RigidBody : public Component
+struct INSOLENCE_API RigidBody
 {
 	friend PhysicsManager;
 	friend RigidBodySystem;

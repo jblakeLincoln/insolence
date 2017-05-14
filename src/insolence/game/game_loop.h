@@ -62,8 +62,6 @@ protected:
 	 */
 	virtual void Update(const GameTime& gametime)=0;
 
-	virtual void PreDraw(const GameTime &gametime) {}
-
 	/**
 	 * Called once per tick by Update. Use this to separate out your game
 	 * logic from rendering.

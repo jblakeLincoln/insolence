@@ -3,11 +3,12 @@
 
 #include "../insolence_dll.h"
 
-#include "component.h"
 #include "../game/material.h"
 #include "../game/mesh.h"
 
-struct INSOLENCE_API MeshRenderable : Component {
+#include <glm/vec4.hpp>
+
+struct INSOLENCE_API MeshRenderable {
 	Mesh *mesh;
 	Material *material;
 	glm::vec4 colour;

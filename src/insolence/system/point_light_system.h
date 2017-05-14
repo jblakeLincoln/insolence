@@ -8,9 +8,9 @@ struct PointLightSystem : SystemBase<PointLight> {
 	RenderManager3D *renderer;
 	PointLightSystem();
 
-	void Manage(const GameTime&, Entity*, PointLight*);
-	void OnCreate(Entity*, PointLight*);
-	void OnRemove(Entity*, PointLight*);
+	void Manage(const GameTime&, Entity&, PointLight&);
+	void OnAdd(Entity&, PointLight&);
+	void OnRemove(Entity&, PointLight&);
 };
 
 #endif

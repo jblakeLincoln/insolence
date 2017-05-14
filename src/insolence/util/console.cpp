@@ -23,9 +23,9 @@ Console::Console()
 	entity_parser = new CommandParser<uint64_t>();
 	bottom_padding = (font->GetLineHeight() - font->GetGlyph('W').h) / PIXEL_SIZE * FONT_SIZE;
 
-	mgr->AddRenderSystem<SpriteRenderableSystem>(
+	mgr->AddSystem<SpriteRenderableSystem>(
 			DefaultRenderer::Get()->Renderer2D);
-	mgr->AddRenderSystem<TextRenderableSystem>(
+	mgr->AddSystem<TextRenderableSystem>(
 			DefaultRenderer::Get()->RendererText);
 
 	fb_console = Framebuffer::Create(Window::GetActive());
@@ -277,7 +277,7 @@ void Console::Draw(const GameTime &gametime)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-	mgr->FlushDraw(gametime);
+	//mgr->FlushDraw(gametime);
 	int y_offset = 0;
 	y_offset += (cumulative_lines - 1) * FONT_SIZE;
 	y_offset += e_current_line->Get<TextRenderable>()->GetLineLengths().size() * FONT_SIZE;

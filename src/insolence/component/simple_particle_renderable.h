@@ -1,12 +1,11 @@
 #ifndef SIMPLE_PARTICLE_RENDERABLE_H
 #define SIMPLE_PARTICLE_RENDERABLE_H
 
-#include "component.h"
 #include "transform.h"
 #include "../render/render_manager_simple_particles.h"
 #include "../component/simple_particle_renderable.h"
 
-struct SimpleParticleParams {
+struct INSOLENCE_API SimpleParticleParams {
 	uint32_t max               = 0;
 	int death_timeout          = -1;
 	glm::vec2 speed_range      = glm::vec2(0.1f, 0.2f);
@@ -20,7 +19,7 @@ struct SimpleParticleParams {
 };
 
 struct SimpleParticleRenderableSystem;
-struct SimpleParticleRenderable : Component
+struct INSOLENCE_API SimpleParticleRenderable
 {
 friend SimpleParticleRenderableSystem;
 protected:

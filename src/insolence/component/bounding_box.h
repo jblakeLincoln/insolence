@@ -2,9 +2,8 @@
 #define COMPONENT_BOUNDING_BOX_H
 
 #include "../insolence_dll.h"
-#include "component.h"
 
-struct INSOLENCE_API BoundingBox : Component {
+struct INSOLENCE_API BoundingBox {
 	float x;
 	float y;
 	float w;

@@ -3,9 +3,9 @@
 
 #include "../insolence_dll.h"
 
-#include "component.h"
+#include <glm/vec4.hpp>
 
-struct INSOLENCE_API Colour : public Component
+struct INSOLENCE_API Colour
 {
 	glm::vec4 colour;
 };

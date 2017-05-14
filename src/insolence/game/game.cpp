@@ -1,21 +1,19 @@
 #include "game.h"
 
 #include "camera.h"
+#include "default_renderers.h"
 #include "input.h"
-#include "entity.h"
-#include "entity_manager.h"
 #include "game_loop.h"
 #include "window.h"
 
-#include "../util/console.h"
-#include "../util/console_functions.cpp"
-
+#include "../ecs/entity_manager.h"
 #include "../render/render_manager_2d.h"
 #include "../render/render_manager_3d.h"
 #include "../system/sprite_renderable_system.h"
 #include "../system/mesh_renderable_system.h"
 #include "../system/text_renderable_system.h"
-#include "default_renderers.h"
+#include "../util/console.h"
+#include "../util/console_functions.cpp"
 
 void Game::Run()
 {
@@ -31,11 +29,11 @@ void Game::Run()
 	CreateShaderPrograms();
 
 	entity_manager = new EntityManager();
-	entity_manager->AddRenderSystem<SpriteRenderableSystem>(
+	entity_manager->AddSystem<SpriteRenderableSystem>(
 			DefaultRenderer::Get()->Renderer2D);
-	entity_manager->AddRenderSystem<MeshRenderableSystem>(
+	entity_manager->AddSystem<MeshRenderableSystem>(
 			DefaultRenderer::Get()->Renderer3D);
-	entity_manager->AddRenderSystem<TextRenderableSystem>(
+	entity_manager->AddSystem<TextRenderableSystem>(
 			DefaultRenderer::Get()->RendererText);
 
 

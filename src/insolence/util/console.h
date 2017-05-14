@@ -5,9 +5,10 @@
 #include <string>
 #include <list>
 #include "command_parser.h"
-#include "../game/entity_manager.h"
 
 struct Camera;
+struct Entity;
+struct EntityManager;
 struct Font;
 struct Framebuffer;
 struct Console {

@@ -4,16 +4,18 @@
 #include "../render/render_manager_3d.h"
 
 MeshRenderableSystem::MeshRenderableSystem(RenderManager3D* r)
-:	renderer(r)
-{}
+	:	renderer(r)
+{
+}
 
 void MeshRenderableSystem::Manage(const GameTime& gametime)
 {
-	for(it = components.begin(); it != components.end(); ++it)
+	for(it = 0; it < components.size(); ++it)
 	{
-		Transform *m = it->first->Get<Transform>();
+		Transform *t = entities[it]->Get<Transform>();
+		MeshRenderable &m = components[it];
 
-		renderer->Add(it->second.mesh, it->second.material,
-				m->GetModelMatrix(), it->second.colour);
+		renderer->Add(m.mesh, m.material,
+				t->GetModelMatrix(), m.colour);
 	}
 }

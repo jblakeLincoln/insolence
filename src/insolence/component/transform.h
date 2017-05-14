@@ -9,12 +9,10 @@
 #include <glm/gtx/quaternion.hpp>
 #include <cstdio>
 
-#include "component.h"
-
 /* TODO Issue #20:	Make sure returned properties consider each other and
  *					any changes that could have occurred.
  */
-struct INSOLENCE_API Transform : Component {
+struct INSOLENCE_API Transform {
 private:
 	void Construct();
 

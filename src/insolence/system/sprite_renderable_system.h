@@ -4,7 +4,6 @@
 #include "../insolence_dll.h"
 
 #include "../component/sprite_renderable.h"
-#include "../game/default_renderers.h"
 
 struct RenderManager2D;
 struct INSOLENCE_API SpriteRenderableSystem : System<SpriteRenderable> {
