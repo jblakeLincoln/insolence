@@ -222,7 +222,11 @@ case "$PLATFORM" in
 	"WEBGL")
 		cd bin
 		echo ${SELECTED_SAMPLE}
-		xdg-open ${SELECTED_SAMPLE}.html
+		if [ ${CONFIGURATION} == "debug" ]; then
+			xdg-open ${SELECTED_SAMPLE}-debug.html
+		else
+			xdg-open ${SELECTED_SAMPLE}.html
+		fi
 		;;
 	"ANDROID")
 		cd android
